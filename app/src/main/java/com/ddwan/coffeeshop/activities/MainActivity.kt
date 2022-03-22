@@ -8,7 +8,10 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.core.view.GravityCompat
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentTransaction
 import com.ddwan.coffeeshop.R
+import com.ddwan.coffeeshop.fragment.HomeFragment
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.toolbar.*
 
@@ -26,6 +29,10 @@ class MainActivity : AppCompatActivity() {
             drawerLayout.closeDrawer(GravityCompat.START)
             true
         }
+        val fragment: FragmentManager = supportFragmentManager
+        val fragmentTransaction: FragmentTransaction = fragment.beginTransaction()
+        fragmentTransaction.add(R.id.fragmentContainer, HomeFragment(), "homeFragment")
+        fragmentTransaction.commit()
     }
 
     private fun navigationItemSelected(view: MenuItem) {
