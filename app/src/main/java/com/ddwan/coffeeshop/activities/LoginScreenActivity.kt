@@ -25,9 +25,11 @@ class LoginScreenActivity : AppCompatActivity() {
             else {
                 if (email.text.toString().uppercase() == "ADMIN" && password.text.toString()
                         .uppercase() == "ADMIN"
-                )
+                ) {
                     startActivity(Intent(this, MainActivity::class.java))
-                else
+                    overridePendingTransition(R.anim.right_to_left, R.anim.right_to_left_out)
+                    finish()
+                } else
                     Toast.makeText(this, "Sai tài khoản hoặc mật khẩu", Toast.LENGTH_SHORT).show()
             }
         }

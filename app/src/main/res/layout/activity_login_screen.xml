@@ -17,8 +17,8 @@
         android:id="@+id/imageView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:scaleType="centerCrop"
         android:adjustViewBounds="true"
+        android:scaleType="centerCrop"
         android:src="@drawable/login_screen"
         app:layout_constraintBottom_toTopOf="@+id/guideline2"
         app:layout_constraintEnd_toEndOf="parent"
@@ -34,11 +34,11 @@
         android:background="@drawable/custom_input"
         android:drawableStart="@drawable/custom_email_focus"
         android:drawablePadding="@dimen/dimen_10dp"
-        android:padding="@dimen/dimen_10dp"
-        android:maxLines="1"
-        android:inputType="text"
         android:hint="Email"
         android:imeOptions="actionNext"
+        android:inputType="text"
+        android:maxLines="1"
+        android:padding="@dimen/dimen_10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -46,7 +46,6 @@
         app:layout_constraintVertical_bias="0.2" />
 
     <EditText
-        android:hint="Password"
         android:id="@+id/password"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -54,6 +53,7 @@
         android:background="@drawable/custom_input"
         android:drawableStart="@drawable/custom_pass_focus"
         android:drawablePadding="@dimen/dimen_10dp"
+        android:hint="Password"
         android:inputType="textPassword"
         android:padding="@dimen/dimen_10dp"
         app:layout_constraintEnd_toEndOf="@+id/email"
@@ -85,4 +85,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
