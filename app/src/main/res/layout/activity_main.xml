@@ -11,16 +11,57 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <include
-            android:id="@+id/toolbar"
-            layout="@layout/toolbar" />
+        <!--        <include-->
+        <!--            android:id="@+id/toolbar"-->
+        <!--            layout="@layout/toolbar"-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="@dimen/dimen_60dp" />-->
+
+        <ImageView
+            android:id="@+id/navMenu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/dimen_15dp"
+            android:src="@drawable/ic_baseline_menu_24"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dimen_10dp"
+            android:text="Trang chủ"
+            android:textColor="@color/white"
+            android:textSize="@dimen/dimen_18sp"
+            app:layout_constraintBottom_toBottomOf="@+id/navMenu"
+            app:layout_constraintStart_toEndOf="@+id/navMenu"
+            app:layout_constraintTop_toTopOf="@+id/navMenu" />
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="@dimen/dimen_40dp"
+            android:layout_height="@dimen/dimen_40dp"
+            app:cardCornerRadius="@dimen/dimen_20sp"
+            android:layout_marginRight="@dimen/dimen_15dp"
+            app:layout_constraintBottom_toBottomOf="@+id/navMenu"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/navMenu">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/logo_1" />
+        </androidx.cardview.widget.CardView>
 
         <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/fragmentContainer"
+            android:id="@+id/fragmentContainerView"
+            android:name="androidx.navigation.fragment.NavHostFragment"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            app:defaultNavHost="true"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+            app:layout_constraintTop_toBottomOf="@+id/navMenu"
+            app:navGraph="@navigation/nav_graph" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -1,16 +1,13 @@
 package com.ddwan.coffeeshop.activities
 
-import android.R.attr
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import com.ddwan.coffeeshop.R
 import kotlinx.android.synthetic.main.activity_login_screen.*
-import android.R.attr.phoneNumber
 import android.content.pm.PackageManager
 import android.net.Uri
-import android.os.Handler
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 
@@ -57,9 +54,7 @@ class LoginScreenActivity : AppCompatActivity() {
                 val intent = Intent(Intent.ACTION_CALL, Uri.parse("tel:" + "0397482016"))
                 startActivity(intent)
             } else {
-                Toast.makeText(applicationContext,
-                    "Không có quyền truy cập dữ liệu trong máy !!!",
-                    Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "Không đủ quyền để thực hiện !!!", Toast.LENGTH_SHORT).show()
             }
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)

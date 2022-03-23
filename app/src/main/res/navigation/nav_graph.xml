@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.ddwan.coffeeshop.fragment.HomeFragment"
+        android:label="fragment_home"
+        tools:layout="@layout/fragment_home" />
+    <fragment
+        android:id="@+id/settingFragment"
+        android:name="com.ddwan.coffeeshop.fragment.SettingFragment"
+        android:label="fragment_setting"
+        tools:layout="@layout/fragment_setting" />
+    <fragment
+        android:id="@+id/tableFragment"
+        android:name="com.ddwan.coffeeshop.fragment.TableFragment"
+        android:label="fragment_table"
+        tools:layout="@layout/fragment_table" />
+    <fragment
+        android:id="@+id/chartFragment"
+        android:name="com.ddwan.coffeeshop.fragment.ChartFragment"
+        android:label="fragment_chart"
+        tools:layout="@layout/fragment_chart" />
+    <fragment
+        android:id="@+id/employeeFragment"
+        android:name="com.ddwan.coffeeshop.fragment.EmployeeFragment"
+        android:label="fragment_employee"
+        tools:layout="@layout/fragment_employee" />
+    <fragment
+        android:id="@+id/menuFragment"
+        android:name="com.ddwan.coffeeshop.fragment.MenuFragment"
+        android:label="fragment_menu"
+        tools:layout="@layout/fragment_menu" />
+    <fragment
+        android:id="@+id/infoFragment"
+        android:name="com.ddwan.coffeeshop.fragment.InfoFragment"
+        android:label="fragment_info"
+        tools:layout="@layout/fragment_info" />
+
+    <activity
+        android:id="@+id/itemFacebook"
+        app:action="android.intent.action.VIEW"
+        app:data="https://fb.com/DoannamVBHP"/>
+
+    <activity
+        android:id="@+id/itemZalo"
+        app:action="android.intent.action.VIEW"
+        app:data="https://zalo.me/0397482016"/>
+
+</navigation>

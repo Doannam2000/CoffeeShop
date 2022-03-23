@@ -2,12 +2,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/itemHome"
+            android:id="@+id/homeFragment"
             android:checked="true"
             android:icon="@drawable/ic_baseline_home_24"
             android:title="Trang chủ" />
         <item
-            android:id="@+id/itemChart"
+            android:id="@+id/chartFragment"
             android:icon="@drawable/ic_baseline_bar_chart_24"
             android:title="Thống kê" />
     </group>
@@ -16,15 +16,15 @@
                 <group android:checkableBehavior="single">
 
                     <item
-                        android:id="@+id/itemTable"
+                        android:id="@+id/tableFragment"
                         android:icon="@drawable/ic_baseline_airline_seat_recline_normal_24"
                         android:title="Quản lý bàn" />
                     <item
-                        android:id="@+id/itemMenuFood"
+                        android:id="@+id/menuFragment"
                         android:icon="@drawable/ic_baseline_assignment_24"
                         android:title="Quản lý menu" />
                     <item
-                        android:id="@+id/itemEmployee"
+                        android:id="@+id/employeeFragment"
                         android:icon="@drawable/ic_outline_account_circle_24"
                         android:title="Quản lý nhân viên" />
                 </group>
@@ -38,11 +38,11 @@
                     android:icon="@drawable/facebook_logo"
                     android:title="Facebook" />
                 <item
-                    android:id="@+id/itemPhone"
-                    android:icon="@drawable/ic_baseline_call_24"
-                    android:title="Điện thoại" />
+                    android:id="@+id/itemZalo"
+                    android:icon="@drawable/zalo_icon"
+                    android:title="Zalo" />
                 <item
-                    android:id="@+id/itemInfo"
+                    android:id="@+id/infoFragment"
                     android:icon="@drawable/ic_baseline_info_24"
                     android:title="Thông tin ứng dụng" />
             </menu>
@@ -50,7 +50,7 @@
         <item android:title="Thiết lập">
             <menu>
                 <item
-                    android:id="@+id/itemSetting"
+                    android:id="@+id/settingFragment"
                     android:icon="@drawable/ic_baseline_settings_24"
                     android:title="Cài đặt" />
                 <item
