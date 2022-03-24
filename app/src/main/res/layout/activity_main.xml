@@ -40,7 +40,7 @@
         <androidx.cardview.widget.CardView
             android:layout_width="@dimen/dimen_40dp"
             android:layout_height="@dimen/dimen_40dp"
-            app:cardCornerRadius="@dimen/dimen_20sp"
+            app:cardCornerRadius="@dimen/dimen_20dp"
             android:layout_marginRight="@dimen/dimen_15dp"
             app:layout_constraintBottom_toBottomOf="@+id/navMenu"
             app:layout_constraintEnd_toEndOf="parent"

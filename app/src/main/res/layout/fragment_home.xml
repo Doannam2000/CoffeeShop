@@ -22,7 +22,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:iss_auto_cycle="true"
-            app:iss_corner_radius="1"
             app:iss_delay="0"
             app:iss_error_image="@android:color/darker_gray"
             app:iss_period="1000"
