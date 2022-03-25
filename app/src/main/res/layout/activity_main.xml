@@ -11,12 +11,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <!--        <include-->
-        <!--            android:id="@+id/toolbar"-->
-        <!--            layout="@layout/toolbar"-->
-        <!--            android:layout_width="match_parent"-->
-        <!--            android:layout_height="@dimen/dimen_60dp" />-->
-
         <ImageView
             android:id="@+id/navMenu"
             android:layout_width="wrap_content"
@@ -30,8 +24,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/dimen_10dp"
-            android:text="Trang chủ"
-            android:textColor="@color/white"
+            android:text="DDWan Coffee"
+            android:textColor="@color/black"
             android:textSize="@dimen/dimen_18sp"
             app:layout_constraintBottom_toBottomOf="@+id/navMenu"
             app:layout_constraintStart_toEndOf="@+id/navMenu"
@@ -40,8 +34,8 @@
         <androidx.cardview.widget.CardView
             android:layout_width="@dimen/dimen_40dp"
             android:layout_height="@dimen/dimen_40dp"
-            app:cardCornerRadius="@dimen/dimen_20dp"
             android:layout_marginRight="@dimen/dimen_15dp"
+            app:cardCornerRadius="@dimen/dimen_20dp"
             app:layout_constraintBottom_toBottomOf="@+id/navMenu"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/navMenu">

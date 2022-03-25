@@ -29,6 +29,7 @@ class SQLHelper(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_
         private const val FOOD_ID = "food_id"
         private const val FOOD_NAME = "food_name"
         private const val PRICE = "price"
+        private const val DESCRIPTION = "description"
 
         //Account
         private const val TB_ACCOUNT = "tbl_account"
@@ -67,7 +68,11 @@ class SQLHelper(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_
 
         //create food
         db?.execSQL("Create table $TB_FOOD($FOOD_ID INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "$FOOD_NAME TEXT,$FOOD_CATEGORY_ID TEXT,$PRICE TEXT)")
+                "$FOOD_NAME TEXT," +
+                "$FOOD_CATEGORY_ID TEXT," +
+                "$PRICE TEXT," +
+                "$DESCRIPTION TEXT," +
+                "FOREIGN KEY (" + FOOD_CATEGORY_ID + ") REFERENCES $TB_CATEGORY ( $FOOD_CATEGORY_ID ))")
 
         //create account
         db?.execSQL("Create table $TB_ACCOUNT($ID INTEGER PRIMARY KEY AUTOINCREMENT," +
@@ -75,15 +80,20 @@ class SQLHelper(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_
 
         //create table
         db?.execSQL("Create table $TB_TABLE($TABLE_ID INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "$TABLE_NAME TEXT,$STATUS TEXT)")
+                "$TABLE_NAME TEXT,$DESCRIPTION TEXT,$STATUS TEXT)")
 
         //create Bill
         db?.execSQL("Create table $TB_BILL($BILL_ID INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "$DATE_CHECK_IN TEXT,$DATE_CHECK_OUT TEXT,$TABLE_ID TEXT,$STATUS TEXT)")
+                "$DATE_CHECK_IN TEXT,$DATE_CHECK_OUT TEXT,$TABLE_ID TEXT," +
+                "$STATUS TEXT," +
+                " FOREIGN KEY (" + TABLE_ID + ") REFERENCES $TB_TABLE ( $TABLE_ID ))")
 
         //create BillInfo
         db?.execSQL("Create table $TB_BILL_INFO($BILL_INFO_ID INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "$BILL_ID TEXT,$FOOD_ID TEXT,$PRICE TEXT,$COUNT TEXT)")
+                "$BILL_ID TEXT,$FOOD_ID TEXT,$PRICE TEXT," +
+                "$COUNT TEXT," +
+                " FOREIGN KEY (" + BILL_ID + ") REFERENCES $TB_BILL ( $BILL_ID )," +
+                " FOREIGN KEY (" + FOOD_ID + ") REFERENCES $TB_FOOD ( $FOOD_ID ))")
 
     }
 
@@ -103,6 +113,7 @@ class SQLHelper(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_
         val contentValues = ContentValues()
         contentValues.put(FOOD_NAME, food.foodName)
         contentValues.put(FOOD_CATEGORY_ID, food.category)
+        contentValues.put(DESCRIPTION, food.description)
         contentValues.put(PRICE, food.price)
         val success = db.insert(TB_FOOD, null, contentValues)
         db.close()
@@ -124,6 +135,7 @@ class SQLHelper(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_
         val db = this.writableDatabase
         val contentValues = ContentValues()
         contentValues.put(TABLE_NAME, table.tableName)
+        contentValues.put(DESCRIPTION, table.description)
         contentValues.put(STATUS, table.status)
         val success = db.insert(TB_TABLE, null, contentValues)
         db.close()
@@ -196,11 +208,11 @@ class SQLHelper(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_
                 val foodName = cursor.getString(cursor.getColumnIndex(FOOD_NAME))
                 val category = cursor.getString(cursor.getColumnIndex(FOOD_CATEGORY_ID)).toInt()
                 val price = cursor.getString(cursor.getColumnIndex(PRICE)).toInt()
-                val food =Food(foodId,foodName,category,price)
+                val description = cursor.getString(cursor.getColumnIndex(DESCRIPTION))
+                val food = Food(foodId, foodName, category, price, description)
                 list.add(food)
             } while (cursor.moveToNext())
         }
         return list
     }
-
 }

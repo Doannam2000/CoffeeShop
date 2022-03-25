@@ -5,8 +5,13 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.ddwan.coffeeshop.R
-
+import com.ddwan.coffeeshop.adapter.TableAdapter
+import com.ddwan.coffeeshop.model.Table
+import com.ddwan.coffeeshop.sql.SQLHelper
+import kotlinx.android.synthetic.main.fragment_table.view.*
 
 class TableFragment : Fragment() {
 
@@ -16,6 +21,43 @@ class TableFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_table, container, false)
+
+        val view = inflater.inflate(R.layout.fragment_table, container, false)
+        val sqlHelper = SQLHelper(requireContext())
+        var listEmpty = arrayListOf<Table>(
+            Table(0, "Bàn 1", "Trống", true),
+            Table(2, "Bàn 3", "Trống", true),
+            Table(4, "Bàn 5", "Trống", true),
+            Table(6, "Bàn 7", "Trống", true),
+            Table(8, "Bàn 9", "Trống", true))
+        var listLiveTable = arrayListOf<Table>(Table(1, "Bàn 2", "Chưa thanh toán", true),
+            Table(3, "Bàn 4", "Chưa thanh toán", true),
+            Table(4, "Bàn 6", "Đã thanh toán", true),
+            Table(5, "Bàn 8", "Chưa thanh toán", true),
+            Table(9, "Bàn 10", "Chưa thanh toán", true))
+
+        view.image_add_table.setOnClickListener {
+            sqlHelper.insertTable(Table(0,
+                "Bàn " + listEmpty.size + listLiveTable.size + 1,
+                "Bàn rỗng",
+                true))
+            sqlHelper.insertTable(Table(0,
+                "Bàn " + listEmpty.size + listLiveTable.size + 1,
+                "Bàn có người",
+                false))
+        }
+
+        var adapterEmpty = TableAdapter(listEmpty)
+        var recyclerTableEmpty: RecyclerView = view.findViewById(R.id.recyclerView_empty_table)
+        recyclerTableEmpty.layoutManager = GridLayoutManager(requireContext(), 3)
+        recyclerTableEmpty.setHasFixedSize(true)
+        recyclerTableEmpty.adapter = adapterEmpty
+
+        var adapterLiveTable = TableAdapter(listLiveTable)
+        var recyclerLiveTable: RecyclerView = view.findViewById(R.id.recyclerView_live_table)
+        recyclerLiveTable.layoutManager = GridLayoutManager(requireContext(), 3)
+        recyclerLiveTable.setHasFixedSize(true)
+        recyclerLiveTable.adapter = adapterLiveTable
+        return view
     }
 }
