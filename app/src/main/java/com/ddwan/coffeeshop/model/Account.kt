@@ -8,4 +8,5 @@ class Account(
     var address: String,
     var phone: String,
     var role: String,
+    var imageUrl:String
 )

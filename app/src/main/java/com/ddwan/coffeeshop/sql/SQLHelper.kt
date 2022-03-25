@@ -40,6 +40,7 @@ class SQLHelper(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_
         private const val ADDRESS = "address"
         private const val PHONE = "phone"
         private const val ROLE = "role"
+        private const val IMAGE_URL = "image_url"
 
         //Bill
         private const val TB_BILL = "tbl_bill"
@@ -72,11 +73,12 @@ class SQLHelper(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_
                 "$FOOD_CATEGORY_ID TEXT," +
                 "$PRICE TEXT," +
                 "$DESCRIPTION TEXT," +
+                "$IMAGE_URL TEXT," +
                 "FOREIGN KEY (" + FOOD_CATEGORY_ID + ") REFERENCES $TB_CATEGORY ( $FOOD_CATEGORY_ID ))")
 
         //create account
         db?.execSQL("Create table $TB_ACCOUNT($ID INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "$EMAIL TEXT,$PASSWORD TEXT,$NAME TEXT,$ADDRESS TEXT,$PHONE TEXT,$ROLE ROLE)")
+                "$EMAIL TEXT,$PASSWORD TEXT,$NAME TEXT,$ADDRESS TEXT,$PHONE TEXT,$IMAGE_URL TEXT,$ROLE ROLE)")
 
         //create table
         db?.execSQL("Create table $TB_TABLE($TABLE_ID INTEGER PRIMARY KEY AUTOINCREMENT," +
@@ -114,6 +116,7 @@ class SQLHelper(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_
         contentValues.put(FOOD_NAME, food.foodName)
         contentValues.put(FOOD_CATEGORY_ID, food.category)
         contentValues.put(DESCRIPTION, food.description)
+        contentValues.put(IMAGE_URL, food.imageUrl)
         contentValues.put(PRICE, food.price)
         val success = db.insert(TB_FOOD, null, contentValues)
         db.close()
@@ -151,6 +154,7 @@ class SQLHelper(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_
         contentValues.put(NAME, account.name)
         contentValues.put(ADDRESS, account.address)
         contentValues.put(PHONE, account.phone)
+        contentValues.put(IMAGE_URL, account.imageUrl)
         contentValues.put(ROLE, account.role)
         val success = db.insert(TB_ACCOUNT, null, contentValues)
         db.close()
@@ -209,7 +213,8 @@ class SQLHelper(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_
                 val category = cursor.getString(cursor.getColumnIndex(FOOD_CATEGORY_ID)).toInt()
                 val price = cursor.getString(cursor.getColumnIndex(PRICE)).toInt()
                 val description = cursor.getString(cursor.getColumnIndex(DESCRIPTION))
-                val food = Food(foodId, foodName, category, price, description)
+                val imageUrl = cursor.getString(cursor.getColumnIndex(IMAGE_URL))
+                val food = Food(foodId, foodName, category, price, description,imageUrl)
                 list.add(food)
             } while (cursor.moveToNext())
         }

@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
@@ -25,7 +26,7 @@ class TableAdapter(var list:ArrayList<Table>): RecyclerView.Adapter<TableAdapter
         return list.size
     }
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var layoutFood: CardView = itemView.findViewById(R.id.cardViewTable)
+        var layoutTable: LinearLayout = itemView.findViewById(R.id.cardViewTable)
         var image: ImageView = itemView.findViewById(R.id.imageTable)
         var name: TextView = itemView.findViewById(R.id.nameTable)
         var price: TextView = itemView.findViewById(R.id.description)

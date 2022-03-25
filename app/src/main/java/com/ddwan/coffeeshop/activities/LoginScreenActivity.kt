@@ -10,6 +10,7 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import kotlin.system.exitProcess
 
 
 class LoginScreenActivity : AppCompatActivity() {
@@ -23,7 +24,7 @@ class LoginScreenActivity : AppCompatActivity() {
                 if (email.text.toString().uppercase() == "ADMIN" && password.text.toString()
                         .uppercase() == "ADMIN"
                 ) {
-                    startActivity(Intent(this, MainActivity::class.java))
+                    startActivity(Intent(this, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK))
                     overridePendingTransition(R.anim.right_to_left, R.anim.right_to_left_out)
                     finish()
                 } else
@@ -60,4 +61,10 @@ class LoginScreenActivity : AppCompatActivity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
+    override fun onBackPressed() {
+        val homeIntent = Intent(Intent.ACTION_MAIN)
+        homeIntent.addCategory(Intent.CATEGORY_HOME)
+        homeIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(homeIntent)
+    }
 }

@@ -1,5 +1,6 @@
 package com.ddwan.coffeeshop.adapter
 
+import android.annotation.SuppressLint
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
@@ -28,13 +29,17 @@ class FoodAdapter(var list: ArrayList<Food>) : RecyclerView.Adapter<FoodAdapter.
     }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var layoutFood: CardView = itemView.findViewById(R.id.layout)
-        var image: ImageView = itemView.findViewById(R.id.imageFood)
-        var name: TextView = itemView.findViewById(R.id.nameFood)
-        var price: TextView = itemView.findViewById(R.id.price)
+        private var layoutFood: CardView = itemView.findViewById(R.id.layout)
+        private var image: ImageView = itemView.findViewById(R.id.imageFood)
+        private var name: TextView = itemView.findViewById(R.id.nameFood)
+        private var price: TextView = itemView.findViewById(R.id.price)
+        private var description: TextView = itemView.findViewById(R.id.descriptionFood)
+        @SuppressLint("SetTextI18n")
         fun setData() {
             name.text = list[adapterPosition].foodName
-            price.text = list[adapterPosition].price.toString()
+            price.text = list[adapterPosition].price.toString() + "đ"
+            description.text = list[adapterPosition].description
+            image.setImageResource(list[adapterPosition].imageUrl.toInt())
         }
     }
 }

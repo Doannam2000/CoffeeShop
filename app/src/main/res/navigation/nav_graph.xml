@@ -44,11 +44,15 @@
     <activity
         android:id="@+id/itemFacebook"
         app:action="android.intent.action.VIEW"
-        app:data="https://fb.com/DoannamVBHP"/>
+        app:data="https://fb.com/DoannamVBHP" />
 
     <activity
         android:id="@+id/itemZalo"
         app:action="android.intent.action.VIEW"
-        app:data="https://zalo.me/0397482016"/>
+        app:data="https://zalo.me/0397482016" />
+
+    <activity
+        android:id="@+id/itemLogout"
+        android:name="com.ddwan.coffeeshop.activities.LoginScreenActivity" />
 
 </navigation>
