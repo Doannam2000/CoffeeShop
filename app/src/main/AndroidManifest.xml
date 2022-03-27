@@ -13,28 +13,26 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.CoffeeShop">
-
+        <activity
+            android:name=".activities.BillActivity"
+            android:exported="false" />
         <activity
             android:name=".activities.SplashActivity"
-            android:exported="true">
-
-        </activity>
-
+            android:exported="true"></activity>
         <activity
             android:name=".activities.MainActivity"
-            android:launchMode="singleTask"
-            android:exported="true">
+            android:exported="true"
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".activities.LoginScreenActivity"
-            android:launchMode="singleTask"
-            android:exported="true">
-
-        </activity>
+            android:exported="true"
+            android:launchMode="singleTask"></activity>
     </application>
 
 </manifest>

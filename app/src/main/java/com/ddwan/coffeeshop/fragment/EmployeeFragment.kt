@@ -97,8 +97,6 @@ class EmployeeFragment : Fragment() {
         val recyclerViewEmployee: RecyclerView = view.findViewById(R.id.recyclerView_employee)
         recyclerViewEmployee.layoutManager = LinearLayoutManager(requireContext())
         recyclerViewEmployee.setHasFixedSize(true)
-//        var dividerItemDecoration = DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
-//        recyclerViewEmployee.addItemDecoration(dividerItemDecoration)
         recyclerViewEmployee.adapter = adapter
         return view
     }

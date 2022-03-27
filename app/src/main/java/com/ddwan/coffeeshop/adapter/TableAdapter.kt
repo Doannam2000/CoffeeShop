@@ -11,7 +11,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.ddwan.coffeeshop.R
 import com.ddwan.coffeeshop.model.Table
 
-class TableAdapter(var list:ArrayList<Table>): RecyclerView.Adapter<TableAdapter.ViewHolder>() {
+class TableAdapter(var list: ArrayList<Table>) : RecyclerView.Adapter<TableAdapter.ViewHolder>() {
+
+
+    lateinit var itemClick: (position: Int) -> Unit
+    fun setCallBack(click: (position: Int) -> Unit) {
+        itemClick = click
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TableAdapter.ViewHolder {
         var view: View =
             LayoutInflater.from(parent.context).inflate(R.layout.table_layout, parent, false)
@@ -25,14 +32,21 @@ class TableAdapter(var list:ArrayList<Table>): RecyclerView.Adapter<TableAdapter
     override fun getItemCount(): Int {
         return list.size
     }
+
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var layoutTable: LinearLayout = itemView.findViewById(R.id.cardViewTable)
+        var layoutTable: LinearLayout = itemView.findViewById(R.id.linearTable)
         var image: ImageView = itemView.findViewById(R.id.imageTable)
         var name: TextView = itemView.findViewById(R.id.nameTable)
         var price: TextView = itemView.findViewById(R.id.description)
         fun setData() {
             name.text = list[adapterPosition].tableName
             price.text = list[adapterPosition].description
+        }
+
+        init {
+            layoutTable.setOnClickListener {
+                itemClick.invoke(adapterPosition)
+            }
         }
     }
 }

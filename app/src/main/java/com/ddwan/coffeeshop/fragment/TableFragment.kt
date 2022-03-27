@@ -1,5 +1,6 @@
 package com.ddwan.coffeeshop.fragment
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -8,6 +9,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ddwan.coffeeshop.R
+import com.ddwan.coffeeshop.activities.BillActivity
 import com.ddwan.coffeeshop.adapter.TableAdapter
 import com.ddwan.coffeeshop.model.Table
 import com.ddwan.coffeeshop.sql.SQLHelper
@@ -48,12 +50,18 @@ class TableFragment : Fragment() {
         }
 
         var adapterEmpty = TableAdapter(listEmpty)
+        adapterEmpty.setCallBack {
+            requireActivity().startActivity(Intent(requireContext(),BillActivity::class.java))
+        }
         var recyclerTableEmpty: RecyclerView = view.findViewById(R.id.recyclerView_empty_table)
         recyclerTableEmpty.layoutManager = GridLayoutManager(requireContext(), 3)
         recyclerTableEmpty.setHasFixedSize(true)
         recyclerTableEmpty.adapter = adapterEmpty
 
         var adapterLiveTable = TableAdapter(listLiveTable)
+        adapterLiveTable.setCallBack {
+            requireActivity().startActivity(Intent(requireContext(),BillActivity::class.java))
+        }
         var recyclerLiveTable: RecyclerView = view.findViewById(R.id.recyclerView_live_table)
         recyclerLiveTable.layoutManager = GridLayoutManager(requireContext(), 3)
         recyclerLiveTable.setHasFixedSize(true)
