@@ -5,10 +5,8 @@
     android:layout_height="match_parent"
     tools:context=".fragment.ChartFragment">
 
-    <TextView
+    <com.github.mikephil.charting.charts.BarChart
+        android:id="@+id/chart"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:textSize="@dimen/dimen_30sp"
-        android:text="chart" />
-
+        android:layout_height="match_parent"/>
 </FrameLayout>
