@@ -1,11 +1,18 @@
 package com.ddwan.coffeeshop.fragment
 
+import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.ImageView
+import android.widget.Toast
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ddwan.coffeeshop.R
@@ -13,6 +20,7 @@ import com.ddwan.coffeeshop.activities.BillActivity
 import com.ddwan.coffeeshop.adapter.TableAdapter
 import com.ddwan.coffeeshop.model.Table
 import com.ddwan.coffeeshop.sql.SQLHelper
+import kotlinx.android.synthetic.main.custom_editext_dialog.view.*
 import kotlinx.android.synthetic.main.fragment_table.view.*
 
 class TableFragment : Fragment() {
@@ -38,16 +46,6 @@ class TableFragment : Fragment() {
             Table(5, "Bàn 8", "Chưa thanh toán", true),
             Table(9, "Bàn 10", "Chưa thanh toán", true))
 
-        view.image_add_table.setOnClickListener {
-            sqlHelper.insertTable(Table(0,
-                "Bàn " + listEmpty.size + listLiveTable.size + 1,
-                "Bàn rỗng",
-                true))
-            sqlHelper.insertTable(Table(0,
-                "Bàn " + listEmpty.size + listLiveTable.size + 1,
-                "Bàn có người",
-                false))
-        }
 
         var adapterEmpty = TableAdapter(listEmpty)
         adapterEmpty.setCallBack {
@@ -66,6 +64,28 @@ class TableFragment : Fragment() {
         recyclerLiveTable.layoutManager = GridLayoutManager(requireContext(), 3)
         recyclerLiveTable.setHasFixedSize(true)
         recyclerLiveTable.adapter = adapterLiveTable
+
+        var btnAdd:ImageView = view.findViewById(R.id.image_add_table)
+        btnAdd.setOnClickListener {
+            val viewDialog = View.inflate(requireContext(), R.layout.custom_editext_dialog, null)
+            val builder = AlertDialog.Builder(requireContext())
+            builder.setView(viewDialog)
+            val dialog = builder.create()
+            dialog.show()
+            dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            viewDialog.cancel.setOnClickListener {
+                dialog.dismiss()
+            }
+            viewDialog.oke.setOnClickListener {
+                dialog.dismiss()
+                if(viewDialog.name.text.isEmpty()){
+                    Toast.makeText(requireContext(),"Tên bàn không được để trống",Toast.LENGTH_SHORT).show()
+                }else{
+                    listEmpty.add(Table(listEmpty.size+listLiveTable.size+1, viewDialog.name.text.toString(), "Trống", true))
+                    adapterEmpty.notifyDataSetChanged()
+                }
+            }
+        }
         return view
     }
 }
