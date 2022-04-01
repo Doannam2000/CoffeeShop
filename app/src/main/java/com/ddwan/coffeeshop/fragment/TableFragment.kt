@@ -1,5 +1,6 @@
 package com.ddwan.coffeeshop.fragment
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
@@ -26,6 +27,7 @@ import kotlinx.android.synthetic.main.fragment_table.view.*
 class TableFragment : Fragment() {
 
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
@@ -33,38 +35,37 @@ class TableFragment : Fragment() {
         // Inflate the layout for this fragment
 
         val view = inflater.inflate(R.layout.fragment_table, container, false)
-        val sqlHelper = SQLHelper(requireContext())
-        var listEmpty = arrayListOf<Table>(
+        val listEmpty = arrayListOf<Table>(
             Table(0, "Bàn 1", "Trống", true),
             Table(2, "Bàn 3", "Trống", true),
             Table(4, "Bàn 5", "Trống", true),
             Table(6, "Bàn 7", "Trống", true),
             Table(8, "Bàn 9", "Trống", true))
-        var listLiveTable = arrayListOf<Table>(Table(1, "Bàn 2", "Chưa thanh toán", true),
+        val listLiveTable = arrayListOf<Table>(Table(1, "Bàn 2", "Chưa thanh toán", true),
             Table(3, "Bàn 4", "Chưa thanh toán", true),
             Table(4, "Bàn 6", "Đã thanh toán", true),
             Table(5, "Bàn 8", "Chưa thanh toán", true),
             Table(9, "Bàn 10", "Chưa thanh toán", true))
 
-        var adapterEmpty = TableAdapter(listEmpty)
+        val adapterEmpty = TableAdapter(listEmpty)
         adapterEmpty.setCallBack {
             requireActivity().startActivity(Intent(requireContext(),BillActivity::class.java))
         }
-        var recyclerTableEmpty: RecyclerView = view.findViewById(R.id.recyclerView_empty_table)
+        val recyclerTableEmpty: RecyclerView = view.findViewById(R.id.recyclerView_empty_table)
         recyclerTableEmpty.layoutManager = GridLayoutManager(requireContext(), 3)
         recyclerTableEmpty.setHasFixedSize(true)
         recyclerTableEmpty.adapter = adapterEmpty
 
-        var adapterLiveTable = TableAdapter(listLiveTable)
+        val adapterLiveTable = TableAdapter(listLiveTable)
         adapterLiveTable.setCallBack {
             requireActivity().startActivity(Intent(requireContext(),BillActivity::class.java))
         }
-        var recyclerLiveTable: RecyclerView = view.findViewById(R.id.recyclerView_live_table)
+        val recyclerLiveTable: RecyclerView = view.findViewById(R.id.recyclerView_live_table)
         recyclerLiveTable.layoutManager = GridLayoutManager(requireContext(), 3)
         recyclerLiveTable.setHasFixedSize(true)
         recyclerLiveTable.adapter = adapterLiveTable
 
-        var btnAdd:ImageView = view.findViewById(R.id.image_add_table)
+        val btnAdd:ImageView = view.findViewById(R.id.image_add_table)
         btnAdd.setOnClickListener {
             val viewDialog = View.inflate(requireContext(), R.layout.custom_editext_dialog, null)
             val builder = AlertDialog.Builder(requireContext())

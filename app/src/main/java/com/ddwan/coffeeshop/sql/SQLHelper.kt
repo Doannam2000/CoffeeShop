@@ -40,6 +40,7 @@ class SQLHelper(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_
         private const val ADDRESS = "address"
         private const val PHONE = "phone"
         private const val ROLE = "role"
+        private const val GENDER = "gender"
         private const val IMAGE_URL = "image_url"
 
         //Bill
@@ -78,7 +79,7 @@ class SQLHelper(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_
 
         //create account
         db?.execSQL("Create table $TB_ACCOUNT($ID INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "$EMAIL TEXT,$PASSWORD TEXT,$NAME TEXT,$ADDRESS TEXT,$PHONE TEXT,$IMAGE_URL TEXT,$ROLE ROLE)")
+                "$EMAIL TEXT,$PASSWORD TEXT,$NAME TEXT,$ADDRESS TEXT,$PHONE TEXT,$GENDER TEXT,$ROLE ROLE, $IMAGE_URL TEXT)")
 
         //create table
         db?.execSQL("Create table $TB_TABLE($TABLE_ID INTEGER PRIMARY KEY AUTOINCREMENT," +

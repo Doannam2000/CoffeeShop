@@ -12,13 +12,20 @@ import androidx.recyclerview.widget.RecyclerView
 import com.ddwan.coffeeshop.R
 import com.ddwan.coffeeshop.model.Account
 
-class EmployeeAdapter(var list:ArrayList<Account>):RecyclerView.Adapter<EmployeeAdapter.ViewHolder>() {
+class EmployeeAdapter(var list: ArrayList<Account>) :
+    RecyclerView.Adapter<EmployeeAdapter.ViewHolder>() {
+
+    lateinit var itemClick: (position: Int) -> Unit
+    fun setCallBack(click: (position: Int) -> Unit) {
+        itemClick = click
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EmployeeAdapter.ViewHolder {
         var view: View =
             LayoutInflater.from(parent.context).inflate(R.layout.employee_layout, parent, false)
         return ViewHolder(view)
     }
+
 
     override fun onBindViewHolder(holder: EmployeeAdapter.ViewHolder, position: Int) {
         holder.setData()
@@ -27,18 +34,25 @@ class EmployeeAdapter(var list:ArrayList<Account>):RecyclerView.Adapter<Employee
     override fun getItemCount(): Int {
         return list.size
     }
-    inner class ViewHolder(itemView:View):RecyclerView.ViewHolder(itemView){
+
+    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private var employeeAccount: CardView = itemView.findViewById(R.id.employeeAccount)
         private var image: ImageView = itemView.findViewById(R.id.imageAccount)
         private var name: TextView = itemView.findViewById(R.id.name)
         private var role: TextView = itemView.findViewById(R.id.role)
         private var email: TextView = itemView.findViewById(R.id.email)
+
         @SuppressLint("SetTextI18n")
         fun setData() {
             name.text = list[adapterPosition].name
             role.text = list[adapterPosition].role
             email.text = list[adapterPosition].email
             image.setImageResource(list[adapterPosition].imageUrl.toInt())
+        }
+        init {
+            employeeAccount.setOnClickListener {
+                itemClick.invoke(adapterPosition)
+            }
         }
     }
 }
