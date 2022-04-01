@@ -8,7 +8,6 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.ddwan.coffeeshop.R
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.toolbar.*
 
 class MainActivity : AppCompatActivity() {
     lateinit var navHostFragment: NavHostFragment
@@ -20,7 +19,6 @@ class MainActivity : AppCompatActivity() {
         navMenu.setOnClickListener {
             drawerLayout.openDrawer(GravityCompat.START)
         }
-
         navHostFragment =
             supportFragmentManager.findFragmentById(R.id.fragmentContainerView) as NavHostFragment
         controller = navHostFragment.navController

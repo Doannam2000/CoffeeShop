@@ -46,7 +46,6 @@ class TableFragment : Fragment() {
             Table(5, "Bàn 8", "Chưa thanh toán", true),
             Table(9, "Bàn 10", "Chưa thanh toán", true))
 
-
         var adapterEmpty = TableAdapter(listEmpty)
         adapterEmpty.setCallBack {
             requireActivity().startActivity(Intent(requireContext(),BillActivity::class.java))
