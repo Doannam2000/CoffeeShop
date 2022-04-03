@@ -11,8 +11,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ddwan.coffeeshop.R
 import com.ddwan.coffeeshop.activities.AccountActivity
+import com.ddwan.coffeeshop.activities.EditProfileActivity
 import com.ddwan.coffeeshop.adapter.EmployeeAdapter
 import com.ddwan.coffeeshop.model.Account
+import kotlinx.android.synthetic.main.fragment_employee.view.*
 
 
 class EmployeeFragment : Fragment() {
@@ -108,12 +110,15 @@ class EmployeeFragment : Fragment() {
         )
         val adapter = EmployeeAdapter(list)
         adapter.setCallBack {
-            startActivity(Intent(requireContext(),AccountActivity::class.java))
+            startActivity(Intent(requireContext(), AccountActivity::class.java))
         }
         val recyclerViewEmployee: RecyclerView = view.findViewById(R.id.recyclerView_employee)
         recyclerViewEmployee.layoutManager = LinearLayoutManager(requireContext())
         recyclerViewEmployee.setHasFixedSize(true)
         recyclerViewEmployee.adapter = adapter
+        view.addAccount.setOnClickListener {
+            startActivity(Intent(requireActivity(), EditProfileActivity::class.java))
+        }
         return view
     }
 

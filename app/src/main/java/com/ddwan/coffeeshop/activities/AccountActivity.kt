@@ -1,5 +1,6 @@
 package com.ddwan.coffeeshop.activities
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.ddwan.coffeeshop.R
@@ -11,6 +12,9 @@ class AccountActivity : AppCompatActivity() {
         setContentView(R.layout.activity_account)
         btnPrevious.setOnClickListener {
             finish()
+        }
+        btnEdit.setOnClickListener {
+            startActivity(Intent(this, EditProfileActivity::class.java))
         }
     }
 }
