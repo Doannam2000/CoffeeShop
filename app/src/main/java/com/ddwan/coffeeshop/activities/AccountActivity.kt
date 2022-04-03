@@ -10,11 +10,15 @@ class AccountActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_account)
+
+
+
         btnPrevious.setOnClickListener {
             finish()
         }
         btnEdit.setOnClickListener {
             startActivity(Intent(this, EditProfileActivity::class.java))
         }
+
     }
 }

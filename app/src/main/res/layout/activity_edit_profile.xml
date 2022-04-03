@@ -122,7 +122,7 @@
                     android:id="@+id/edtEmail"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="DoanDuyNam2000@gmail.com"
+                    android:text="DoanDuyNam2000@gmail.com"
                     android:textColor="@color/black"
                     android:textSize="@dimen/dimen_18sp" />
             </LinearLayout>
@@ -153,7 +153,7 @@
                     android:id="@+id/edtName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Đoàn Duy Nam"
+                    android:text="Đoàn Duy Nam"
                     android:textColor="@color/black"
                     android:textSize="@dimen/dimen_18sp" />
             </LinearLayout>
@@ -184,7 +184,7 @@
                     android:id="@+id/edtPassword"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="******"
+                    android:text="123456"
                     android:inputType="textPassword"
                     android:textColor="@color/black"
                     android:textSize="@dimen/dimen_18sp" />
@@ -216,7 +216,7 @@
                     android:id="@+id/edtAddress"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Vĩnh Bảo - Hải Phòng"
+                    android:text="Vĩnh Bảo - Hải Phòng"
                     android:textColor="@color/black"
                     android:textSize="@dimen/dimen_18sp" />
             </LinearLayout>
@@ -247,7 +247,7 @@
                     android:id="@+id/edtPhone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="0397482016"
+                    android:text="0397482016"
                     android:inputType="number"
                     android:textColor="@color/black"
                     android:textSize="@dimen/dimen_18sp" />
@@ -323,7 +323,7 @@
                     android:id="@+id/edtRole"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Nhân viên"
+                    android:text="Nhân viên"
                     android:textColor="@color/black"
                     android:textSize="@dimen/dimen_18sp" />
             </LinearLayout>

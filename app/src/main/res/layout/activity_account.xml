@@ -66,10 +66,9 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/textView6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Account"
+        android:text="Profile"
         android:textColor="@color/black"
         android:textSize="@dimen/dimen_18sp"
         app:layout_constraintBottom_toBottomOf="@+id/btnPrevious"
@@ -101,6 +100,7 @@
         app:layout_constraintVertical_bias="0.35">
 
         <ImageView
+            android:id="@+id/accountImage"
             android:layout_width="@dimen/dimen_150dp"
             android:layout_height="@dimen/dimen_150dp"
             android:src="@drawable/img" />
@@ -108,7 +108,7 @@
 
 
     <TextView
-        android:id="@+id/textView8"
+        android:id="@+id/accountName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Name"
@@ -143,6 +143,7 @@
                 android:text="Email" />
 
             <TextView
+                android:id="@+id/accountEmail"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="DoanDuyNam2000@gmail.com"
@@ -175,6 +176,7 @@
                 android:text="Địa chỉ" />
 
             <TextView
+                android:id="@+id/accountAddress"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Vĩnh Bảo - Hải Phòng"
@@ -206,6 +208,7 @@
                 android:text="Điện thoại" />
 
             <TextView
+                android:id="@+id/accountPhone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="0397482016"
@@ -236,6 +239,7 @@
                 android:text="Giới tính" />
 
             <TextView
+                android:id="@+id/accountGender"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Nam"
@@ -267,6 +271,7 @@
                 android:text="Chức vụ" />
 
             <TextView
+                android:id="@+id/accountRole"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Nhân viên"

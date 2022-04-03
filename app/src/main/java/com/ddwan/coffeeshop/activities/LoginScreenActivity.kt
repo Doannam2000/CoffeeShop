@@ -10,6 +10,10 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.ddwan.coffeeshop.Application
+import com.ddwan.coffeeshop.Application.Companion.mAuth
+import com.ddwan.coffeeshop.model.Account
+import com.google.firebase.auth.FirebaseAuth
 import kotlin.system.exitProcess
 
 
@@ -21,14 +25,19 @@ class LoginScreenActivity : AppCompatActivity() {
             if (email.text.toString().isEmpty() || password.text.toString().isEmpty())
                 Toast.makeText(this, "Vui lòng điền đủ thông tin !", Toast.LENGTH_SHORT).show()
             else {
-                if (email.text.toString().uppercase() == "ADMIN" && password.text.toString()
-                        .uppercase() == "ADMIN"
-                ) {
-                    startActivity(Intent(this, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK))
-                    overridePendingTransition(R.anim.right_to_left, R.anim.right_to_left_out)
-                    finish()
-                } else
-                    Toast.makeText(this, "Sai tài khoản hoặc mật khẩu", Toast.LENGTH_SHORT).show()
+                mAuth.signInWithEmailAndPassword(email.text.toString(), password.text.toString())
+                    .addOnCompleteListener {
+                        if (it.isSuccessful) {
+                            startActivity(Intent(this,
+                                MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK))
+                            overridePendingTransition(R.anim.right_to_left,
+                                R.anim.right_to_left_out)
+                            finish()
+                        } else
+                            Toast.makeText(this, "Sai tài khoản hoặc mật khẩu", Toast.LENGTH_SHORT)
+                                .show()
+
+                    }
             }
         }
         help.setOnClickListener {
