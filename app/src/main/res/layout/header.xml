@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="200dp"
-    android:background="#F46363">
-
+    android:background="#514343">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView"
@@ -23,7 +22,7 @@
             android:id="@+id/imageHead"
             android:layout_width="70dp"
             android:layout_height="70dp"
-            android:src="@drawable/img" />
+            android:src="@drawable/logo" />
     </androidx.cardview.widget.CardView>
 
     <TextView

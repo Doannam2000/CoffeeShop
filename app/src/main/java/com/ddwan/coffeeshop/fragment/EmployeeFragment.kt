@@ -9,108 +9,36 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.ddwan.coffeeshop.Application
+import com.ddwan.coffeeshop.Application.Companion.firebaseDB
+import com.ddwan.coffeeshop.Application.Companion.mAuth
 import com.ddwan.coffeeshop.R
 import com.ddwan.coffeeshop.activities.AccountActivity
 import com.ddwan.coffeeshop.activities.EditProfileActivity
 import com.ddwan.coffeeshop.adapter.EmployeeAdapter
 import com.ddwan.coffeeshop.model.Account
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 import kotlinx.android.synthetic.main.fragment_employee.view.*
 
 
 class EmployeeFragment : Fragment() {
 
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
-        // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_employee, container, false)
-        var list = arrayListOf<Account>(
-            Account(0,
-                "doanduynam2000@gmail.com",
-                "admin",
-                "Đoàn Duy Nam",
-                "Hải Phòng",
-                "0397482016",
-                "admin", true,
-                R.drawable.img.toString()),
-            Account(1,
-                "doanduynam2000@gmail.com",
-                "admin",
-                "Đoàn Duy Nam",
-                "Hải Phòng",
-                "0397482016",
-                "admin", true,
-                R.drawable.img.toString()),
-            Account(2,
-                "doanduynam2000@gmail.com",
-                "admin",
-                "Đoàn Duy Nam",
-                "Hải Phòng",
-                "0397482016",
-                "admin", true,
-                R.drawable.img.toString()),
-            Account(3,
-                "doanduynam2000@gmail.com",
-                "admin",
-                "Đoàn Duy Nam",
-                "Hải Phòng",
-                "0397482016",
-                "admin", true,
-                R.drawable.img.toString()),
-            Account(4,
-                "doanduynam2000@gmail.com",
-                "admin",
-                "Đoàn Duy Nam",
-                "Hải Phòng",
-                "0397482016",
-                "admin", true,
-                R.drawable.img.toString()),
-            Account(5,
-                "doanduynam2000@gmail.com",
-                "admin",
-                "Đoàn Duy Nam",
-                "Hải Phòng",
-                "0397482016",
-                "admin", true,
-                R.drawable.img.toString()),
-            Account(6,
-                "doanduynam2000@gmail.com",
-                "admin",
-                "Đoàn Duy Nam",
-                "Hải Phòng",
-                "0397482016",
-                "admin", true,
-                R.drawable.img.toString()),
-            Account(7,
-                "doanduynam2000@gmail.com",
-                "admin",
-                "Đoàn Duy Nam",
-                "Hải Phòng",
-                "0397482016",
-                "admin", true,
-                R.drawable.img.toString()),
-            Account(8,
-                "doanduynam2000@gmail.com",
-                "admin",
-                "Đoàn Duy Nam",
-                "Hải Phòng",
-                "0397482016",
-                "admin", true,
-                R.drawable.img.toString()),
-            Account(9,
-                "doanduynam2000@gmail.com",
-                "admin",
-                "Đoàn Duy Nam",
-                "Hải Phòng",
-                "0397482016",
-                "admin", true,
-                R.drawable.img.toString()),
-        )
-        val adapter = EmployeeAdapter(list)
+        var list = ArrayList<Account>()
+        val adapter = EmployeeAdapter(list, requireContext())
         adapter.setCallBack {
-            startActivity(Intent(requireContext(), AccountActivity::class.java))
+            val bundle = Bundle()
+            bundle.putSerializable("account",list[it])
+            val intent = Intent(requireContext(), AccountActivity::class.java)
+            intent.putExtras(bundle)
+            startActivity(intent)
         }
         val recyclerViewEmployee: RecyclerView = view.findViewById(R.id.recyclerView_employee)
         recyclerViewEmployee.layoutManager = LinearLayoutManager(requireContext())
@@ -119,6 +47,29 @@ class EmployeeFragment : Fragment() {
         view.addAccount.setOnClickListener {
             startActivity(Intent(requireActivity(), EditProfileActivity::class.java))
         }
+        firebaseDB.getReference("Users").addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()) {
+                    for (user in snapshot.children) {
+                        val account = Account(user.key.toString(),
+                            user.child("Email").value.toString(),
+                            "",
+                            user.child("Name").value.toString(),
+                            user.child("Address").value.toString(),
+                            user.child("Phone_Number").value.toString(),
+                            user.child("Role").value.toString(),
+                            user.child("Gender").value as Boolean,
+                            "")
+                        list.add(account)
+                    }
+                    adapter.notifyDataSetChanged()
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+        })
         return view
     }
 

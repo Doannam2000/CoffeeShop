@@ -1,6 +1,7 @@
 package com.ddwan.coffeeshop.adapter
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,10 +10,14 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
+import com.ddwan.coffeeshop.Application
+import com.ddwan.coffeeshop.Application.Companion.firebaseStore
 import com.ddwan.coffeeshop.R
 import com.ddwan.coffeeshop.model.Account
 
-class EmployeeAdapter(var list: ArrayList<Account>) :
+class EmployeeAdapter(var list: ArrayList<Account>, var context: Context) :
     RecyclerView.Adapter<EmployeeAdapter.ViewHolder>() {
 
     lateinit var itemClick: (position: Int) -> Unit
@@ -47,8 +52,15 @@ class EmployeeAdapter(var list: ArrayList<Account>) :
             name.text = list[adapterPosition].name
             role.text = list[adapterPosition].role
             email.text = list[adapterPosition].email
-            image.setImageResource(list[adapterPosition].imageUrl.toInt())
+            firebaseStore.reference.child(list[adapterPosition].id).downloadUrl.addOnSuccessListener { Uri ->
+                Glide.with(context)
+                    .load(Uri.toString())
+                    .apply(RequestOptions().override(70, 70))
+                    .into(image)
+                list[adapterPosition].imageUrl = Uri.toString()
+            }
         }
+
         init {
             employeeAccount.setOnClickListener {
                 itemClick.invoke(adapterPosition)

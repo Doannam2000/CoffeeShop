@@ -23,7 +23,7 @@
                 android:id="@+id/imageAccount"
                 android:layout_width="@dimen/dimen_70dp"
                 android:layout_height="@dimen/dimen_70dp"
-                android:src="@drawable/img" />
+                android:src="@drawable/logo"/>
 
         </androidx.cardview.widget.CardView>
 

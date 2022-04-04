@@ -8,16 +8,19 @@ import com.ddwan.coffeeshop.R
 import kotlinx.android.synthetic.main.activity_login_screen.*
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.view.View
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.ddwan.coffeeshop.Application
+import com.ddwan.coffeeshop.Application.Companion.accountLogin
 import com.ddwan.coffeeshop.Application.Companion.mAuth
-import com.ddwan.coffeeshop.model.Account
-import com.google.firebase.auth.FirebaseAuth
-import kotlin.system.exitProcess
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 
 
 class LoginScreenActivity : AppCompatActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login_screen)
@@ -25,19 +28,8 @@ class LoginScreenActivity : AppCompatActivity() {
             if (email.text.toString().isEmpty() || password.text.toString().isEmpty())
                 Toast.makeText(this, "Vui lòng điền đủ thông tin !", Toast.LENGTH_SHORT).show()
             else {
-                mAuth.signInWithEmailAndPassword(email.text.toString(), password.text.toString())
-                    .addOnCompleteListener {
-                        if (it.isSuccessful) {
-                            startActivity(Intent(this,
-                                MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK))
-                            overridePendingTransition(R.anim.right_to_left,
-                                R.anim.right_to_left_out)
-                            finish()
-                        } else
-                            Toast.makeText(this, "Sai tài khoản hoặc mật khẩu", Toast.LENGTH_SHORT)
-                                .show()
-
-                    }
+                progress_circular.visibility = View.VISIBLE
+                login()
             }
         }
         help.setOnClickListener {
@@ -75,5 +67,55 @@ class LoginScreenActivity : AppCompatActivity() {
         homeIntent.addCategory(Intent.CATEGORY_HOME)
         homeIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(homeIntent)
+    }
+
+    fun nextActivity() {
+        val intent = Intent(this,
+            MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        startActivity(intent)
+        overridePendingTransition(R.anim.right_to_left,
+            R.anim.right_to_left_out)
+        finish()
+    }
+
+    private fun getInfoUser() {
+        // get current user
+        val user = mAuth.currentUser
+        accountLogin.id = user!!.uid
+        accountLogin.email = user.email.toString()
+        accountLogin.password = password.text.toString()
+        // get info user
+        Application.firebaseDB.getReference("Users").child(user.uid)
+            .addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    accountLogin.name = snapshot.child("Name").value.toString()
+                    accountLogin.address =
+                        snapshot.child("Address").value.toString()
+                    accountLogin.phone =
+                        snapshot.child("Phone_Number").value.toString()
+                    accountLogin.role = snapshot.child("Role").value.toString()
+                    accountLogin.gender =
+                        snapshot.child("Gender").value as Boolean
+                    progress_circular.visibility = View.GONE
+                    nextActivity()
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    TODO("Not yet implemented")
+                }
+
+            })
+    }
+
+    private fun login() {
+        mAuth.signInWithEmailAndPassword(email.text.toString(), password.text.toString())
+            .addOnCompleteListener {
+                if (it.isSuccessful) {
+                    getInfoUser()
+                } else
+                    Toast.makeText(this, "Sai tài khoản hoặc mật khẩu", Toast.LENGTH_SHORT)
+                        .show()
+
+            }
     }
 }

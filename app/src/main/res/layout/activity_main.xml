@@ -41,6 +41,7 @@
             app:layout_constraintTop_toTopOf="@+id/navMenu">
 
             <ImageView
+                android:id="@+id/imageAccount"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:src="@drawable/logo_1" />

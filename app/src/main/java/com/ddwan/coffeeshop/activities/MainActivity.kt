@@ -1,52 +1,29 @@
 package com.ddwan.coffeeshop.activities
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
+import android.widget.TextView
 import androidx.core.view.GravityCompat
 import androidx.navigation.NavController
+import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.bumptech.glide.Glide
-import com.ddwan.coffeeshop.Application.Companion.firebaseDB
-import com.ddwan.coffeeshop.Application.Companion.mAuth
+import com.ddwan.coffeeshop.Application.Companion.accountLogin
+import com.ddwan.coffeeshop.Application.Companion.firebaseStore
 import com.ddwan.coffeeshop.R
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.google.android.material.navigation.NavigationView
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.header.*
 
 class MainActivity : AppCompatActivity() {
-    lateinit var navHostFragment: NavHostFragment
+    private lateinit var navHostFragment: NavHostFragment
     lateinit var controller: NavController
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        // get current user
-        val user = mAuth.currentUser
-        // get info user
-        firebaseDB.getReference("Users").child(user!!.uid)
-            .addValueEventListener(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    nameHead.text = snapshot.child("Name").value.toString()
-                    emailHead.text = user.email.toString()
-                }
-                override fun onCancelled(error: DatabaseError) {
-                    TODO("Not yet implemented")
-                }
-
-            })
-        // load image
-       val imageRef =  FirebaseStorage.getInstance().reference.child(user.uid+"_avatar")
-        imageRef.downloadUrl.addOnSuccessListener {Uri->
-            val imageURL = Uri.toString()
-            Glide.with(this)
-                .load(imageURL)
-                .into(imageHead)
-        }
 
         // setup navigation
         navMenu.setOnClickListener {
@@ -56,5 +33,34 @@ class MainActivity : AppCompatActivity() {
             supportFragmentManager.findFragmentById(R.id.fragmentContainerView) as NavHostFragment
         controller = navHostFragment.navController
         navigationView.setupWithNavController(controller)
+
+        // load image
+        val imageRef = firebaseStore.reference.child(accountLogin.id)
+        imageRef.downloadUrl.addOnSuccessListener { Uri ->
+            val imageURL = Uri.toString()
+            Glide.with(this)
+                .load(imageURL)
+                .into(imageAccount)
+            Glide.with(this)
+                .load(imageURL)
+                .into(imageHead)
+            accountLogin.imageUrl = imageURL
+        }
+        imageAccount.setOnClickListener {
+            val intent = Intent(this, AccountActivity::class.java)
+            val bundle = Bundle()
+            bundle.putSerializable("account", accountLogin)
+            intent.putExtras(bundle)
+            startActivity(intent)
+        }
+
+        val navigationView:NavigationView = findViewById(R.id.navigationView)
+        val viewHeader = navigationView.getHeaderView(0)
+        val name:TextView = viewHeader.findViewById(R.id.nameHead)
+        val email:TextView = viewHeader.findViewById(R.id.emailHead)
+        name.text = accountLogin.name
+        email.text = accountLogin.email
+
+
     }
 }

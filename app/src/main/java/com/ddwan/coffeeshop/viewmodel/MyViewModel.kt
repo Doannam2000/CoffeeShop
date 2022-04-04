@@ -7,8 +7,8 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.ktx.Firebase
 
 class MyViewModel : ViewModel() {
+    var userLogin = Account("", "", "", "", "", "", "", true, "")
+    fun loadImage(){
 
-    var userLogin = Account(0, "", "", "", "", "", "", true, "")
-
-
+    }
 }
