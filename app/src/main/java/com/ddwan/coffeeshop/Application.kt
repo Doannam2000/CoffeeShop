@@ -1,7 +1,4 @@
 package com.ddwan.coffeeshop
-import android.content.Context
-import android.widget.ImageView
-import com.bumptech.glide.Glide
 import com.ddwan.coffeeshop.model.Account
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
@@ -14,4 +11,5 @@ class Application {
         val firebaseStore = FirebaseStorage.getInstance()
         val accountLogin = Account()
     }
+
 }

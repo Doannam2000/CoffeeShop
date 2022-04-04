@@ -9,26 +9,29 @@ import kotlinx.android.synthetic.main.activity_login_screen.*
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.view.View
+import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.ddwan.coffeeshop.Application
 import com.ddwan.coffeeshop.Application.Companion.accountLogin
 import com.ddwan.coffeeshop.Application.Companion.mAuth
+import com.ddwan.coffeeshop.model.LoadingDialog
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 
 
 class LoginScreenActivity : AppCompatActivity() {
-
+    private val dialog by lazy { LoadingDialog(this) }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login_screen)
+
         btnLogin.setOnClickListener {
             if (email.text.toString().isEmpty() || password.text.toString().isEmpty())
                 Toast.makeText(this, "Vui lòng điền đủ thông tin !", Toast.LENGTH_SHORT).show()
             else {
-                progress_circular.visibility = View.VISIBLE
+                dialog.startLoadingDialog()
                 login()
             }
         }
@@ -75,6 +78,7 @@ class LoginScreenActivity : AppCompatActivity() {
         startActivity(intent)
         overridePendingTransition(R.anim.right_to_left,
             R.anim.right_to_left_out)
+        dialog.stopLoadingDialog()
         finish()
     }
 
@@ -86,7 +90,7 @@ class LoginScreenActivity : AppCompatActivity() {
         accountLogin.password = password.text.toString()
         // get info user
         Application.firebaseDB.getReference("Users").child(user.uid)
-            .addValueEventListener(object : ValueEventListener {
+            .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     accountLogin.name = snapshot.child("Name").value.toString()
                     accountLogin.address =

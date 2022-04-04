@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.widget.TextView
 import androidx.core.view.GravityCompat
 import androidx.navigation.NavController
-import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.bumptech.glide.Glide
@@ -14,7 +13,6 @@ import com.ddwan.coffeeshop.Application.Companion.accountLogin
 import com.ddwan.coffeeshop.Application.Companion.firebaseStore
 import com.ddwan.coffeeshop.R
 import com.google.android.material.navigation.NavigationView
-import com.google.firebase.storage.FirebaseStorage
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.header.*
 
@@ -52,6 +50,9 @@ class MainActivity : AppCompatActivity() {
             bundle.putSerializable("account", accountLogin)
             intent.putExtras(bundle)
             startActivity(intent)
+            overridePendingTransition(R.anim.right_to_left,
+                R.anim.right_to_left_out)
+            finish()
         }
 
         val navigationView:NavigationView = findViewById(R.id.navigationView)
@@ -60,7 +61,6 @@ class MainActivity : AppCompatActivity() {
         val email:TextView = viewHeader.findViewById(R.id.emailHead)
         name.text = accountLogin.name
         email.text = accountLogin.email
-
 
     }
 }

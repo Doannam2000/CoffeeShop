@@ -9,21 +9,30 @@ import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
+import com.ddwan.coffeeshop.Application
 import com.ddwan.coffeeshop.Application.Companion.accountLogin
 import com.ddwan.coffeeshop.Application.Companion.firebaseDB
+import com.ddwan.coffeeshop.Application.Companion.firebaseStore
 import com.ddwan.coffeeshop.Application.Companion.mAuth
 import com.ddwan.coffeeshop.R
 import com.ddwan.coffeeshop.model.Account
+import com.ddwan.coffeeshop.model.LoadingDialog
+import com.ddwan.coffeeshop.viewmodel.MyViewModel
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.android.synthetic.main.activity_edit_profile.*
 
 class EditProfileActivity : AppCompatActivity() {
 
+    private val dialog by lazy { LoadingDialog(this) }
     private lateinit var imageUrl: Uri
     private lateinit var firebaseUserID: String
     var edit = false
     var account = Account()
+    val model by lazy {
+        ViewModelProvider(this).get(MyViewModel::class.java)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,17 +48,19 @@ class EditProfileActivity : AppCompatActivity() {
                 Toast.makeText(this, "Hi", Toast.LENGTH_LONG).show()
             }
             btnSave.setOnClickListener {
-                if (this::imageUrl.isInitialized)
-                    updateImage(account.id)
                 if (checkTextChange())
                     insertDataUser(account.id)
                 else
-                    Toast.makeText(this, "Không có thông tin nào thay đổi !!!", Toast.LENGTH_SHORT)
-                        .show()
+                    backActivity()
             }
         } else
-            btnSave.setOnClickListener { registerUser() }
-        btnImage.setOnClickListener { selectImage() }
+            btnSave.setOnClickListener {
+                dialog.startLoadingDialog()
+                registerUser()
+            }
+        btnImage.setOnClickListener {
+            selectImage()
+        }
         btnPrevious.setOnClickListener { finish() }
     }
 
@@ -60,14 +71,18 @@ class EditProfileActivity : AppCompatActivity() {
     }
 
     private fun uploadImage(id: String) {
-        val storageReference = FirebaseStorage.getInstance().getReference(id)
-        storageReference.putFile(imageUrl)
+        firebaseStore.reference.child(id).putFile(imageUrl).addOnCompleteListener {
+            if (it.isSuccessful) {
+                Toast.makeText(this, "Thay đổi avatar thành công !", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     private fun updateImage(id: String) {
         FirebaseStorage.getInstance().reference.child(id).delete()
-            .addOnSuccessListener {
-                uploadImage(id)
+            .addOnCompleteListener {
+                if (it.isSuccessful)
+                    uploadImage(id)
             }
     }
 
@@ -76,6 +91,11 @@ class EditProfileActivity : AppCompatActivity() {
         if (requestCode == 100 && resultCode == RESULT_OK) {
             imageUrl = data?.data!!
             avatar.setImageURI(imageUrl)
+            if (edit)
+                if (account.imageUrl.trim() == "")
+                    uploadImage(account.id)
+                else
+                    updateImage(account.id)
         }
     }
 
@@ -87,17 +107,17 @@ class EditProfileActivity : AppCompatActivity() {
         hashMap["Address"] = edtAddress.text.toString()
         hashMap["Role"] = edtRole.text.toString()
         hashMap["Gender"] = radioMale.isChecked
-        if (id == accountLogin.id) {
-            accountLogin.role = edtRole.text.toString()
-            accountLogin.name = edtName.text.toString()
-            accountLogin.phone = edtPhone.text.toString()
-            accountLogin.address = edtAddress.text.toString()
-            accountLogin.gender = radioMale.isChecked
+        if (account.id == accountLogin.id) {
+            updateDataUserLocal(accountLogin)
         }
+        updateDataUserLocal(account)
         firebaseDB.reference.child("Users").child(id).updateChildren(hashMap)
             .addOnCompleteListener {
                 if (it.isSuccessful) {
-                    finish()
+                    if (!edit) {
+                        account.email = edtEmail.text.toString()
+                    }
+                    dialog.stopLoadingDialog()
                     Toast.makeText(this, "Thực hiện thao tác thành công !", Toast.LENGTH_LONG)
                         .show()
                 }
@@ -114,19 +134,15 @@ class EditProfileActivity : AppCompatActivity() {
                 edtPassword.text.toString()).addOnCompleteListener { it ->
                 if (it.isSuccessful) {
                     firebaseUserID = mAuth.currentUser!!.uid
-                    if (this::imageUrl.isInitialized) {
-                        uploadImage(firebaseUserID)
-                    }
+                    if (this::imageUrl.isInitialized) uploadImage(firebaseUserID)
                     insertDataUser(firebaseUserID)
-                } else {
-
                 }
             }
         }
     }
 
     private fun loadInfo() {
-        if(account.id == accountLogin.id)
+        if (account.id == accountLogin.id)
             btnChangePassword.visibility = View.VISIBLE
         cardViewPassword.visibility = View.GONE
         edtEmail.setText(account.email)
@@ -138,10 +154,7 @@ class EditProfileActivity : AppCompatActivity() {
             radioMale.isChecked = true
         } else
             radioFemale.isChecked = true
-        Glide.with(this)
-            .load(account.imageUrl)
-            .placeholder(R.drawable.logo)
-            .into(avatar)
+        model.loadImage(this, account, avatar)
         edtEmail.isEnabled = false
         cardViewEmail.setOnClickListener {
             Toast.makeText(this,
@@ -164,5 +177,25 @@ class EditProfileActivity : AppCompatActivity() {
                 edtPhone.text.toString() != accountLogin.phone ||
                 edtRole.text.toString() != accountLogin.role ||
                 radioMale.isChecked != accountLogin.gender
+    }
+
+    private fun updateDataUserLocal(acc: Account) {
+        acc.role = edtRole.text.toString()
+        acc.name = edtName.text.toString()
+        acc.phone = edtPhone.text.toString()
+        acc.address = edtAddress.text.toString()
+        acc.gender = radioMale.isChecked
+    }
+
+    private fun backActivity() {
+        val intent1 = Intent(this, AccountActivity::class.java)
+        val bundle = Bundle()
+        bundle.putSerializable("account", account)
+        intent1.putExtras(bundle)
+        intent1.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        startActivity(intent1)
+        overridePendingTransition(R.anim.left_to_right,
+            R.anim.left_to_right_out)
+        finish()
     }
 }

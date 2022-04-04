@@ -47,7 +47,7 @@ class EmployeeFragment : Fragment() {
         view.addAccount.setOnClickListener {
             startActivity(Intent(requireActivity(), EditProfileActivity::class.java))
         }
-        firebaseDB.getReference("Users").addValueEventListener(object : ValueEventListener {
+        firebaseDB.getReference("Users").addListenerForSingleValueEvent (object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.exists()) {
                     for (user in snapshot.children) {

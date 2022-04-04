@@ -103,7 +103,7 @@
             android:id="@+id/accountImage"
             android:layout_width="@dimen/dimen_150dp"
             android:layout_height="@dimen/dimen_150dp"
-            android:src="@drawable/img" />
+            android:src="@drawable/logo" />
     </androidx.cardview.widget.CardView>
 
 
