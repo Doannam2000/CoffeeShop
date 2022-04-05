@@ -4,14 +4,9 @@ import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
-import com.bumptech.glide.Glide
-import com.ddwan.coffeeshop.Application
 import com.ddwan.coffeeshop.Application.Companion.accountLogin
 import com.ddwan.coffeeshop.Application.Companion.firebaseDB
 import com.ddwan.coffeeshop.Application.Companion.firebaseStore
@@ -50,8 +45,11 @@ class EditProfileActivity : AppCompatActivity() {
             btnSave.setOnClickListener {
                 if (checkTextChange())
                     insertDataUser(account.id)
-                else
-                    backActivity()
+                else {
+                    finish()
+                    overridePendingTransition(R.anim.left_to_right,
+                        R.anim.left_to_right_out)
+                }
             }
         } else
             btnSave.setOnClickListener {
@@ -61,7 +59,11 @@ class EditProfileActivity : AppCompatActivity() {
         btnImage.setOnClickListener {
             selectImage()
         }
-        btnPrevious.setOnClickListener { finish() }
+        btnPrevious.setOnClickListener {
+            finish()
+            overridePendingTransition(R.anim.left_to_right,
+                R.anim.left_to_right_out)
+        }
     }
 
     private fun selectImage() {
@@ -73,7 +75,17 @@ class EditProfileActivity : AppCompatActivity() {
     private fun uploadImage(id: String) {
         firebaseStore.reference.child(id).putFile(imageUrl).addOnCompleteListener {
             if (it.isSuccessful) {
-                Toast.makeText(this, "Thay đổi avatar thành công !", Toast.LENGTH_SHORT).show()
+                dialog.stopLoadingDialog()
+                if (!edit) {
+                    Toast.makeText(this, "Thực hiện thao tác thành công !", Toast.LENGTH_LONG)
+                        .show()
+                    finish()
+                    overridePendingTransition(R.anim.left_to_right,
+                        R.anim.left_to_right_out)
+                } else {
+                    Toast.makeText(this, "Đổi avatar thành công !", Toast.LENGTH_LONG)
+                        .show()
+                }
             }
         }
     }
@@ -91,11 +103,13 @@ class EditProfileActivity : AppCompatActivity() {
         if (requestCode == 100 && resultCode == RESULT_OK) {
             imageUrl = data?.data!!
             avatar.setImageURI(imageUrl)
-            if (edit)
+            if (edit) {
+                dialog.startLoadingDialog()
                 if (account.imageUrl.trim() == "")
                     uploadImage(account.id)
                 else
                     updateImage(account.id)
+            }
         }
     }
 
@@ -117,9 +131,13 @@ class EditProfileActivity : AppCompatActivity() {
                     if (!edit) {
                         account.email = edtEmail.text.toString()
                     }
-                    dialog.stopLoadingDialog()
-                    Toast.makeText(this, "Thực hiện thao tác thành công !", Toast.LENGTH_LONG)
-                        .show()
+                    if ((!edit && !this::imageUrl.isInitialized) || edit) {
+                        Toast.makeText(this, "Thực hiện thao tác thành công !", Toast.LENGTH_LONG)
+                            .show()
+                        finish()
+                        overridePendingTransition(R.anim.left_to_right,
+                            R.anim.left_to_right_out)
+                    }
                 }
             }
     }
@@ -187,15 +205,4 @@ class EditProfileActivity : AppCompatActivity() {
         acc.gender = radioMale.isChecked
     }
 
-    private fun backActivity() {
-        val intent1 = Intent(this, AccountActivity::class.java)
-        val bundle = Bundle()
-        bundle.putSerializable("account", account)
-        intent1.putExtras(bundle)
-        intent1.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-        startActivity(intent1)
-        overridePendingTransition(R.anim.left_to_right,
-            R.anim.left_to_right_out)
-        finish()
-    }
 }

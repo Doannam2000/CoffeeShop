@@ -9,7 +9,6 @@ import kotlinx.android.synthetic.main.activity_login_screen.*
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.view.View
-import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.ddwan.coffeeshop.Application
@@ -82,6 +81,7 @@ class LoginScreenActivity : AppCompatActivity() {
         finish()
     }
 
+
     private fun getInfoUser() {
         // get current user
         val user = mAuth.currentUser
@@ -100,8 +100,13 @@ class LoginScreenActivity : AppCompatActivity() {
                     accountLogin.role = snapshot.child("Role").value.toString()
                     accountLogin.gender =
                         snapshot.child("Gender").value as Boolean
-                    progress_circular.visibility = View.GONE
-                    nextActivity()
+                    val imageRef = Application.firebaseStore.reference.child(accountLogin.id)
+                    imageRef.downloadUrl.addOnSuccessListener { Uri ->
+                        accountLogin.imageUrl = Uri.toString()
+                    }.addOnCompleteListener {
+                        progress_circular.visibility = View.GONE
+                        nextActivity()
+                    }
                 }
 
                 override fun onCancelled(error: DatabaseError) {

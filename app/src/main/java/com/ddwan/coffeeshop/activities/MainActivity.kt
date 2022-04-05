@@ -52,7 +52,6 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
             overridePendingTransition(R.anim.right_to_left,
                 R.anim.right_to_left_out)
-            finish()
         }
 
         val navigationView:NavigationView = findViewById(R.id.navigationView)
