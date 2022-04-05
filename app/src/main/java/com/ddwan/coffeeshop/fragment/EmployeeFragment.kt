@@ -33,7 +33,7 @@ class EmployeeFragment : Fragment() {
             bundle.putSerializable("account", list[it])
             val intent = Intent(requireContext(), AccountActivity::class.java)
             intent.putExtras(bundle)
-            startActivityForResult(intent, 123)
+            startActivity(intent)
             activity?.overridePendingTransition(R.anim.right_to_left,
                 R.anim.right_to_left_out)
         }
@@ -75,10 +75,6 @@ class EmployeeFragment : Fragment() {
                     TODO("Not yet implemented")
                 }
             })
-    }
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
     }
 
     override fun onResume() {

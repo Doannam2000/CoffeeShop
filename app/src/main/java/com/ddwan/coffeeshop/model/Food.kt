@@ -1,3 +1,12 @@
 package com.ddwan.coffeeshop.model
 
-class Food(var foodId: Int, var foodName: String, var category: Int, var price: Int,var description:String,var imageUrl:String)
+import java.io.Serializable
+
+class Food(
+    var foodId: String = "",
+    var foodName: String = "",
+    var category: String = "",
+    var price: String = "",
+    var description: String = "",
+    var imageUrl: String = "",
+):Serializable

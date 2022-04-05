@@ -2,7 +2,6 @@ package com.ddwan.coffeeshop.fragment
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
-import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -11,21 +10,34 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.ddwan.coffeeshop.Application
 import com.ddwan.coffeeshop.R
 import com.ddwan.coffeeshop.activities.BillActivity
 import com.ddwan.coffeeshop.adapter.TableAdapter
+import com.ddwan.coffeeshop.model.LoadingDialog
 import com.ddwan.coffeeshop.model.Table
-import com.ddwan.coffeeshop.sql.SQLHelper
+import com.ddwan.coffeeshop.viewmodel.MyViewModel
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
+import kotlinx.android.synthetic.main.activity_edit_profile.*
 import kotlinx.android.synthetic.main.custom_editext_dialog.view.*
-import kotlinx.android.synthetic.main.fragment_table.view.*
 
 class TableFragment : Fragment() {
 
+    val model by lazy {
+        ViewModelProvider(this).get(MyViewModel::class.java)
+    }
+    private val dialogLoad by lazy { LoadingDialog(requireActivity()) }
+    private val listEmpty = ArrayList<Table>()
+    private val listLiveTable = ArrayList<Table>()
+    private val adapterEmpty by lazy { TableAdapter(listEmpty) }
+    private val adapterLiveTable by lazy { TableAdapter(listLiveTable) }
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onCreateView(
@@ -35,57 +47,114 @@ class TableFragment : Fragment() {
         // Inflate the layout for this fragment
 
         val view = inflater.inflate(R.layout.fragment_table, container, false)
-        val listEmpty = arrayListOf<Table>(
-            Table(0, "Bàn 1", "Trống", true),
-            Table(2, "Bàn 3", "Trống", true),
-            Table(4, "Bàn 5", "Trống", true),
-            Table(6, "Bàn 7", "Trống", true),
-            Table(8, "Bàn 9", "Trống", true))
-        val listLiveTable = arrayListOf<Table>(Table(1, "Bàn 2", "Chưa thanh toán", true),
-            Table(3, "Bàn 4", "Chưa thanh toán", true),
-            Table(4, "Bàn 6", "Đã thanh toán", true),
-            Table(5, "Bàn 8", "Chưa thanh toán", true),
-            Table(9, "Bàn 10", "Chưa thanh toán", true))
 
-        val adapterEmpty = TableAdapter(listEmpty)
+        //setup RecyclerView Empty
+        initRecyclerEmpty(view)
+        //setup RecyclerView
+        initRecyclerLive(view)
+        //load data from firebase
+        loadData()
+        val btnAdd: ImageView = view.findViewById(R.id.image_add_table)
+        btnAdd.setOnClickListener {
+            createDialogAddTable()
+        }
+        return view
+    }
+
+
+    private fun initRecyclerEmpty(view: View) {
         adapterEmpty.setCallBack {
-            requireActivity().startActivity(Intent(requireContext(),BillActivity::class.java))
+            requireActivity().startActivity(Intent(requireContext(), BillActivity::class.java))
         }
         val recyclerTableEmpty: RecyclerView = view.findViewById(R.id.recyclerView_empty_table)
         recyclerTableEmpty.layoutManager = GridLayoutManager(requireContext(), 3)
         recyclerTableEmpty.setHasFixedSize(true)
         recyclerTableEmpty.adapter = adapterEmpty
+    }
 
-        val adapterLiveTable = TableAdapter(listLiveTable)
+    private fun initRecyclerLive(view: View) {
         adapterLiveTable.setCallBack {
-            requireActivity().startActivity(Intent(requireContext(),BillActivity::class.java))
+            requireActivity().startActivity(Intent(requireContext(), BillActivity::class.java))
         }
         val recyclerLiveTable: RecyclerView = view.findViewById(R.id.recyclerView_live_table)
         recyclerLiveTable.layoutManager = GridLayoutManager(requireContext(), 3)
         recyclerLiveTable.setHasFixedSize(true)
         recyclerLiveTable.adapter = adapterLiveTable
+    }
 
-        val btnAdd:ImageView = view.findViewById(R.id.image_add_table)
-        btnAdd.setOnClickListener {
-            val viewDialog = View.inflate(requireContext(), R.layout.custom_editext_dialog, null)
-            val builder = AlertDialog.Builder(requireContext())
-            builder.setView(viewDialog)
-            val dialog = builder.create()
-            dialog.show()
-            dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-            viewDialog.cancel.setOnClickListener {
-                dialog.dismiss()
+    private fun createDialogAddTable() {
+        val viewDialog = View.inflate(requireContext(), R.layout.custom_editext_dialog, null)
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setView(viewDialog)
+        val dialog = builder.create()
+        dialog.show()
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        viewDialog.cancel.setOnClickListener {
+            dialog.dismiss()
+        }
+        viewDialog.oke.setOnClickListener {
+            dialog.dismiss()
+            if (viewDialog.name.text.isEmpty()) {
+                Toast.makeText(requireContext(),
+                    "Tên bàn không được để trống",
+                    Toast.LENGTH_SHORT).show()
+            } else {
+                addTable(viewDialog.name.text.toString())
             }
-            viewDialog.oke.setOnClickListener {
-                dialog.dismiss()
-                if(viewDialog.name.text.isEmpty()){
-                    Toast.makeText(requireContext(),"Tên bàn không được để trống",Toast.LENGTH_SHORT).show()
-                }else{
-                    listEmpty.add(Table(listEmpty.size+listLiveTable.size+1, viewDialog.name.text.toString(), "Trống", true))
+        }
+    }
+
+    private fun addTable(name: String) {
+        val hashMap = HashMap<String, Any>()
+        val id = model.randomID()
+        hashMap["Name"] = name
+        hashMap["Description"] = "Trống"
+        hashMap["Status"] = true
+        Application.firebaseDB.reference.child("Table").child(id)
+            .updateChildren(hashMap).addOnCompleteListener {
+                if (it.isSuccessful) {
+                    listEmpty.add(Table(id, name, "Trống", true))
                     adapterEmpty.notifyDataSetChanged()
                 }
             }
+    }
+
+    private fun loadData() {
+        dialogLoad.startLoadingDialog()
+        val list = ArrayList<Table>()
+        Application.firebaseDB.getReference("Table")
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.exists()) {
+                        for (tb in snapshot.children) {
+                            val table = Table(tb.key.toString(),
+                                tb.child("Name").value.toString(),
+                                tb.child("Description").value.toString(),
+                                tb.child("Status").value as Boolean)
+                            list.add(table)
+                        }
+                        splitData(list)
+                    } else {
+                        dialogLoad.stopLoadingDialog()
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    TODO("Not yet implemented")
+                }
+            })
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun splitData(list: ArrayList<Table>) {
+        for (item in list) {
+            if (item.status)
+                listEmpty.add(item)
+            else
+                listLiveTable.add(item)
         }
-        return view
+        adapterEmpty.notifyDataSetChanged()
+        adapterLiveTable.notifyDataSetChanged()
+        dialogLoad.stopLoadingDialog()
     }
 }

@@ -17,23 +17,23 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.activity_login_screen.*
+import kotlin.random.Random
 
 class MyViewModel : ViewModel() {
 
-    fun loadImage(context: Context, acc: Account, view: ImageView) {
-        if (acc.imageUrl.trim() != "")
+    fun loadImage(context: Context, imageUrl: String, id: String, view: ImageView) {
+        if (imageUrl.trim() != "")
             Glide.with(context)
-                .load(acc.imageUrl)
+                .load(imageUrl)
                 .placeholder(R.drawable.logo)
                 .into(view)
         else {
             try {
-                firebaseStore.reference.child(acc.id).downloadUrl.addOnSuccessListener { Uri ->
+                firebaseStore.reference.child(id).downloadUrl.addOnSuccessListener { Uri ->
                     Glide.with(context)
                         .load(Uri.toString())
                         .placeholder(R.drawable.logo)
                         .into(view)
-                    acc.imageUrl = Uri.toString()
                 }
             } catch (e: Exception) {
             }
@@ -41,5 +41,12 @@ class MyViewModel : ViewModel() {
         }
     }
 
+    fun randomID(): String {
+        var k = ""
+        for (i in 0..12) {
+            k += Random.nextInt(1, 100).toString()
+        }
+        return k
+    }
 
 }

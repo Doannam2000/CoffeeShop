@@ -124,13 +124,9 @@ class EditProfileActivity : AppCompatActivity() {
         if (account.id == accountLogin.id) {
             updateDataUserLocal(accountLogin)
         }
-        updateDataUserLocal(account)
         firebaseDB.reference.child("Users").child(id).updateChildren(hashMap)
             .addOnCompleteListener {
                 if (it.isSuccessful) {
-                    if (!edit) {
-                        account.email = edtEmail.text.toString()
-                    }
                     if ((!edit && !this::imageUrl.isInitialized) || edit) {
                         Toast.makeText(this, "Thực hiện thao tác thành công !", Toast.LENGTH_LONG)
                             .show()
@@ -172,7 +168,7 @@ class EditProfileActivity : AppCompatActivity() {
             radioMale.isChecked = true
         } else
             radioFemale.isChecked = true
-        model.loadImage(this, account, avatar)
+        model.loadImage(this, account.imageUrl, account.id, avatar)
         edtEmail.isEnabled = false
         cardViewEmail.setOnClickListener {
             Toast.makeText(this,

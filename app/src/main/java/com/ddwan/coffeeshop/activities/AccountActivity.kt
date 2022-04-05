@@ -55,7 +55,7 @@ class AccountActivity : AppCompatActivity() {
         accountGender.text = if (account.gender) "Nam" else "Nữ"
         accountPhone.text = account.phone
         accountRole.text = account.role
-        model.loadImage(this, account, accountImage)
+        model.loadImage(this, account.imageUrl,account.id, accountImage)
     }
 
     private fun loadInfoUser() {

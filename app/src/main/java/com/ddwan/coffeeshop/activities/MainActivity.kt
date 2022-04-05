@@ -33,6 +33,23 @@ class MainActivity : AppCompatActivity() {
         navigationView.setupWithNavController(controller)
 
         // load image
+        imageAccount.setOnClickListener {
+            val intent = Intent(this, AccountActivity::class.java)
+            val bundle = Bundle()
+            bundle.putSerializable("account", accountLogin)
+            intent.putExtras(bundle)
+            startActivity(intent)
+            overridePendingTransition(R.anim.right_to_left,
+                R.anim.right_to_left_out)
+        }
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+        initView()
+    }
+    fun initView(){
         val imageRef = firebaseStore.reference.child(accountLogin.id)
         imageRef.downloadUrl.addOnSuccessListener { Uri ->
             val imageURL = Uri.toString()
@@ -44,22 +61,11 @@ class MainActivity : AppCompatActivity() {
                 .into(imageHead)
             accountLogin.imageUrl = imageURL
         }
-        imageAccount.setOnClickListener {
-            val intent = Intent(this, AccountActivity::class.java)
-            val bundle = Bundle()
-            bundle.putSerializable("account", accountLogin)
-            intent.putExtras(bundle)
-            startActivity(intent)
-            overridePendingTransition(R.anim.right_to_left,
-                R.anim.right_to_left_out)
-        }
-
         val navigationView:NavigationView = findViewById(R.id.navigationView)
         val viewHeader = navigationView.getHeaderView(0)
         val name:TextView = viewHeader.findViewById(R.id.nameHead)
         val email:TextView = viewHeader.findViewById(R.id.emailHead)
         name.text = accountLogin.name
         email.text = accountLogin.email
-
     }
 }
