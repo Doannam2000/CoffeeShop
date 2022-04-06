@@ -17,6 +17,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ddwan.coffeeshop.Application
+import com.ddwan.coffeeshop.Application.Companion.firebaseDB
 import com.ddwan.coffeeshop.R
 import com.ddwan.coffeeshop.activities.BillActivity
 import com.ddwan.coffeeshop.adapter.TableAdapter
@@ -48,18 +49,22 @@ class TableFragment : Fragment() {
         // Inflate the layout for this fragment
 
         val view = inflater.inflate(R.layout.fragment_table, container, false)
-
         //setup RecyclerView Empty
         initRecyclerEmpty(view)
         //setup RecyclerView
         initRecyclerLive(view)
         //load data from firebase
-        loadData()
+
         val btnAdd: ImageView = view.findViewById(R.id.image_add_table)
         btnAdd.setOnClickListener {
             createDialogAddTable()
         }
         return view
+    }
+
+    override fun onResume() {
+        super.onResume()
+        loadData()
     }
 
     private fun initRecyclerEmpty(view: View) {
@@ -118,7 +123,7 @@ class TableFragment : Fragment() {
         hashMap["Name"] = name
         hashMap["Description"] = "Trống"
         hashMap["Status"] = true
-        Application.firebaseDB.reference.child("Table").child(id)
+        firebaseDB.reference.child("Table").child(id)
             .updateChildren(hashMap).addOnCompleteListener {
                 if (it.isSuccessful) {
                     listEmpty.add(Table(id, name, "Trống", true))
@@ -155,6 +160,8 @@ class TableFragment : Fragment() {
 
     @SuppressLint("NotifyDataSetChanged")
     fun splitData(list: ArrayList<Table>) {
+        listEmpty.clear()
+        listLiveTable.clear()
         for (item in list) {
             if (item.status)
                 listEmpty.add(item)

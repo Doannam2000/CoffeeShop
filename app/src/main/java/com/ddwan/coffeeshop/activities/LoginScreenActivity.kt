@@ -13,6 +13,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.ddwan.coffeeshop.Application
 import com.ddwan.coffeeshop.Application.Companion.accountLogin
+import com.ddwan.coffeeshop.Application.Companion.firebaseDB
 import com.ddwan.coffeeshop.Application.Companion.mAuth
 import com.ddwan.coffeeshop.model.LoadingDialog
 import com.google.firebase.database.DataSnapshot
@@ -25,7 +26,6 @@ class LoginScreenActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login_screen)
-
         btnLogin.setOnClickListener {
             if (email.text.toString().isEmpty() || password.text.toString().isEmpty())
                 Toast.makeText(this, "Vui lòng điền đủ thông tin !", Toast.LENGTH_SHORT).show()
@@ -89,7 +89,7 @@ class LoginScreenActivity : AppCompatActivity() {
         accountLogin.email = user.email.toString()
         accountLogin.password = password.text.toString()
         // get info user
-        Application.firebaseDB.getReference("Users").child(user.uid)
+        firebaseDB.getReference("Users").child(user.uid)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     accountLogin.name = snapshot.child("Name").value.toString()
@@ -124,7 +124,6 @@ class LoginScreenActivity : AppCompatActivity() {
                 } else
                     Toast.makeText(this, "Sai tài khoản hoặc mật khẩu", Toast.LENGTH_SHORT)
                         .show()
-
             }
     }
 }

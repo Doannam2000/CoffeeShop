@@ -1,5 +1,6 @@
 package com.ddwan.coffeeshop.activities
 
+import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.graphics.Color
@@ -67,7 +68,15 @@ class MenuActivity : AppCompatActivity() {
             }
         }
         initRecycler()
-        btnPrevious.setOnClickListener { finish() }
+        btnPrevious.setOnClickListener {
+            if (tableID != "null") {
+                val returnIntent = Intent()
+                returnIntent.putExtra("Status", checkEmpty)
+                setResult(Activity.RESULT_OK, returnIntent)
+                finish()
+            } else
+                finish()
+        }
     }
 
 
@@ -87,7 +96,7 @@ class MenuActivity : AppCompatActivity() {
                             val food = Food(f.key.toString(),
                                 f.child("Name").value.toString(),
                                 f.child("Category").value.toString(),
-                                f.child("Price").value.toString(),
+                                f.child("Price").value.toString().toInt(),
                                 f.child("Description").value.toString(), "")
                             list.add(food)
                         }
@@ -143,7 +152,7 @@ class MenuActivity : AppCompatActivity() {
     }
 
     private fun deleteFood(id: String, it: Int) {
-        Application.firebaseDB.reference.child("Food").child(id)
+        firebaseDB.reference.child("Food").child(id)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.exists()) {

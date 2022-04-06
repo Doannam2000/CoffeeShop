@@ -1,6 +1,7 @@
 package com.ddwan.coffeeshop.adapter
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -10,10 +11,23 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
+import com.ddwan.coffeeshop.Application
+import com.ddwan.coffeeshop.Application.Companion.firebaseDB
+import com.ddwan.coffeeshop.Application.Companion.firebaseStore
 import com.ddwan.coffeeshop.R
 import com.ddwan.coffeeshop.model.BillInfo
+import com.ddwan.coffeeshop.model.Food
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 
-class BillAdapter(var list: ArrayList<BillInfo>) : RecyclerView.Adapter<BillAdapter.ViewHolder>() {
+class BillAdapter(
+    var list: ArrayList<BillInfo>,
+    var context: Context,
+) :
+    RecyclerView.Adapter<BillAdapter.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BillAdapter.ViewHolder {
         val view: View =
             LayoutInflater.from(parent.context).inflate(R.layout.item_bill_layout, parent, false)
@@ -38,34 +52,25 @@ class BillAdapter(var list: ArrayList<BillInfo>) : RecyclerView.Adapter<BillAdap
 
         @SuppressLint("SetTextI18n")
         fun setData() {
-            var i = list[adapterPosition].count
-            name.text = list[adapterPosition].foodId.toString()
+            firebaseDB.reference.child("Food").child(list[adapterPosition].foodId)
+                .addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        name.text = snapshot.child("Name").value.toString()
+                    }
+                    override fun onCancelled(error: DatabaseError) {
+                    }
+                })
+            val i = list[adapterPosition].count
             count.setText(i.toString())
             price.text =
-                (list[adapterPosition].price * list[adapterPosition].count).toString() + "đ"
-            imagePlus.setOnClickListener {
-                i++
-                count.setText(i.toString())
+                (list[adapterPosition].price * i).toString() + "đ"
+            firebaseStore.reference.child(list[adapterPosition].foodId).downloadUrl.addOnSuccessListener { Uri ->
+                Glide.with(context)
+                    .load(Uri.toString())
+                    .apply(RequestOptions().override(70, 70))
+                    .into(image)
             }
-            imageMinus.setOnClickListener {
-                if (i - 1 != 0) {
-                    i--
-                    count.setText(i.toString())
-                }
-            }
-            count.addTextChangedListener(object : TextWatcher {
-                override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                }
-
-                override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                }
-
-                override fun afterTextChanged(p0: Editable?) {
-                    price.text = (list[adapterPosition].price * count.text.toString()
-                        .toInt()).toString() + "đ"
-                }
-            })
-
         }
     }
+
 }

@@ -53,7 +53,7 @@ class FoodAdapter(var list: ArrayList<Food>, var context: Context, var deleted: 
         @SuppressLint("SetTextI18n")
         fun setData() {
             name.text = list[adapterPosition].foodName
-            price.text = list[adapterPosition].price + "đ"
+            price.text = list[adapterPosition].price.toString() + "đ"
             description.text = list[adapterPosition].description
             firebaseStore.reference.child(list[adapterPosition].foodId).downloadUrl.addOnSuccessListener { Uri ->
                 Glide.with(context)

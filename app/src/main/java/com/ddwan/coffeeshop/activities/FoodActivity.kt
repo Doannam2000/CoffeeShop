@@ -6,8 +6,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
-import com.ddwan.coffeeshop.Application
 import com.ddwan.coffeeshop.Application.Companion.firebaseDB
+import com.ddwan.coffeeshop.Application.Companion.firebaseStore
 import com.ddwan.coffeeshop.R
 import com.ddwan.coffeeshop.model.Food
 import com.ddwan.coffeeshop.model.LoadingDialog
@@ -68,7 +68,7 @@ class FoodActivity : AppCompatActivity() {
     }
 
     private fun uploadImage(id: String) {
-        Application.firebaseStore.reference.child(id).putFile(imageUrl).addOnCompleteListener {
+        firebaseStore.reference.child(id).putFile(imageUrl).addOnCompleteListener {
             if (it.isSuccessful) {
                 dialog.stopLoadingDialog()
                 if (!edit) {
@@ -84,7 +84,6 @@ class FoodActivity : AppCompatActivity() {
             }
         }
     }
-
 
     private fun updateImage(id: String) {
         FirebaseStorage.getInstance().reference.child(id).delete()
@@ -150,7 +149,7 @@ class FoodActivity : AppCompatActivity() {
         val string = if (radioDrink.isChecked) "Đồ uống" else "Đồ ăn"
         return edtNameFood.text.toString() != food.foodName ||
                 string != food.category ||
-                edtPrice.text.toString() != food.price ||
+                edtPrice.text.toString().toInt() != food.price ||
                 edtDescription.text.toString() != food.description
     }
 

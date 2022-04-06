@@ -16,15 +16,15 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/textView5"
+        android:id="@+id/tvNameTable"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Bàn 1"
         android:textColor="@color/black"
         android:textSize="@dimen/dimen_18sp"
         app:layout_constraintBottom_toBottomOf="@+id/btnPrevious"
-        app:layout_constraintEnd_toStartOf="@+id/image_add_bill"
-        app:layout_constraintStart_toEndOf="@+id/btnPrevious"
+        app:layout_constraintEnd_toEndOf="@+id/image_add_bill"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/btnPrevious" />
 
     <ImageView

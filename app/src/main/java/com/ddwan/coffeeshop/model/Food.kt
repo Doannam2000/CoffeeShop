@@ -6,7 +6,7 @@ class Food(
     var foodId: String = "",
     var foodName: String = "",
     var category: String = "",
-    var price: String = "",
+    var price: Int = 0,
     var description: String = "",
     var imageUrl: String = "",
 ):Serializable
