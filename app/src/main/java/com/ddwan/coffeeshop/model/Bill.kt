@@ -3,9 +3,9 @@ package com.ddwan.coffeeshop.model
 import java.sql.Date
 
 class Bill(
-    var billId: Int,
+    var billId: String,
     var dateCheckIn: Date,
     var dateCheckOut: Date,
-    var tableId: Int,
+    var tableId: String,
     var status: Boolean,
 )

@@ -97,6 +97,7 @@
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
+            android:id="@+id/cardViewTable"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/dimen_10dp"

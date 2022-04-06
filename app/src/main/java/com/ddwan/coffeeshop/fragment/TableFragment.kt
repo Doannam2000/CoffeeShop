@@ -6,6 +6,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -61,10 +62,13 @@ class TableFragment : Fragment() {
         return view
     }
 
-
     private fun initRecyclerEmpty(view: View) {
         adapterEmpty.setCallBack {
-            requireActivity().startActivity(Intent(requireContext(), BillActivity::class.java))
+            val intent = Intent(requireContext(), BillActivity::class.java)
+            intent.putExtra("TableID", listEmpty[it].tableId)
+            intent.putExtra("TableName", listEmpty[it].tableName)
+            intent.putExtra("Status", true)
+            requireActivity().startActivity(intent)
         }
         val recyclerTableEmpty: RecyclerView = view.findViewById(R.id.recyclerView_empty_table)
         recyclerTableEmpty.layoutManager = GridLayoutManager(requireContext(), 3)
@@ -74,7 +78,11 @@ class TableFragment : Fragment() {
 
     private fun initRecyclerLive(view: View) {
         adapterLiveTable.setCallBack {
-            requireActivity().startActivity(Intent(requireContext(), BillActivity::class.java))
+            val intent = Intent(requireContext(), BillActivity::class.java)
+            intent.putExtra("TableID", listLiveTable[it].tableId)
+            intent.putExtra("TableName", listLiveTable[it].tableName)
+            intent.putExtra("Status", false)
+            requireActivity().startActivity(intent)
         }
         val recyclerLiveTable: RecyclerView = view.findViewById(R.id.recyclerView_live_table)
         recyclerLiveTable.layoutManager = GridLayoutManager(requireContext(), 3)

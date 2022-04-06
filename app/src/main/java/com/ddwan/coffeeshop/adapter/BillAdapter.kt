@@ -15,7 +15,7 @@ import com.ddwan.coffeeshop.model.BillInfo
 
 class BillAdapter(var list: ArrayList<BillInfo>) : RecyclerView.Adapter<BillAdapter.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BillAdapter.ViewHolder {
-        var view: View =
+        val view: View =
             LayoutInflater.from(parent.context).inflate(R.layout.item_bill_layout, parent, false)
         return ViewHolder(view)
     }

@@ -2,7 +2,6 @@ package com.ddwan.coffeeshop.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,20 +11,25 @@ import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import com.ddwan.coffeeshop.Application
 import com.ddwan.coffeeshop.Application.Companion.firebaseStore
 import com.ddwan.coffeeshop.R
 import com.ddwan.coffeeshop.model.Food
 
-class FoodAdapter(var list: ArrayList<Food>,var context:Context) : RecyclerView.Adapter<FoodAdapter.ViewHolder>() {
+class FoodAdapter(var list: ArrayList<Food>, var context: Context, var deleted: Boolean) :
+    RecyclerView.Adapter<FoodAdapter.ViewHolder>() {
 
     lateinit var itemClick: (position: Int) -> Unit
     fun setCallBack(click: (position: Int) -> Unit) {
         itemClick = click
     }
 
+    lateinit var itemClick2: (position: Int) -> Unit
+    fun setCallBack2(click: (position: Int) -> Unit) {
+        itemClick2 = click
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        var view: View =
+        val view: View =
             LayoutInflater.from(parent.context).inflate(R.layout.food_layout, parent, false)
         return ViewHolder(view)
     }
@@ -44,6 +48,7 @@ class FoodAdapter(var list: ArrayList<Food>,var context:Context) : RecyclerView.
         private var name: TextView = itemView.findViewById(R.id.nameFood)
         private var price: TextView = itemView.findViewById(R.id.price)
         private var description: TextView = itemView.findViewById(R.id.descriptionFood)
+        private var delete: ImageView = itemView.findViewById(R.id.deleteFood)
 
         @SuppressLint("SetTextI18n")
         fun setData() {
@@ -57,9 +62,14 @@ class FoodAdapter(var list: ArrayList<Food>,var context:Context) : RecyclerView.
                     .into(image)
                 list[adapterPosition].imageUrl = Uri.toString()
             }
+            if (!deleted) {
+                delete.visibility = View.GONE
+            }
         }
+
         init {
             layoutFood.setOnClickListener { itemClick.invoke(adapterPosition) }
+            delete.setOnClickListener { itemClick2.invoke(adapterPosition) }
         }
     }
 }

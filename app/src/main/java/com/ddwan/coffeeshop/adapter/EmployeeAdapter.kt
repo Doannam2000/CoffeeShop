@@ -26,12 +26,11 @@ class EmployeeAdapter(var list: ArrayList<Account>, var context: Context) :
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EmployeeAdapter.ViewHolder {
-        var view: View =
+        val view: View =
             LayoutInflater.from(parent.context).inflate(R.layout.employee_layout, parent, false)
         return ViewHolder(view)
     }
-
-
+    
     override fun onBindViewHolder(holder: EmployeeAdapter.ViewHolder, position: Int) {
         holder.setData()
     }

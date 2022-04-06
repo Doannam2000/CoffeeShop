@@ -25,7 +25,8 @@ class FoodActivity : AppCompatActivity() {
     val model by lazy {
         ViewModelProvider(this).get(MyViewModel::class.java)
     }
-    var food = Food()
+    private var food = Food()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_food)
@@ -51,6 +52,7 @@ class FoodActivity : AppCompatActivity() {
                 dialog.startLoadingDialog()
                 addDataFood(model.randomID())
             }
+
         btnPrevious.setOnClickListener {
             finish()
             overridePendingTransition(R.anim.left_to_right,
@@ -58,7 +60,6 @@ class FoodActivity : AppCompatActivity() {
         }
         imageEdit.setOnClickListener { selectImage() }
     }
-
 
     private fun selectImage() {
         val intent = Intent(Intent.ACTION_GET_CONTENT)
@@ -111,7 +112,7 @@ class FoodActivity : AppCompatActivity() {
     private fun infoFood(): HashMap<String, Any> {
         val hashMap = HashMap<String, Any>()
         hashMap["Name"] = edtNameFood.text.toString()
-        hashMap["Category"] = edtMenuCategory.text.toString()
+        hashMap["Category"] = if (radioDrink.isChecked) "Đồ uống" else "Đồ ăn"
         hashMap["Price"] = edtPrice.text.toString()
         hashMap["Description"] = edtDescription.text.toString()
         return hashMap
@@ -137,14 +138,18 @@ class FoodActivity : AppCompatActivity() {
     private fun loadFood() {
         model.loadImage(this, food.imageUrl, food.foodId, imageViewFood)
         edtNameFood.setText(food.foodName)
-        edtMenuCategory.setText(food.category)
+        if (food.category == "Đồ uống")
+            radioDrink.isChecked = true
+        else
+            radioFood.isChecked = true
         edtPrice.setText(food.price)
         edtDescription.setText(food.description)
     }
 
     private fun checkTextChange(): Boolean {
+        val string = if (radioDrink.isChecked) "Đồ uống" else "Đồ ăn"
         return edtNameFood.text.toString() != food.foodName ||
-                edtMenuCategory.text.toString() != food.category ||
+                string != food.category ||
                 edtPrice.text.toString() != food.price ||
                 edtDescription.text.toString() != food.description
     }

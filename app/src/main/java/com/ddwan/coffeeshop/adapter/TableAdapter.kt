@@ -20,7 +20,7 @@ class TableAdapter(var list: ArrayList<Table>) : RecyclerView.Adapter<TableAdapt
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TableAdapter.ViewHolder {
-        var view: View =
+        val view: View =
             LayoutInflater.from(parent.context).inflate(R.layout.table_layout, parent, false)
         return ViewHolder(view)
     }

@@ -49,7 +49,7 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         initView()
     }
-    fun initView(){
+    private fun initView(){
         val imageRef = firebaseStore.reference.child(accountLogin.id)
         imageRef.downloadUrl.addOnSuccessListener { Uri ->
             val imageURL = Uri.toString()
