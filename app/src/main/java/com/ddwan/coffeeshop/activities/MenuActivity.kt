@@ -66,8 +66,13 @@ class MenuActivity : AppCompatActivity() {
                 returnIntent.putExtra("Status", checkEmpty)
                 setResult(Activity.RESULT_OK, returnIntent)
                 finish()
-            } else
+                overridePendingTransition(R.anim.left_to_right,
+                    R.anim.left_to_right_out)
+            } else {
                 finish()
+                overridePendingTransition(R.anim.left_to_right,
+                    R.anim.left_to_right_out)
+            }
         }
     }
 
@@ -137,10 +142,8 @@ class MenuActivity : AppCompatActivity() {
             }
             recyclerViewFood.adapter = adapterAddFood
         }
-
         recyclerViewFood.layoutManager = LinearLayoutManager(this)
         recyclerViewFood.setHasFixedSize(true)
-
     }
 
     private fun deleteFood(id: String, it: Int) {

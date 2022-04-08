@@ -5,7 +5,9 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import java.text.DecimalFormat
+import java.text.NumberFormat
 import java.text.SimpleDateFormat
+import java.util.*
 
 class Application {
     companion object{
@@ -18,7 +20,12 @@ class Application {
         const val TYPE_PLUS = 1
         const val TYPE_MINUS = 2
         const val TYPE_DELETE = 3
-        val numberFormatter = DecimalFormat("#,###")
+        val numberFormatter: NumberFormat = NumberFormat.getCurrencyInstance()
+
+    }
+    init {
+        numberFormatter.maximumFractionDigits = 0
+        numberFormatter.currency = Currency.getInstance("VND")
     }
 
 }

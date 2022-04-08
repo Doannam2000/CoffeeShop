@@ -15,9 +15,9 @@
         android:name="com.ddwan.coffeeshop.fragment.SettingFragment"
         android:label="fragment_setting"
         tools:layout="@layout/fragment_setting" />
-    <fragment
+    <activity
         android:id="@+id/tableFragment"
-        android:name="com.ddwan.coffeeshop.fragment.TableFragment"
+        android:name="com.ddwan.coffeeshop.activities.TableActivity"
         android:label="fragment_table"
         tools:layout="@layout/fragment_table" />
     <fragment
@@ -25,14 +25,14 @@
         android:name="com.ddwan.coffeeshop.fragment.ChartFragment"
         android:label="fragment_chart"
         tools:layout="@layout/fragment_chart" />
-    <fragment
+    <activity
         android:id="@+id/employeeFragment"
-        android:name="com.ddwan.coffeeshop.fragment.EmployeeFragment"
+        android:name="com.ddwan.coffeeshop.activities.EmployeeActivity"
         android:label="fragment_employee"
         tools:layout="@layout/fragment_employee" />
-    <fragment
+    <activity
         android:id="@+id/menuFragment"
-        android:name="com.ddwan.coffeeshop.fragment.MenuFragment"
+        android:name="com.ddwan.coffeeshop.activities.MenuActivity"
         android:label="fragment_menu"
         tools:layout="@layout/fragment_menu" />
     <fragment

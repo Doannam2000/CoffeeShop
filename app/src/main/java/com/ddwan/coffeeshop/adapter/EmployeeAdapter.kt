@@ -16,6 +16,7 @@ import com.ddwan.coffeeshop.Application
 import com.ddwan.coffeeshop.Application.Companion.firebaseStore
 import com.ddwan.coffeeshop.R
 import com.ddwan.coffeeshop.model.Account
+import java.lang.Exception
 
 class EmployeeAdapter(var list: ArrayList<Account>, var context: Context) :
     RecyclerView.Adapter<EmployeeAdapter.ViewHolder>() {
@@ -30,7 +31,7 @@ class EmployeeAdapter(var list: ArrayList<Account>, var context: Context) :
             LayoutInflater.from(parent.context).inflate(R.layout.employee_layout, parent, false)
         return ViewHolder(view)
     }
-    
+
     override fun onBindViewHolder(holder: EmployeeAdapter.ViewHolder, position: Int) {
         holder.setData()
     }
@@ -51,13 +52,17 @@ class EmployeeAdapter(var list: ArrayList<Account>, var context: Context) :
             name.text = list[adapterPosition].name
             role.text = list[adapterPosition].role
             email.text = list[adapterPosition].email
-            firebaseStore.reference.child(list[adapterPosition].id).downloadUrl.addOnSuccessListener { Uri ->
-                Glide.with(context)
-                    .load(Uri.toString())
-                    .apply(RequestOptions().override(70, 70))
-                    .into(image)
-                list[adapterPosition].imageUrl = Uri.toString()
+            try {
+                firebaseStore.reference.child(list[adapterPosition].id).downloadUrl.addOnSuccessListener { Uri ->
+                    Glide.with(context)
+                        .load(Uri.toString())
+                        .apply(RequestOptions().override(70, 70))
+                        .into(image)
+                    list[adapterPosition].imageUrl = Uri.toString()
+                }
+            } catch (e: Exception) {
             }
+
         }
 
         init {

@@ -17,6 +17,12 @@
         android:theme="@style/Theme.CoffeeShop"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".activities.EmployeeActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.TableActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.MenuActivity"
             android:exported="false" />
         <activity

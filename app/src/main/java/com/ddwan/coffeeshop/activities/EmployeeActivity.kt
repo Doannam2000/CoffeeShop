@@ -1,55 +1,52 @@
-package com.ddwan.coffeeshop.fragment
+package com.ddwan.coffeeshop.activities
 
 import android.content.Intent
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.ddwan.coffeeshop.Application.Companion.firebaseDB
+import com.ddwan.coffeeshop.Application
 import com.ddwan.coffeeshop.R
-import com.ddwan.coffeeshop.activities.AccountActivity
-import com.ddwan.coffeeshop.activities.EditProfileActivity
 import com.ddwan.coffeeshop.adapter.EmployeeAdapter
 import com.ddwan.coffeeshop.model.Account
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
-import kotlinx.android.synthetic.main.fragment_employee.view.*
+import kotlinx.android.synthetic.main.activity_employee.*
 
-class EmployeeFragment : Fragment() {
+class EmployeeActivity : AppCompatActivity() {
     var list = ArrayList<Account>()
-    val adapter by lazy { EmployeeAdapter(list, requireContext()) }
+    val adapter by lazy { EmployeeAdapter(list, this) }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View? {
-        val view = inflater.inflate(R.layout.fragment_employee, container, false)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_employee)
         adapter.setCallBack {
             val bundle = Bundle()
             bundle.putSerializable("account", list[it])
-            val intent = Intent(requireContext(), AccountActivity::class.java)
+            val intent = Intent(this, AccountActivity::class.java)
             intent.putExtras(bundle)
             startActivity(intent)
-            activity?.overridePendingTransition(R.anim.right_to_left,
+            overridePendingTransition(R.anim.right_to_left,
                 R.anim.right_to_left_out)
         }
-        val recyclerViewEmployee: RecyclerView = view.findViewById(R.id.recyclerView_employee)
-        recyclerViewEmployee.layoutManager = LinearLayoutManager(requireContext())
+        val recyclerViewEmployee: RecyclerView = findViewById(R.id.recyclerView_employee)
+        recyclerViewEmployee.layoutManager = LinearLayoutManager(this)
         recyclerViewEmployee.setHasFixedSize(true)
         recyclerViewEmployee.adapter = adapter
-        view.addAccount.setOnClickListener {
-            startActivity(Intent(requireActivity(), EditProfileActivity::class.java))
+        addAccount.setOnClickListener {
+            startActivity(Intent(this, EditProfileActivity::class.java))
         }
-        return view
+        btnPrevious.setOnClickListener {
+            finish()
+            overridePendingTransition(R.anim.left_to_right,
+                R.anim.left_to_right_out)
+        }
     }
 
-    private fun loadData(){
+    private fun loadData() {
         val listP = ArrayList<Account>()
-        firebaseDB.getReference("Users")
+        Application.firebaseDB.getReference("Users")
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.exists()) {

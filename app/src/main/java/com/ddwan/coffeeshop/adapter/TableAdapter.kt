@@ -35,14 +35,12 @@ class TableAdapter(var list: ArrayList<Table>) : RecyclerView.Adapter<TableAdapt
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var layoutTable: LinearLayout = itemView.findViewById(R.id.linearTable)
-        var image: ImageView = itemView.findViewById(R.id.imageTable)
         var name: TextView = itemView.findViewById(R.id.nameTable)
         var price: TextView = itemView.findViewById(R.id.description)
         fun setData() {
             name.text = list[adapterPosition].tableName
             price.text = list[adapterPosition].description
         }
-
         init {
             layoutTable.setOnClickListener {
                 itemClick.invoke(adapterPosition)

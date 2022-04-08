@@ -12,8 +12,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.ddwan.coffeeshop.Application.Companion.firebaseStore
+import com.ddwan.coffeeshop.Application.Companion.numberFormatter
 import com.ddwan.coffeeshop.R
 import com.ddwan.coffeeshop.model.Food
+import java.lang.Exception
 
 class FoodAdapter(var list: ArrayList<Food>, var context: Context, var deleted: Boolean) :
     RecyclerView.Adapter<FoodAdapter.ViewHolder>() {
@@ -53,14 +55,17 @@ class FoodAdapter(var list: ArrayList<Food>, var context: Context, var deleted: 
         @SuppressLint("SetTextI18n")
         fun setData() {
             name.text = list[adapterPosition].foodName
-            price.text = list[adapterPosition].price.toString() + "đ"
+            price.text = numberFormatter.format(list[adapterPosition].price)
             description.text = list[adapterPosition].description
-            firebaseStore.reference.child(list[adapterPosition].foodId).downloadUrl.addOnSuccessListener { Uri ->
-                Glide.with(context)
-                    .load(Uri.toString())
-                    .apply(RequestOptions().override(70, 70))
-                    .into(image)
-                list[adapterPosition].imageUrl = Uri.toString()
+            try {
+                firebaseStore.reference.child(list[adapterPosition].foodId).downloadUrl.addOnSuccessListener { Uri ->
+                    Glide.with(context)
+                        .load(Uri.toString())
+                        .apply(RequestOptions().override(70, 70))
+                        .into(image)
+                    list[adapterPosition].imageUrl = Uri.toString()
+                }
+            } catch (e: Exception) {
             }
             if (!deleted) {
                 delete.visibility = View.GONE
