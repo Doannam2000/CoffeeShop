@@ -12,8 +12,6 @@ import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.ddwan.coffeeshop.Application
 import com.ddwan.coffeeshop.Application.Companion.firebaseDB
 import com.ddwan.coffeeshop.Application.Companion.sdf
 import com.ddwan.coffeeshop.R
@@ -25,17 +23,11 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.FirebaseStorage
-import kotlinx.android.synthetic.main.activity_food.*
 import kotlinx.android.synthetic.main.activity_menu.*
 import kotlinx.android.synthetic.main.activity_menu.btnPrevious
 import kotlinx.android.synthetic.main.custom_add_food.view.*
-import kotlinx.android.synthetic.main.custom_editext_dialog.view.*
 import kotlinx.android.synthetic.main.custom_editext_dialog.view.cancel
 import kotlinx.android.synthetic.main.custom_editext_dialog.view.oke
-import kotlinx.android.synthetic.main.fragment_menu.view.*
-import java.sql.Date
-import java.text.SimpleDateFormat
-import java.time.LocalDateTime
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
@@ -88,7 +80,7 @@ class MenuActivity : AppCompatActivity() {
     private fun loadData() {
         list.clear()
         dialogLoad.startLoadingDialog()
-        Application.firebaseDB.getReference("Food")
+        firebaseDB.getReference("Food")
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.exists()) {
@@ -217,7 +209,8 @@ class MenuActivity : AppCompatActivity() {
                             .setValue(false)
                         firebaseDB.reference.child("Table").child(tableID).child("Description")
                             .setValue("Chưa Thanh Toán")
-                        addBillInfo(returnBillInfo(food, count, billID), model.randomID())
+                        addBillInfo(model.returnBillInfo(food.foodId, food.price, count, billID),
+                            model.randomID())
                     } else {
                         Toast.makeText(this,
                             "Thêm thành món ăn không thành công ",
@@ -230,14 +223,6 @@ class MenuActivity : AppCompatActivity() {
         }
     }
 
-    private fun returnBillInfo(food: Food, count: Int, billID: String): HashMap<String, Any> {
-        val billInfo = HashMap<String, Any>()
-        billInfo["Bill_ID"] = billID
-        billInfo["Food_ID"] = food.foodId
-        billInfo["Price"] = food.price
-        billInfo["Count"] = count
-        return billInfo
-    }
 
     private fun addBillInfoWithTableID(food: Food, count: Int) {
         firebaseDB.reference.child("Bill")
@@ -288,9 +273,15 @@ class MenuActivity : AppCompatActivity() {
                             }
                         }
                         if (count1 == 0) {
-                            addBillInfo(returnBillInfo(food, count, billID), model.randomID())
+                            addBillInfo(model.returnBillInfo(food.foodId,
+                                food.price,
+                                count,
+                                billID), model.randomID())
                         } else {
-                            addBillInfo(returnBillInfo(food, count + count1, billID), billInfoID)
+                            addBillInfo(model.returnBillInfo(food.foodId,
+                                food.price,
+                                count + count1,
+                                billID), billInfoID)
                         }
                     }
                 }

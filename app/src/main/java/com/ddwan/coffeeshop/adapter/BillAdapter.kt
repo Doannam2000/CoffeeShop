@@ -14,8 +14,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.ddwan.coffeeshop.Application
+import com.ddwan.coffeeshop.Application.Companion.TYPE_DELETE
+import com.ddwan.coffeeshop.Application.Companion.TYPE_MINUS
+import com.ddwan.coffeeshop.Application.Companion.TYPE_PLUS
 import com.ddwan.coffeeshop.Application.Companion.firebaseDB
 import com.ddwan.coffeeshop.Application.Companion.firebaseStore
+import com.ddwan.coffeeshop.Application.Companion.numberFormatter
 import com.ddwan.coffeeshop.R
 import com.ddwan.coffeeshop.model.BillInfo
 import com.ddwan.coffeeshop.model.Food
@@ -28,6 +32,12 @@ class BillAdapter(
     var context: Context,
 ) :
     RecyclerView.Adapter<BillAdapter.ViewHolder>() {
+
+    lateinit var itemClick: (position: Int, type: Int) -> Unit
+    fun setCallBack(click: (position: Int, type: Int) -> Unit) {
+        itemClick = click
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BillAdapter.ViewHolder {
         val view: View =
             LayoutInflater.from(parent.context).inflate(R.layout.item_bill_layout, parent, false)
@@ -42,13 +52,15 @@ class BillAdapter(
         return list.size
     }
 
+    @SuppressLint("SetTextI18n")
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private var image: ImageView = itemView.findViewById(R.id.imageFood)
         private var name: TextView = itemView.findViewById(R.id.nameFood)
         private var price: TextView = itemView.findViewById(R.id.price)
-        private var count: EditText = itemView.findViewById(R.id.countFood)
+        private var count: TextView = itemView.findViewById(R.id.countFood)
         private var imagePlus: ImageView = itemView.findViewById(R.id.add)
         private var imageMinus: ImageView = itemView.findViewById(R.id.minus)
+        private var imageDelete: ImageView = itemView.findViewById(R.id.deleteFood)
 
         @SuppressLint("SetTextI18n")
         fun setData() {
@@ -57,13 +69,14 @@ class BillAdapter(
                     override fun onDataChange(snapshot: DataSnapshot) {
                         name.text = snapshot.child("Name").value.toString()
                     }
+
                     override fun onCancelled(error: DatabaseError) {
                     }
                 })
             val i = list[adapterPosition].count
             count.setText(i.toString())
             price.text =
-                (list[adapterPosition].price * i).toString() + "đ"
+                numberFormatter.format((list[adapterPosition].price * i))
             firebaseStore.reference.child(list[adapterPosition].foodId).downloadUrl.addOnSuccessListener { Uri ->
                 Glide.with(context)
                     .load(Uri.toString())
@@ -71,6 +84,26 @@ class BillAdapter(
                     .into(image)
             }
         }
+
+        init {
+            imagePlus.setOnClickListener {
+                itemClick.invoke(adapterPosition, TYPE_PLUS)
+                list[adapterPosition].count++
+                count.setText(list[adapterPosition].count.toString())
+                price.text =
+                    numberFormatter.format(list[adapterPosition].price * list[adapterPosition].count)
+                itemClick.invoke(adapterPosition, TYPE_MINUS)
+            }
+            imageMinus.setOnClickListener {
+                list[adapterPosition].count--
+                count.setText(list[adapterPosition].count.toString())
+                price.text =
+                    numberFormatter.format(list[adapterPosition].price * list[adapterPosition].count)
+                itemClick.invoke(adapterPosition, TYPE_MINUS)
+            }
+            imageDelete.setOnClickListener { itemClick.invoke(adapterPosition, TYPE_DELETE) }
+        }
     }
+
 
 }

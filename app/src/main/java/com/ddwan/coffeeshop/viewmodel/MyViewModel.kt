@@ -10,6 +10,7 @@ import com.ddwan.coffeeshop.Application.Companion.firebaseDB
 import com.ddwan.coffeeshop.Application.Companion.firebaseStore
 import com.ddwan.coffeeshop.R
 import com.ddwan.coffeeshop.model.Account
+import com.ddwan.coffeeshop.model.Food
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -47,6 +48,20 @@ class MyViewModel : ViewModel() {
             k += Random.nextInt(1, 100).toString()
         }
         return k
+    }
+
+    fun returnBillInfo(
+        foodId: String,
+        price: Int,
+        count: Int,
+        billID: String,
+    ): HashMap<String, Any> {
+        val billInfo = HashMap<String, Any>()
+        billInfo["Bill_ID"] = billID
+        billInfo["Food_ID"] = foodId
+        billInfo["Price"] = price
+        billInfo["Count"] = count
+        return billInfo
     }
 
 }
