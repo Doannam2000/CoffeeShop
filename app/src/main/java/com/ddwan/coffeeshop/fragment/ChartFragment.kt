@@ -42,4 +42,7 @@ class ChartFragment : Fragment() {
         return view
     }
 
+    fun loadData(){
+
+    }
 }

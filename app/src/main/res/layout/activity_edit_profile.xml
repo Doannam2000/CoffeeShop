@@ -38,8 +38,8 @@
             android:id="@+id/textView6"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Account"
             android:layout_marginLeft="@dimen/dimen_10dp"
+            android:text="Account"
             android:textColor="@color/black"
             android:textSize="@dimen/dimen_18sp"
             app:layout_constraintBottom_toBottomOf="@+id/btnPrevious"
@@ -292,7 +292,7 @@
         <androidx.cardview.widget.CardView
             android:id="@+id/cardViewRole"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/dimen_70dp"
+            android:layout_height="wrap_content"
             android:layout_margin="@dimen/dimen_8dp"
             android:elevation="@dimen/dimen_10dp"
             app:cardCornerRadius="@dimen/dimen_10dp"
@@ -303,6 +303,7 @@
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
                 android:orientation="vertical"
+                android:layout_marginBottom="@dimen/dimen_10dp"
                 android:paddingHorizontal="@dimen/dimen_10dp">
 
                 <TextView
@@ -310,13 +311,20 @@
                     android:layout_height="wrap_content"
                     android:text="Chức vụ" />
 
-                <EditText
-                    android:id="@+id/edtRole"
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Nhân viên"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/dimen_18sp" />
+                    android:layout_height="match_parent">
+
+                    <AutoCompleteTextView
+                        android:id="@+id/edtRole"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:inputType="none"
+                        android:text="Quản lý" />
+
+                </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 

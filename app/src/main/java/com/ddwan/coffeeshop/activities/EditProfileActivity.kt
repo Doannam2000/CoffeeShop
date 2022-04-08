@@ -5,6 +5,8 @@ import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import com.ddwan.coffeeshop.Application.Companion.accountLogin
@@ -37,7 +39,12 @@ class EditProfileActivity : AppCompatActivity() {
             account = bundle.getSerializable("account") as Account
             edit = bundle.getBoolean("check")
         }
+        val role = resources.getStringArray(R.array.Role)
+        val arrayAdapter = ArrayAdapter(this, R.layout.text_view_dropdown, role)
+        edtRole.setAdapter(arrayAdapter)
+
         if (edit) {
+
             loadInfo()
             btnChangePassword.setOnClickListener {
                 Toast.makeText(this, "Hi", Toast.LENGTH_LONG).show()

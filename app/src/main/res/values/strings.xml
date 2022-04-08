@@ -2,4 +2,10 @@
     <string name="app_name">CoffeeShop</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    
+    <string-array name="Role">
+        <item>Quản lý</item>
+        <item>Nhân viên phục vụ</item>
+        <item>Nhân viên pha chế</item>
+    </string-array>
 </resources>
