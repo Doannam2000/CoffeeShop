@@ -73,16 +73,19 @@ class BillAdapter(
                     override fun onCancelled(error: DatabaseError) {
                     }
                 })
-            val i = list[adapterPosition].count
-            count.setText(i.toString())
+            count.text = list[adapterPosition].count.toString()
             price.text =
-                numberFormatter.format((list[adapterPosition].price * i))
+                numberFormatter.format((list[adapterPosition].price * list[adapterPosition].count))
             firebaseStore.reference.child(list[adapterPosition].foodId).downloadUrl.addOnSuccessListener { Uri ->
-                Glide.with(context)
-                    .load(Uri.toString())
-                    .apply(RequestOptions().override(70, 70))
-                    .into(image)
+                try {
+                    Glide.with(context)
+                        .load(Uri.toString())
+                        .apply(RequestOptions().override(70, 70))
+                        .into(image)
+                } catch (e: Exception) {
+                }
             }
+
         }
 
         init {

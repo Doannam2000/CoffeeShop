@@ -52,17 +52,18 @@ class EmployeeAdapter(var list: ArrayList<Account>, var context: Context) :
             name.text = list[adapterPosition].name
             role.text = list[adapterPosition].role
             email.text = list[adapterPosition].email
-            try {
-                firebaseStore.reference.child(list[adapterPosition].id).downloadUrl.addOnSuccessListener { Uri ->
+
+            firebaseStore.reference.child(list[adapterPosition].id).downloadUrl.addOnSuccessListener { Uri ->
+                try {
                     Glide.with(context)
                         .load(Uri.toString())
                         .apply(RequestOptions().override(70, 70))
                         .into(image)
                     list[adapterPosition].imageUrl = Uri.toString()
+                } catch (e: Exception) {
                 }
-            } catch (e: Exception) {
-            }
 
+            }
         }
 
         init {

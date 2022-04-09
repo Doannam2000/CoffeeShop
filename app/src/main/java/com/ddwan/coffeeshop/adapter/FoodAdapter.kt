@@ -57,15 +57,15 @@ class FoodAdapter(var list: ArrayList<Food>, var context: Context, var deleted: 
             name.text = list[adapterPosition].foodName
             price.text = numberFormatter.format(list[adapterPosition].price)
             description.text = list[adapterPosition].description
-            try {
-                firebaseStore.reference.child(list[adapterPosition].foodId).downloadUrl.addOnSuccessListener { Uri ->
+            firebaseStore.reference.child(list[adapterPosition].foodId).downloadUrl.addOnSuccessListener { Uri ->
+                try {
                     Glide.with(context)
                         .load(Uri.toString())
                         .apply(RequestOptions().override(70, 70))
                         .into(image)
                     list[adapterPosition].imageUrl = Uri.toString()
+                } catch (e: Exception) {
                 }
-            } catch (e: Exception) {
             }
             if (!deleted) {
                 delete.visibility = View.GONE

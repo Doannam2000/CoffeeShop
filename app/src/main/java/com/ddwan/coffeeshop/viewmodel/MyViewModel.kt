@@ -24,19 +24,22 @@ class MyViewModel : ViewModel() {
 
     fun loadImage(context: Context, imageUrl: String, id: String, view: ImageView) {
         if (imageUrl.trim() != "")
-            Glide.with(context)
-                .load(imageUrl)
-                .placeholder(R.drawable.logo)
-                .into(view)
-        else {
             try {
-                firebaseStore.reference.child(id).downloadUrl.addOnSuccessListener { Uri ->
+                Glide.with(context)
+                    .load(imageUrl)
+                    .placeholder(R.drawable.logo)
+                    .into(view)
+            } catch (e: Exception) {
+            }
+        else {
+            firebaseStore.reference.child(id).downloadUrl.addOnSuccessListener { Uri ->
+                try {
                     Glide.with(context)
                         .load(Uri.toString())
                         .placeholder(R.drawable.logo)
                         .into(view)
+                } catch (e: Exception) {
                 }
-            } catch (e: Exception) {
             }
 
         }
