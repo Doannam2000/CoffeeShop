@@ -1,18 +1,16 @@
 package com.ddwan.coffeeshop
-import android.annotation.SuppressLint
 import com.ddwan.coffeeshop.model.Account
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
-import java.text.DecimalFormat
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
 class Application {
     companion object{
-        @SuppressLint("SimpleDateFormat")
         val sdf = SimpleDateFormat("HH:mm:ss dd/MM/yyyy")
+        val sdfDay = SimpleDateFormat("dd/MM/yyyy")
         val mAuth = FirebaseAuth.getInstance()
         val firebaseDB = FirebaseDatabase.getInstance()
         val firebaseStore = FirebaseStorage.getInstance()

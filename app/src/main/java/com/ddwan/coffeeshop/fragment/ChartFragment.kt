@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import com.ddwan.coffeeshop.Application
 import com.ddwan.coffeeshop.Application.Companion.firebaseDB
 import com.ddwan.coffeeshop.Application.Companion.sdf
+import com.ddwan.coffeeshop.Application.Companion.sdfDay
 import com.ddwan.coffeeshop.R
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.data.BarData
@@ -21,11 +22,14 @@ import com.google.firebase.database.ValueEventListener
 import java.lang.Exception
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 
 class ChartFragment : Fragment() {
 
-    val listBillID = ArrayList<String>()
+
+    private val hashmap = HashMap<String, ArrayList<String>>()
+    private val listDay = ArrayList<String>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -34,6 +38,7 @@ class ChartFragment : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_chart, container, false)
         val barchart: BarChart = view.findViewById(R.id.chart)
+        returnsTheLast7Days()
         val list = arrayListOf<BarEntry>(BarEntry(2016f, 560f),
             BarEntry(2017f, 202f),
             BarEntry(2018f, 300f),
@@ -56,13 +61,13 @@ class ChartFragment : Fragment() {
         return view
     }
 
-    fun loadData() {
+    private fun loadData() {
         firebaseDB.reference.child("Bill")
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.exists()) {
                         for (item in snapshot.children) {
-                            if((item.child("Status").value as Boolean)){
+                            if ((item.child("Status").value as Boolean)) {
                                 val time = sdf.parse(item.child("Date_Check_Out").value.toString())
                                 Log.d("checkkkkkk", time.toString())
                                 val now = Calendar.getInstance().time
@@ -78,4 +83,45 @@ class ChartFragment : Fragment() {
                 }
             })
     }
+
+    suspend fun returnTheMoneyOfOneBill(billID: String): Int {
+        var money = 0
+        firebaseDB.reference.child("BillInfo")
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.exists()) {
+                        for (item in snapshot.children) {
+                            if (item.child("Bill_ID").value.toString() == billID)
+                                money += item.child("Price").value.toString()
+                                    .toInt() * item.child("Count").value.toString().toInt()
+                        }
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    TODO("Not yet implemented")
+                }
+
+            })
+        return money
+    }
+
+    private fun returnsTheLast7Days() {
+        for (i in 1..6) {
+            addDay(-i)
+            Log.d("check $i", listDay[i - 1])
+        }
+
+    }
+
+    private fun addDay(i: Int) {
+        val now = Calendar.getInstance().time
+        val calendar = Calendar.getInstance()
+        calendar.time = now
+        calendar.add(Calendar.DAY_OF_YEAR, i)
+        val newDate = calendar.time
+        listDay.add(sdfDay.format(newDate))
+
+    }
+
 }
