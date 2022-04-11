@@ -77,56 +77,14 @@ class ChartFragment : Fragment() {
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.exists()) {
-                        var i = 0
-                        for (item in snapshot.children) {
-                            i++
-                            if (i == snapshot.childrenCount.toInt()) checkLast = true
+                        for ((i, item) in snapshot.children.withIndex()) {
+                            if (i == snapshot.childrenCount.toInt() - 1) checkLast = true
                             if ((item.child("Status").value as Boolean)) {
                                 val time = sdf.parse(item.child("Date_Check_Out").value.toString())
-                                when (sdfDay.format(time)) {
-                                    listDay[0] -> {
-                                        returnTheMoneyOfOneBill(item.key.toString(),
-                                            0,
-                                            view,
-                                            checkLast)
-                                    }
-                                    listDay[1] -> {
-                                        returnTheMoneyOfOneBill(item.key.toString(),
-                                            1,
-                                            view,
-                                            checkLast)
-                                    }
-                                    listDay[2] -> {
-                                        returnTheMoneyOfOneBill(item.key.toString(),
-                                            2,
-                                            view,
-                                            checkLast)
-                                    }
-                                    listDay[3] -> {
-                                        returnTheMoneyOfOneBill(item.key.toString(),
-                                            3,
-                                            view,
-                                            checkLast)
-                                    }
-                                    listDay[4] -> {
-                                        returnTheMoneyOfOneBill(item.key.toString(),
-                                            4,
-                                            view,
-                                            checkLast)
-                                    }
-                                    listDay[5] -> {
-                                        returnTheMoneyOfOneBill(item.key.toString(),
-                                            5,
-                                            view,
-                                            checkLast)
-                                    }
-                                    listDay[6] -> {
-                                        returnTheMoneyOfOneBill(item.key.toString(),
-                                            6,
-                                            view,
-                                            checkLast)
-                                    }
-                                }
+                                returnTheMoneyOfOneBill(item.key.toString(),
+                                    sdfDay.format(time),
+                                    view,
+                                    checkLast)
                             } else {
                                 if (checkLast) initChart(view)
                             }
@@ -139,14 +97,14 @@ class ChartFragment : Fragment() {
             })
     }
 
-    fun returnTheMoneyOfOneBill(billID: String, day: Int, view: View, checkLast: Boolean) {
+    fun returnTheMoneyOfOneBill(billID: String, day: String, view: View, checkLast: Boolean) {
         firebaseDB.reference.child("BillInfo")
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.exists()) {
                         for (item in snapshot.children) {
                             if (item.child("Bill_ID").value.toString() == billID) {
-                                listPrice[day] += item.child("Price").value.toString()
+                                listPrice[listDay.indexOf(day)] += item.child("Price").value.toString()
                                     .toInt() * item.child("Count").value.toString().toInt()
                             }
                         }
@@ -180,5 +138,6 @@ class ChartFragment : Fragment() {
         val newDate = calendar.time
         listDay.add(sdfDay.format(newDate))
     }
+
 
 }
