@@ -85,49 +85,42 @@ class ChartFragment : Fragment() {
                                 val time = sdf.parse(item.child("Date_Check_Out").value.toString())
                                 when (sdfDay.format(time)) {
                                     listDay[0] -> {
-                                        listBillID[0].add(item.key.toString())
                                         returnTheMoneyOfOneBill(item.key.toString(),
                                             0,
                                             view,
                                             checkLast)
                                     }
                                     listDay[1] -> {
-                                        listBillID[1].add(item.key.toString())
                                         returnTheMoneyOfOneBill(item.key.toString(),
                                             1,
                                             view,
                                             checkLast)
                                     }
                                     listDay[2] -> {
-                                        listBillID[2].add(item.key.toString())
                                         returnTheMoneyOfOneBill(item.key.toString(),
                                             2,
                                             view,
                                             checkLast)
                                     }
                                     listDay[3] -> {
-                                        listBillID[3].add(item.key.toString())
                                         returnTheMoneyOfOneBill(item.key.toString(),
                                             3,
                                             view,
                                             checkLast)
                                     }
                                     listDay[4] -> {
-                                        listBillID[4].add(item.key.toString())
                                         returnTheMoneyOfOneBill(item.key.toString(),
                                             4,
                                             view,
                                             checkLast)
                                     }
                                     listDay[5] -> {
-                                        listBillID[5].add(item.key.toString())
                                         returnTheMoneyOfOneBill(item.key.toString(),
                                             5,
                                             view,
                                             checkLast)
                                     }
                                     listDay[6] -> {
-                                        listBillID[6].add(item.key.toString())
                                         returnTheMoneyOfOneBill(item.key.toString(),
                                             6,
                                             view,
