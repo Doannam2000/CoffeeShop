@@ -12,9 +12,12 @@ import com.ddwan.coffeeshop.Application.Companion.sdfDay
 import com.ddwan.coffeeshop.R
 import com.ddwan.coffeeshop.model.LoadingDialog
 import com.github.mikephil.charting.charts.BarChart
+import com.github.mikephil.charting.components.AxisBase
+import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -40,21 +43,38 @@ class ChartFragment : Fragment() {
         val barchart: BarChart = view.findViewById(R.id.chart)
         val list = arrayListOf(
             BarEntry(0f, listPrice[0].toFloat()),
-            BarEntry(2f, listPrice[1].toFloat()),
-            BarEntry(4f, listPrice[2].toFloat()),
-            BarEntry(6f, listPrice[3].toFloat()),
-            BarEntry(8f, listPrice[4].toFloat()),
-            BarEntry(10f, listPrice[5].toFloat()),
-            BarEntry(12f, listPrice[6].toFloat()))
-        val barDataset = BarDataSet(list, "Doanh thu")
+            BarEntry(1f, listPrice[1].toFloat()),
+            BarEntry(2f, listPrice[2].toFloat()),
+            BarEntry(3f, listPrice[3].toFloat()),
+            BarEntry(4f, listPrice[4].toFloat()),
+            BarEntry(5f, listPrice[5].toFloat()),
+            BarEntry(6f, listPrice[6].toFloat()))
+        val barDataset = BarDataSet(list, "")
         barDataset.colors =
-            mutableListOf(Color.BLUE, Color.CYAN, Color.RED, Color.GRAY, Color.GREEN)
+            mutableListOf(Color.LTGRAY, Color.CYAN, Color.RED, Color.GRAY, Color.GREEN,Color.MAGENTA,Color.YELLOW)
         barDataset.valueTextColor = Color.BLACK
         barDataset.valueTextSize = 10f
         val barData = BarData(barDataset)
-        barchart.setFitBars(true)
+
+
+        barchart.setFitBars(false)
+        barchart.xAxis.setDrawGridLines(false)
+        barchart.xAxis.setDrawAxisLine(false)
+        barchart.axisRight.isEnabled = false
+        barchart.legend.isEnabled = false
+        barchart.description.isEnabled = false
+
         barchart.data = barData
-        barchart.animateY(2000)
+        barchart.animateY(3000)
+
+
+        val xAxis: XAxis = barchart.xAxis
+        xAxis.position = XAxis.XAxisPosition.BOTTOM_INSIDE
+        xAxis.valueFormatter = MyAxisFormatter()
+        xAxis.setDrawLabels(true)
+        xAxis.granularity = 1f
+        xAxis.labelRotationAngle = +90f
+
         dialogLoad.stopLoadingDialog()
     }
 
@@ -121,5 +141,16 @@ class ChartFragment : Fragment() {
         calendar.add(Calendar.DAY_OF_YEAR, i)
         val newDate = calendar.time
         listDay.add(sdfDay.format(newDate))
+    }
+
+    inner class MyAxisFormatter : IndexAxisValueFormatter() {
+        override fun getAxisLabel(value: Float, axis: AxisBase?): String {
+            val index = value.toInt()
+            return if (index < listDay.size) {
+               listDay[index]
+            } else {
+                ""
+            }
+        }
     }
 }
