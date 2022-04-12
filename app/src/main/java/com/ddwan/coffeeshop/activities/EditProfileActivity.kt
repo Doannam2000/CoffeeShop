@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Toast
@@ -24,11 +25,12 @@ class EditProfileActivity : AppCompatActivity() {
     private val dialog by lazy { LoadingDialog(this) }
     private lateinit var imageUrl: Uri
     private lateinit var firebaseUserID: String
-    var edit = false
-    var account = Account()
-    val model by lazy {
+    private var edit = false
+    private var account = Account()
+    private val model by lazy {
         ViewModelProvider(this).get(MyViewModel::class.java)
     }
+    private val role by lazy { resources.getStringArray(R.array.Role) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,7 +40,6 @@ class EditProfileActivity : AppCompatActivity() {
             account = bundle.getSerializable("account") as Account
             edit = bundle.getBoolean("check")
         }
-        val role = resources.getStringArray(R.array.Role)
         val arrayAdapter = ArrayAdapter(this, R.layout.text_view_dropdown, role)
         edtRole.setAdapter(arrayAdapter)
         if (edit) {
@@ -60,6 +61,7 @@ class EditProfileActivity : AppCompatActivity() {
                 dialog.startLoadingDialog()
                 registerUser()
             }
+
         btnImage.setOnClickListener {
             selectImage()
         }
@@ -149,7 +151,7 @@ class EditProfileActivity : AppCompatActivity() {
             Toast.makeText(this, "Thông tin không được để trống", Toast.LENGTH_SHORT).show()
         } else {
             mAuth.createUserWithEmailAndPassword(edtEmail.text.toString(),
-                edtPassword.text.toString()).addOnCompleteListener { it ->
+                edtPassword.text.toString()).addOnCompleteListener {
                 if (it.isSuccessful) {
                     firebaseUserID = mAuth.currentUser!!.uid
                     if (this::imageUrl.isInitialized) uploadImage(firebaseUserID)
@@ -167,7 +169,7 @@ class EditProfileActivity : AppCompatActivity() {
         edtAddress.setText(account.address)
         edtName.setText(account.name)
         edtPhone.setText(account.phone)
-        edtRole.setText(account.role)
+        edtRole.setText(account.role,false)
         if (account.gender) {
             radioMale.isChecked = true
         } else

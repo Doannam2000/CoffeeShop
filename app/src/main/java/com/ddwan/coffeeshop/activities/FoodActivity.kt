@@ -141,7 +141,7 @@ class FoodActivity : AppCompatActivity() {
             radioDrink.isChecked = true
         else
             radioFood.isChecked = true
-        edtPrice.setText(food.price)
+        edtPrice.setText(food.price.toString())
         edtDescription.setText(food.description)
     }
 

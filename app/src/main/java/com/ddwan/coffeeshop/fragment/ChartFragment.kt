@@ -2,12 +2,10 @@ package com.ddwan.coffeeshop.fragment
 
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.ddwan.coffeeshop.Application
 import com.ddwan.coffeeshop.Application.Companion.firebaseDB
 import com.ddwan.coffeeshop.Application.Companion.sdf
 import com.ddwan.coffeeshop.Application.Companion.sdfDay
@@ -17,24 +15,17 @@ import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
-import com.github.mikephil.charting.data.Entry
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
-import java.lang.Exception
 import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 
 
 class ChartFragment : Fragment() {
-
-
-    private val listBillID = ArrayList<ArrayList<String>>()
     private val listDay = ArrayList<String>()
     private val listPrice = ArrayList<Int>()
     private val dialogLoad by lazy { LoadingDialog(requireActivity()) }
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -47,27 +38,25 @@ class ChartFragment : Fragment() {
 
     fun initChart(view: View) {
         val barchart: BarChart = view.findViewById(R.id.chart)
-        val list = arrayListOf<BarEntry>(
+        val list = arrayListOf(
             BarEntry(0f, listPrice[0].toFloat()),
-            BarEntry(1f, listPrice[1].toFloat()),
-            BarEntry(2f, listPrice[2].toFloat()),
-            BarEntry(3f, listPrice[3].toFloat()),
-            BarEntry(4f, listPrice[4].toFloat()),
-            BarEntry(5f, listPrice[5].toFloat()),
-            BarEntry(6f, listPrice[6].toFloat()))
-
+            BarEntry(2f, listPrice[1].toFloat()),
+            BarEntry(4f, listPrice[2].toFloat()),
+            BarEntry(6f, listPrice[3].toFloat()),
+            BarEntry(8f, listPrice[4].toFloat()),
+            BarEntry(10f, listPrice[5].toFloat()),
+            BarEntry(12f, listPrice[6].toFloat()))
         val barDataset = BarDataSet(list, "Doanh thu")
         barDataset.colors =
             mutableListOf(Color.BLUE, Color.CYAN, Color.RED, Color.GRAY, Color.GREEN)
         barDataset.valueTextColor = Color.BLACK
-        barDataset.valueTextSize = 16f
+        barDataset.valueTextSize = 10f
         val barData = BarData(barDataset)
         barchart.setFitBars(true)
         barchart.data = barData
         barchart.animateY(2000)
         dialogLoad.stopLoadingDialog()
     }
-
 
     private fun loadData(view: View) {
         dialogLoad.startLoadingDialog()
@@ -118,16 +107,11 @@ class ChartFragment : Fragment() {
             })
     }
 
-
     private fun returnsTheLast7Days() {
-        listPrice.add(0)
-        for (i in 1..6) {
+        for (i in 6 downTo 0) {
             addDay(-i)
-            listBillID.add(ArrayList())
             listPrice.add(0)
-            Log.d("check $i", listDay[i - 1])
         }
-        listDay.add(sdfDay.format(Calendar.getInstance().time))
     }
 
     private fun addDay(i: Int) {
@@ -138,6 +122,4 @@ class ChartFragment : Fragment() {
         val newDate = calendar.time
         listDay.add(sdfDay.format(newDate))
     }
-
-
 }
