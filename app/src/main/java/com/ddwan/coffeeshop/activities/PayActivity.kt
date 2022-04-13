@@ -15,7 +15,7 @@ import com.ddwan.coffeeshop.Application.Companion.TYPE_PLUS
 import com.ddwan.coffeeshop.Application.Companion.firebaseDB
 import com.ddwan.coffeeshop.Application.Companion.numberFormatter
 import com.ddwan.coffeeshop.R
-import com.ddwan.coffeeshop.adapter.BillAdapter
+import com.ddwan.coffeeshop.adapter.PayAdapter
 import com.ddwan.coffeeshop.model.*
 import com.ddwan.coffeeshop.viewmodel.MyViewModel
 import com.google.firebase.database.DataSnapshot
@@ -35,7 +35,7 @@ class PayActivity : AppCompatActivity() {
         ViewModelProvider(this).get(MyViewModel::class.java)
     }
     private var list = ArrayList<BillInfo>()
-    private val adapter by lazy { BillAdapter(list, this) }
+    private val adapter by lazy { PayAdapter(list, this) }
     private var changeInfo = false
     private var listItemDelete = ArrayList<BillInfo>()
 
@@ -69,9 +69,16 @@ class PayActivity : AppCompatActivity() {
                     .setPositiveButton("Có") { _, _ ->
                         updateDB(false)
                     }
-                    .setNegativeButton("Không") { _, _ -> finish() }.show()
-            } else
+                    .setNegativeButton("Không") { _, _ ->
+                        finish()
+                        overridePendingTransition(R.anim.left_to_right,
+                            R.anim.left_to_right_out)
+                    }.show()
+            } else {
                 finish()
+                overridePendingTransition(R.anim.left_to_right,
+                    R.anim.left_to_right_out)
+            }
         }
         btnPay.setOnClickListener {
             updateDB(true)
@@ -213,8 +220,10 @@ class PayActivity : AppCompatActivity() {
             }
             if (list.size == 0) {
                 updateTableToEmpty(listItemDelete[0].billId, true)
-            }else{
+            } else {
                 finish()
+                overridePendingTransition(R.anim.left_to_right,
+                    R.anim.left_to_right_out)
             }
         }
 
@@ -236,7 +245,11 @@ class PayActivity : AppCompatActivity() {
                         .setValue(true)
                     firebaseDB.reference.child("Table")
                         .child(snapshot.child("Table_ID").value.toString()).child("Description")
-                        .setValue("Trống").addOnCompleteListener { finish() }
+                        .setValue("Trống").addOnCompleteListener {
+                            finish()
+                            overridePendingTransition(R.anim.left_to_right,
+                                R.anim.left_to_right_out)
+                        }
                     if (deleteBill) {
                         snapshot.ref.removeValue()
                     }

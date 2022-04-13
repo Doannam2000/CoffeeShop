@@ -13,7 +13,6 @@ import com.ddwan.coffeeshop.model.Table
 
 class TableAdapter(var list: ArrayList<Table>) : RecyclerView.Adapter<TableAdapter.ViewHolder>() {
 
-
     lateinit var itemClick: (position: Int) -> Unit
     fun setCallBack(click: (position: Int) -> Unit) {
         itemClick = click

@@ -6,15 +6,27 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.ddwan.coffeeshop.Application
+import com.ddwan.coffeeshop.Application.Companion.firebaseDB
 import com.ddwan.coffeeshop.R
 import com.ddwan.coffeeshop.activities.EmployeeActivity
 import com.ddwan.coffeeshop.activities.MenuActivity
 import com.ddwan.coffeeshop.activities.TableActivity
+import com.ddwan.coffeeshop.adapter.BillAdapter
+import com.ddwan.coffeeshop.model.Bill
 import com.denzcoskun.imageslider.constants.ScaleTypes
 import com.denzcoskun.imageslider.models.SlideModel
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
+import kotlinx.android.synthetic.main.activity_bill.*
 import kotlinx.android.synthetic.main.fragment_home.view.*
 
 class HomeFragment : Fragment() {
+
+    val list = ArrayList<Bill>()
+    private val adapter by lazy { BillAdapter(list) }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -42,6 +54,36 @@ class HomeFragment : Fragment() {
             activity?.overridePendingTransition(R.anim.right_to_left,
                 R.anim.right_to_left_out)
         }
+        view.recyclerViewBillInHome.layoutManager = LinearLayoutManager(requireContext())
+        view.recyclerViewBillInHome.setHasFixedSize(true)
+        view.recyclerViewBillInHome.adapter = adapter
+        loadData()
         return view
     }
+
+    private fun loadData() {
+        firebaseDB.reference.child("Bill")
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.exists()) {
+                        for ((i, item) in snapshot.children.reversed().withIndex()) {
+                            if ((item.child("Status").value as Boolean)) {
+                                list.add(Bill(item.key.toString(),
+                                    item.child("Date_Check_In").value.toString(),
+                                    item.child("Date_Check_Out").value.toString(),
+                                    item.child("Table_ID").value.toString(),
+                                    item.child("Status").value as Boolean))
+                            }
+                            if (i == 4)
+                                break
+                        }
+                        adapter.notifyDataSetChanged()
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                }
+            })
+    }
+
 }
