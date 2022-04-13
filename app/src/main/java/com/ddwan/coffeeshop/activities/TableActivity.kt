@@ -13,7 +13,7 @@ import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.ddwan.coffeeshop.Application
+import com.ddwan.coffeeshop.Application.Companion.firebaseDB
 import com.ddwan.coffeeshop.R
 import com.ddwan.coffeeshop.adapter.TableAdapter
 import com.ddwan.coffeeshop.model.LoadingDialog
@@ -61,7 +61,7 @@ class TableActivity : AppCompatActivity() {
 
     private fun initRecyclerEmpty() {
         adapterEmpty.setCallBack {
-            val intent = Intent(this, BillActivity::class.java)
+            val intent = Intent(this, PayActivity::class.java)
             intent.putExtra("TableID", listEmpty[it].tableId)
             intent.putExtra("TableName", listEmpty[it].tableName)
             intent.putExtra("Status", true)
@@ -75,7 +75,7 @@ class TableActivity : AppCompatActivity() {
 
     private fun initRecyclerLive() {
         adapterLiveTable.setCallBack {
-            val intent = Intent(this, BillActivity::class.java)
+            val intent = Intent(this, PayActivity::class.java)
             intent.putExtra("TableID", listLiveTable[it].tableId)
             intent.putExtra("TableName", listLiveTable[it].tableName)
             intent.putExtra("Status", false)
@@ -115,7 +115,7 @@ class TableActivity : AppCompatActivity() {
         hashMap["Name"] = name
         hashMap["Description"] = "Trống"
         hashMap["Status"] = true
-        Application.firebaseDB.reference.child("Table").child(id)
+        firebaseDB.reference.child("Table").child(id)
             .updateChildren(hashMap).addOnCompleteListener {
                 if (it.isSuccessful) {
                     listEmpty.add(Table(id, name, "Trống", true))
@@ -127,7 +127,7 @@ class TableActivity : AppCompatActivity() {
     private fun loadData() {
         dialogLoad.startLoadingDialog()
         val list = ArrayList<Table>()
-        Application.firebaseDB.getReference("Table")
+        firebaseDB.getReference("Table")
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.exists()) {

@@ -6,87 +6,10 @@
     android:layout_height="match_parent"
     tools:context=".activities.BillActivity">
 
-    <ImageView
-        android:id="@+id/btnPrevious"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/dimen_12dp"
-        android:src="@drawable/ic_baseline_arrow_back_24"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <TextView
-        android:id="@+id/tvNameTable"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Bàn 1"
-        android:textColor="@color/black"
-        android:textSize="@dimen/dimen_18sp"
-        app:layout_constraintBottom_toBottomOf="@+id/btnPrevious"
-        app:layout_constraintEnd_toEndOf="@+id/image_add_bill"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/btnPrevious" />
-
-    <ImageView
-        android:id="@+id/image_add_bill"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/dimen_12dp"
-        android:src="@drawable/ic_baseline_add_24"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/textTotal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Tổng :"
-        android:textColor="@color/black"
-        android:textSize="@dimen/dimen_22dp"
-        app:layout_constraintStart_toStartOf="@+id/btnPay"
-        app:layout_constraintTop_toTopOf="@+id/txtTotal" />
-
-    <TextView
-        android:id="@+id/txtTotal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/dimen_15dp"
-        android:text="10000đ"
-        android:textColor="@color/red"
-        android:textSize="@dimen/dimen_22sp"
-        app:layout_constraintBottom_toTopOf="@+id/btnPay"
-        app:layout_constraintEnd_toEndOf="@+id/btnPay" />
-
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/btnPay"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/dimen_15dp"
-        android:background="@color/red"
-        android:text="Thanh toán"
-        android:textColor="@color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
-        android:id="@+id/emptyTable"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Bàn trống"
-        android:textSize="@dimen/dimen_30sp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView_Bill"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginVertical="10dp"
-        app:layout_constraintBottom_toTopOf="@+id/textTotal"
-        app:layout_constraintTop_toBottomOf="@+id/btnPrevious" />
-
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="DDaay la 1 man hinh test"
+        android:textSize="@dimen/dimen_30sp" />
 </androidx.constraintlayout.widget.ConstraintLayout>

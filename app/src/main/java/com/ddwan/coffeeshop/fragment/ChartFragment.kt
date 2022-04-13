@@ -1,5 +1,7 @@
 package com.ddwan.coffeeshop.fragment
 
+import android.app.DatePickerDialog
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -10,6 +12,7 @@ import com.ddwan.coffeeshop.Application.Companion.firebaseDB
 import com.ddwan.coffeeshop.Application.Companion.sdf
 import com.ddwan.coffeeshop.Application.Companion.sdfDay
 import com.ddwan.coffeeshop.R
+import com.ddwan.coffeeshop.activities.BillActivity
 import com.ddwan.coffeeshop.model.LoadingDialog
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.components.AxisBase
@@ -21,7 +24,9 @@ import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
+import kotlinx.android.synthetic.main.fragment_chart.view.*
 import java.util.*
+import javax.xml.datatype.DatatypeConstants.MONTHS
 import kotlin.collections.ArrayList
 
 
@@ -36,6 +41,21 @@ class ChartFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_chart, container, false)
         loadData(view)
+        val cal = Calendar.getInstance()
+        view.txtDay.text = sdfDay.format(cal.time)
+        view.txtDay.setOnClickListener {
+            val year = cal.get(Calendar.YEAR)
+            val month = cal.get(Calendar.MONTH)
+            val day = cal.get(Calendar.DAY_OF_MONTH)
+            val datePicker =
+                DatePickerDialog(requireContext(), { _, year, monthOfYear, dayOfMonth ->
+                    cal.set(Calendar.YEAR, year)
+                    cal.set(Calendar.MONTH, monthOfYear)
+                    cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+                    startActivity(Intent(requireContext(),BillActivity::class.java))
+                }, year, month, day)
+            datePicker.show()
+        }
         return view
     }
 
@@ -51,7 +71,13 @@ class ChartFragment : Fragment() {
             BarEntry(6f, listPrice[6].toFloat()))
         val barDataset = BarDataSet(list, "")
         barDataset.colors =
-            mutableListOf(Color.LTGRAY, Color.CYAN, Color.RED, Color.GRAY, Color.GREEN,Color.MAGENTA,Color.YELLOW)
+            mutableListOf(Color.LTGRAY,
+                Color.CYAN,
+                Color.RED,
+                Color.GRAY,
+                Color.GREEN,
+                Color.MAGENTA,
+                Color.YELLOW)
         barDataset.valueTextColor = Color.BLACK
         barDataset.valueTextSize = 10f
         val barData = BarData(barDataset)
@@ -66,7 +92,6 @@ class ChartFragment : Fragment() {
 
         barchart.data = barData
         barchart.animateY(3000)
-
 
         val xAxis: XAxis = barchart.xAxis
         xAxis.position = XAxis.XAxisPosition.BOTTOM_INSIDE
@@ -88,10 +113,11 @@ class ChartFragment : Fragment() {
                     if (snapshot.exists()) {
                         for ((i, item) in snapshot.children.withIndex()) {
                             if (i == snapshot.childrenCount.toInt() - 1) checkLast = true
+                            val time = sdf.parse(item.child("Date_Check_Out").value.toString())
+                            val index = listDay.indexOf(sdfDay.format(time))
                             if ((item.child("Status").value as Boolean)) {
-                                val time = sdf.parse(item.child("Date_Check_Out").value.toString())
                                 returnTheMoneyOfOneBill(item.key.toString(),
-                                    sdfDay.format(time),
+                                    index,
                                     view,
                                     checkLast)
                             } else {
@@ -106,17 +132,18 @@ class ChartFragment : Fragment() {
             })
     }
 
-    fun returnTheMoneyOfOneBill(billID: String, day: String, view: View, checkLast: Boolean) {
+    fun returnTheMoneyOfOneBill(billID: String, day: Int, view: View, checkLast: Boolean) {
         firebaseDB.reference.child("BillInfo")
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.exists()) {
-                        for (item in snapshot.children) {
-                            if (item.child("Bill_ID").value.toString() == billID) {
-                                listPrice[listDay.indexOf(day)] += item.child("Price").value.toString()
-                                    .toInt() * item.child("Count").value.toString().toInt()
+                        if (day != -1)
+                            for (item in snapshot.children) {
+                                if (item.child("Bill_ID").value.toString() == billID) {
+                                    listPrice[day] += item.child("Price").value.toString()
+                                        .toInt() * item.child("Count").value.toString().toInt()
+                                }
                             }
-                        }
                     }
                     if (checkLast) initChart(view)
                 }
@@ -147,7 +174,7 @@ class ChartFragment : Fragment() {
         override fun getAxisLabel(value: Float, axis: AxisBase?): String {
             val index = value.toInt()
             return if (index < listDay.size) {
-               listDay[index]
+                listDay[index]
             } else {
                 ""
             }
