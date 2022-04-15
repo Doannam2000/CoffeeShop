@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ddwan.coffeeshop.Application
+import com.ddwan.coffeeshop.Application.Companion.firebaseDB
 import com.ddwan.coffeeshop.R
 import com.ddwan.coffeeshop.adapter.EmployeeAdapter
 import com.ddwan.coffeeshop.model.Account
@@ -46,7 +47,7 @@ class EmployeeActivity : AppCompatActivity() {
 
     private fun loadData() {
         val listP = ArrayList<Account>()
-        Application.firebaseDB.getReference("Users")
+        firebaseDB.getReference("Users")
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.exists()) {

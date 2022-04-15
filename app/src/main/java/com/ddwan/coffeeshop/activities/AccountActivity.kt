@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import com.ddwan.coffeeshop.Application
 import com.ddwan.coffeeshop.Application.Companion.accountLogin
+import com.ddwan.coffeeshop.Application.Companion.firebaseDB
 import com.ddwan.coffeeshop.R
 import com.ddwan.coffeeshop.model.Account
 import com.ddwan.coffeeshop.viewmodel.MyViewModel
@@ -85,7 +86,7 @@ class AccountActivity : AppCompatActivity() {
     }
 
     private fun loadInfoUser() {
-        Application.firebaseDB.getReference("Users").child(account.id)
+        firebaseDB.getReference("Users").child(account.id)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     account.name = snapshot.child("Name").value.toString()
@@ -127,7 +128,7 @@ class AccountActivity : AppCompatActivity() {
     }
 
     private fun deleteAccount(id: String) {
-        Application.firebaseDB.reference.child("Users").child(id)
+        firebaseDB.reference.child("Users").child(id)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.exists()) {

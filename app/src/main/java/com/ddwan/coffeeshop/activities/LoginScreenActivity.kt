@@ -1,5 +1,6 @@
 package com.ddwan.coffeeshop.activities
 
+import android.app.AlertDialog
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -8,6 +9,7 @@ import com.ddwan.coffeeshop.R
 import kotlinx.android.synthetic.main.activity_login_screen.*
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.util.Patterns
 import android.view.View
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -19,6 +21,7 @@ import com.ddwan.coffeeshop.model.LoadingDialog
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
+import java.util.regex.Pattern
 
 
 class LoginScreenActivity : AppCompatActivity() {
@@ -29,39 +32,42 @@ class LoginScreenActivity : AppCompatActivity() {
         btnLogin.setOnClickListener {
             if (email.text.toString().isEmpty() || password.text.toString().isEmpty())
                 Toast.makeText(this, "Vui lòng điền đủ thông tin !", Toast.LENGTH_SHORT).show()
+            else if (!Patterns.EMAIL_ADDRESS.matcher(email.text.toString()).matches())
+                Toast.makeText(this, "Định dạng không đúng !", Toast.LENGTH_SHORT).show()
             else {
                 dialog.startLoadingDialog()
                 login()
             }
         }
-        help.setOnClickListener {
-            if (ContextCompat.checkSelfPermission(this,
-                    android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED
-            ) {
-                ActivityCompat.requestPermissions(this,
-                    arrayOf(android.Manifest.permission.CALL_PHONE),
-                    101)
-            } else {
-                val intent = Intent(Intent.ACTION_CALL, Uri.parse("tel:" + "0397482016"))
-                startActivity(intent)
-            }
-        }
-    }
+        forgotPass.setOnClickListener {
+            val builder = AlertDialog.Builder(this)
+            builder.setMessage("Bạn muốn lấy lại mật khẩu tài khoản ${email.text.toString()} ?")
+                .setPositiveButton("Có") { _, _ ->
+                    when {
+                        email.text.toString().isEmpty() -> Toast.makeText(this,
+                            "Vui lòng điền email cần lấy lại mật khẩu !",
+                            Toast.LENGTH_SHORT).show()
+                        !Patterns.EMAIL_ADDRESS.matcher(email.text.toString())
+                            .matches() -> Toast.makeText(
+                            this,
+                            "Định dạng không đúng !",
+                            Toast.LENGTH_SHORT).show()
+                        else -> mAuth.sendPasswordResetEmail(email.text.toString())
+                            .addOnCompleteListener {
+                                if (it.isSuccessful)
+                                    Toast.makeText(this,
+                                        "Mật khẩu đã được gửi đến email của bạn !",
+                                        Toast.LENGTH_LONG).show()
+                                else
+                                    Toast.makeText(this,
+                                        "Có lỗi, xin hãy thử lại !",
+                                        Toast.LENGTH_LONG).show()
+                            }
+                    }
+                }
+                .setNegativeButton("Không") { _, _ -> }.show()
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray,
-    ) {
-        if (requestCode == 101) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                val intent = Intent(Intent.ACTION_CALL, Uri.parse("tel:" + "0397482016"))
-                startActivity(intent)
-            } else {
-                Toast.makeText(this, "Không đủ quyền để thực hiện !!!", Toast.LENGTH_SHORT).show()
-            }
         }
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
     override fun onBackPressed() {
