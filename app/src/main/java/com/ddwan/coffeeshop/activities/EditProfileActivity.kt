@@ -1,6 +1,9 @@
 package com.ddwan.coffeeshop.activities
 
+import android.app.AlertDialog
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -19,6 +22,10 @@ import com.ddwan.coffeeshop.model.LoadingDialog
 import com.ddwan.coffeeshop.viewmodel.MyViewModel
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.android.synthetic.main.activity_edit_profile.*
+import kotlinx.android.synthetic.main.custom_dialog_change_password.view.*
+import kotlinx.android.synthetic.main.custom_editext_dialog.view.*
+import kotlinx.android.synthetic.main.custom_editext_dialog.view.cancel
+import kotlinx.android.synthetic.main.custom_editext_dialog.view.oke
 
 class EditProfileActivity : AppCompatActivity() {
 
@@ -45,7 +52,7 @@ class EditProfileActivity : AppCompatActivity() {
         if (edit) {
             loadInfo()
             btnChangePassword.setOnClickListener {
-                Toast.makeText(this, "Hi", Toast.LENGTH_LONG).show()
+                createDialogChangePass()
             }
             btnSave.setOnClickListener {
                 if (checkTextChange())
@@ -156,6 +163,8 @@ class EditProfileActivity : AppCompatActivity() {
                     firebaseUserID = mAuth.currentUser!!.uid
                     if (this::imageUrl.isInitialized) uploadImage(firebaseUserID)
                     insertDataUser(firebaseUserID)
+                    mAuth.signOut()
+                    mAuth.signInWithEmailAndPassword(accountLogin.email, accountLogin.password)
                 }
             }
         }
@@ -169,10 +178,10 @@ class EditProfileActivity : AppCompatActivity() {
         edtAddress.setText(account.address)
         edtName.setText(account.name)
         edtPhone.setText(account.phone)
-        edtRole.setText(account.role,false)
-        if (account.gender) {
+        edtRole.setText(account.role, false)
+        if (account.gender)
             radioMale.isChecked = true
-        } else
+        else
             radioFemale.isChecked = true
         model.loadImage(this, account.imageUrl, account.id, avatar)
         edtEmail.isEnabled = false
@@ -207,4 +216,58 @@ class EditProfileActivity : AppCompatActivity() {
         acc.gender = radioMale.isChecked
     }
 
+    private fun createDialogChangePass() {
+        val viewDialog = View.inflate(this, R.layout.custom_dialog_change_password, null)
+        val builder = AlertDialog.Builder(this)
+        builder.setView(viewDialog)
+        val dialog = builder.create()
+        dialog.show()
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        viewDialog.cancel.setOnClickListener {
+            dialog.dismiss()
+        }
+        viewDialog.oke.setOnClickListener {
+            if (viewDialog.edtCheckNewPass.text.isEmpty() ||
+                viewDialog.edtCurrentPass.text.isEmpty() ||
+                viewDialog.edtNewPass.text.isEmpty()
+            ) {
+                Toast.makeText(this, "Thông tin không được để trống", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            if (viewDialog.edtCurrentPass.text.toString() != accountLogin.password) {
+                Toast.makeText(this, "Mật khẩu hiện tại không đúng", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            if (viewDialog.edtCurrentPass.text.toString() == viewDialog.edtNewPass.text.toString()) {
+                Toast.makeText(this,
+                    "Mật khẩu mới không được trùng với mật khẩu hiện tại !",
+                    Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            if (viewDialog.edtCheckNewPass.text.toString() != viewDialog.edtNewPass.text.toString()) {
+                Toast.makeText(this, "Mật khẩu mới không khớp !", Toast.LENGTH_SHORT)
+                    .show()
+                return@setOnClickListener
+            }
+            if (viewDialog.edtNewPass.text.toString().length < 6) {
+                Toast.makeText(this, "Mật khẩu phải có 6 kí tự trở lên !", Toast.LENGTH_SHORT)
+                    .show()
+                return@setOnClickListener
+            }
+            dialog.dismiss()
+            mAuth.currentUser!!.updatePassword(viewDialog.edtCheckNewPass.text.toString())
+                .addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        Toast.makeText(this,
+                            "Đổi mật khẩu thành công !",
+                            Toast.LENGTH_SHORT).show()
+                        accountLogin.password = viewDialog.edtCheckNewPass.text.toString()
+                    } else {
+                        Toast.makeText(this,
+                            "Đã xảy ra lỗi, xin thử lại sau !",
+                            Toast.LENGTH_SHORT).show()
+                    }
+                }
+        }
+    }
 }

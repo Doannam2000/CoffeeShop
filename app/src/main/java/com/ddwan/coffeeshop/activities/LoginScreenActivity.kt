@@ -127,9 +127,11 @@ class LoginScreenActivity : AppCompatActivity() {
             .addOnCompleteListener {
                 if (it.isSuccessful) {
                     getInfoUser()
-                } else
+                } else {
                     Toast.makeText(this, "Sai tài khoản hoặc mật khẩu", Toast.LENGTH_SHORT)
                         .show()
+                    dialog.stopLoadingDialog()
+                }
             }
     }
 }
