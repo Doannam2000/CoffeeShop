@@ -7,7 +7,6 @@ import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Toast
@@ -23,7 +22,6 @@ import com.ddwan.coffeeshop.viewmodel.MyViewModel
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.android.synthetic.main.activity_edit_profile.*
 import kotlinx.android.synthetic.main.custom_dialog_change_password.view.*
-import kotlinx.android.synthetic.main.custom_editext_dialog.view.*
 import kotlinx.android.synthetic.main.custom_editext_dialog.view.cancel
 import kotlinx.android.synthetic.main.custom_editext_dialog.view.oke
 

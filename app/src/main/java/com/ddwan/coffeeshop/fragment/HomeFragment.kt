@@ -62,6 +62,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun loadData() {
+        list.clear()
         firebaseDB.reference.child("Bill")
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {

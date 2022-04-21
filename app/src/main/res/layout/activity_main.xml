@@ -47,15 +47,15 @@
                 android:src="@drawable/logo_1" />
         </androidx.cardview.widget.CardView>
 
+        <!--        android:name="androidx.navigation.fragment.NavHostFragment"-->
+        <!--        app:defaultNavHost="true"-->
+        <!--        app:navGraph="@navigation/nav_graph"-->
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/fragmentContainerView"
-            android:name="androidx.navigation.fragment.NavHostFragment"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            app:defaultNavHost="true"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/navMenu"
-            app:navGraph="@navigation/nav_graph" />
+            app:layout_constraintTop_toBottomOf="@+id/navMenu" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

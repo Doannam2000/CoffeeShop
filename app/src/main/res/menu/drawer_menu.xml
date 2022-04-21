@@ -11,28 +11,25 @@
             android:icon="@drawable/ic_baseline_bar_chart_24"
             android:title="Thống kê" />
     </group>
-        <item android:title="Quản lý">
-            <menu>
-                <group android:checkableBehavior="single">
-
-                    <item
-                        android:id="@+id/tableFragment"
-                        android:icon="@drawable/ic_baseline_airline_seat_recline_normal_24"
-                        android:title="Quản lý bàn" />
-                    <item
-                        android:id="@+id/menuFragment"
-                        android:icon="@drawable/ic_baseline_assignment_24"
-                        android:title="Quản lý menu" />
-                    <item
-                        android:id="@+id/employeeFragment"
-                        android:icon="@drawable/ic_outline_account_circle_24"
-                        android:title="Quản lý nhân viên" />
-                </group>
-            </menu>
-
-        </item>
-        <item android:title="Hỗ trợ">
-            <menu>
+    <item android:title="Quản lý">
+        <menu>
+                <item
+                    android:id="@+id/tableFragment"
+                    android:icon="@drawable/ic_baseline_airline_seat_recline_normal_24"
+                    android:title="Quản lý bàn" />
+                <item
+                    android:id="@+id/menuFragment"
+                    android:icon="@drawable/ic_baseline_assignment_24"
+                    android:title="Quản lý menu" />
+                <item
+                    android:id="@+id/employeeFragment"
+                    android:icon="@drawable/ic_outline_account_circle_24"
+                    android:title="Quản lý nhân viên" />
+        </menu>
+    </item>
+    <item android:title="Hỗ trợ">
+        <menu>
+            <group android:checkableBehavior="single">
                 <item
                     android:id="@+id/itemFacebook"
                     android:icon="@drawable/facebook_logo"
@@ -45,19 +42,16 @@
                     android:id="@+id/infoFragment"
                     android:icon="@drawable/ic_baseline_info_24"
                     android:title="Thông tin ứng dụng" />
-            </menu>
-        </item>
-        <item android:title="Thiết lập">
-            <menu>
-                <item
-                    android:id="@+id/settingFragment"
-                    android:icon="@drawable/ic_baseline_settings_24"
-                    android:title="Cài đặt" />
-                <item
-                    android:id="@+id/itemLogout"
-                    android:icon="@drawable/ic_baseline_logout_24"
-                    android:title="Đăng xuất" />
-            </menu>
-        </item>
+            </group>
+        </menu>
+    </item>
+    <item android:title="Thiết lập">
+        <menu>
+            <item
+                android:id="@+id/itemLogout"
+                android:icon="@drawable/ic_baseline_logout_24"
+                android:title="Đăng xuất" />
+        </menu>
+    </item>
 
 </menu>
