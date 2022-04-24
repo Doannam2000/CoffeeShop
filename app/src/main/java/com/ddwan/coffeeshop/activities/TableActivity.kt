@@ -7,6 +7,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
@@ -19,11 +20,14 @@ import com.ddwan.coffeeshop.adapter.TableAdapter
 import com.ddwan.coffeeshop.model.LoadingDialog
 import com.ddwan.coffeeshop.model.Table
 import com.ddwan.coffeeshop.viewmodel.MyViewModel
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.storage.FirebaseStorage
 import kotlinx.android.synthetic.main.activity_table.*
 import kotlinx.android.synthetic.main.custom_editext_dialog.view.*
+import kotlinx.android.synthetic.main.header.*
 
 class TableActivity : AppCompatActivity() {
     val model by lazy {
@@ -32,8 +36,8 @@ class TableActivity : AppCompatActivity() {
     private val dialogLoad by lazy { LoadingDialog(this) }
     private val listEmpty = ArrayList<Table>()
     private val listLiveTable = ArrayList<Table>()
-    private val adapterEmpty by lazy { TableAdapter(listEmpty) }
-    private val adapterLiveTable by lazy { TableAdapter(listLiveTable) }
+    private val adapterEmpty by lazy { TableAdapter(listEmpty, true) }
+    private val adapterLiveTable by lazy { TableAdapter(listLiveTable, false) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,7 +49,7 @@ class TableActivity : AppCompatActivity() {
 
         val btnAdd: ImageView = findViewById(R.id.image_add_table)
         btnAdd.setOnClickListener {
-            createDialogAddTable()
+            createDialogAddTable(true, null)
         }
         btnPrevious.setOnClickListener {
             finish()
@@ -59,6 +63,13 @@ class TableActivity : AppCompatActivity() {
         loadData()
     }
 
+    override fun onBackPressed() {
+        finish()
+        overridePendingTransition(R.anim.left_to_right,
+            R.anim.left_to_right_out)
+        super.onBackPressed()
+    }
+
     private fun initRecyclerEmpty() {
         adapterEmpty.setCallBack {
             val intent = Intent(this, PayActivity::class.java)
@@ -66,6 +77,8 @@ class TableActivity : AppCompatActivity() {
             intent.putExtra("TableName", listEmpty[it].tableName)
             intent.putExtra("Status", true)
             this.startActivity(intent)
+            overridePendingTransition(R.anim.right_to_left,
+                R.anim.right_to_left_out)
         }
         val recyclerTableEmpty: RecyclerView = findViewById(R.id.recyclerView_empty_table)
         recyclerTableEmpty.layoutManager = GridLayoutManager(this, 3)
@@ -80,6 +93,8 @@ class TableActivity : AppCompatActivity() {
             intent.putExtra("TableName", listLiveTable[it].tableName)
             intent.putExtra("Status", false)
             this.startActivity(intent)
+            overridePendingTransition(R.anim.right_to_left,
+                R.anim.right_to_left_out)
         }
         val recyclerLiveTable: RecyclerView = findViewById(R.id.recyclerView_live_table)
         recyclerLiveTable.layoutManager = GridLayoutManager(this, 3)
@@ -87,13 +102,14 @@ class TableActivity : AppCompatActivity() {
         recyclerLiveTable.adapter = adapterLiveTable
     }
 
-    private fun createDialogAddTable() {
+    private fun createDialogAddTable(check: Boolean, index: Int?) {
         val viewDialog = View.inflate(this, R.layout.custom_editext_dialog, null)
         val builder = AlertDialog.Builder(this)
         builder.setView(viewDialog)
         val dialog = builder.create()
         dialog.show()
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        if (!check) viewDialog.name.setText(listEmpty[index!!].tableName)
         viewDialog.cancel.setOnClickListener {
             dialog.dismiss()
         }
@@ -104,7 +120,12 @@ class TableActivity : AppCompatActivity() {
                     "Tên bàn không được để trống",
                     Toast.LENGTH_SHORT).show()
             } else {
-                addTable(viewDialog.name.text.toString())
+                if (check)
+                    addTable(viewDialog.name.text.toString())
+                else {
+                    if (viewDialog.name.text.toString() != listEmpty[index!!].tableName)
+                        updateTable(index, viewDialog.name.text.toString())
+                }
             }
         }
     }
@@ -115,13 +136,41 @@ class TableActivity : AppCompatActivity() {
         hashMap["Name"] = name
         hashMap["Description"] = "Trống"
         hashMap["Status"] = true
-        firebaseDB.reference.child("Table").child(id)
-            .updateChildren(hashMap).addOnCompleteListener {
-                if (it.isSuccessful) {
-                    listEmpty.add(Table(id, name, "Trống", true))
-                    adapterEmpty.notifyDataSetChanged()
+        firebaseDB.reference.child("Table")
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.exists()) {
+                        var check = true
+                        for (item in snapshot.children) {
+                            if (name.uppercase() == item.child("Name").value.toString()
+                                    .uppercase()
+                            ) {
+                                check = false
+                                break
+                            }
+                        }
+                        if (check) {
+                            firebaseDB.reference.child("Table").child(id)
+                                .updateChildren(hashMap).addOnCompleteListener {
+                                    if (it.isSuccessful) {
+                                        listEmpty.add(Table(id, name, "Trống", true))
+                                        adapterEmpty.notifyItemInserted(listEmpty.size - 1)
+                                    }
+                                }
+                        } else {
+                            Toast.makeText(this@TableActivity,
+                                "Tên bàn đã tồn tại",
+                                Toast.LENGTH_SHORT).show()
+                        }
+                    }
                 }
-            }
+
+                override fun onCancelled(error: DatabaseError) {
+                    TODO("Not yet implemented")
+                }
+
+            })
+
     }
 
     private fun loadData() {
@@ -163,5 +212,87 @@ class TableActivity : AppCompatActivity() {
         adapterEmpty.notifyDataSetChanged()
         adapterLiveTable.notifyDataSetChanged()
         dialogLoad.stopLoadingDialog()
+    }
+
+    override fun onContextItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            123 -> createDialogAddTable(false, item.groupId)
+            124 -> confirmDelete(item.groupId)
+        }
+        return super.onContextItemSelected(item)
+    }
+
+    private fun checkName(name: String): Boolean {
+        for (item in listEmpty) {
+            if (name.uppercase() == item.tableName.uppercase()) {
+                return false
+            }
+        }
+        for (item in listLiveTable) {
+            if (name.uppercase() == item.tableName.uppercase()) {
+                return false
+            }
+        }
+        return true
+    }
+
+    private fun updateTable(index: Int, name: String) {
+        if (checkName(name)) {
+            firebaseDB.reference.child("Table").child(listEmpty[index].tableId)
+                .child("Name")
+                .setValue(name)
+                .addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        listEmpty[index].tableName = name
+                        adapterEmpty.notifyItemChanged(index)
+                        Toast.makeText(this@TableActivity,
+                            "Thực hiện thao tác thành công !",
+                            Toast.LENGTH_LONG)
+                            .show()
+                    }
+                }
+        } else {
+            Toast.makeText(this@TableActivity,
+                "Tên bàn đã tồn tại",
+                Toast.LENGTH_SHORT).show()
+        }
+    }
+
+
+    private fun confirmDelete(index: Int) {
+        val builder = AlertDialog.Builder(this)
+        builder.setMessage("Bạn có chắc muốn xóa ${listEmpty[index].tableName} ?")
+            .setPositiveButton("Có") { _, _ ->
+                deleteTable(index)
+            }
+            .setNegativeButton("Không") { _, _ -> }.show()
+    }
+
+    private fun deleteTable(index: Int) {
+        val id = listEmpty[index].tableId
+        firebaseDB.reference.child("Table").child(id)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.exists()) {
+                        snapshot.ref.removeValue().addOnCompleteListener { i ->
+                            if (i.isSuccessful) {
+                                FirebaseStorage.getInstance().reference.child(id).delete()
+                                listEmpty.removeAt(index)
+                                adapterEmpty.notifyItemRemoved(index)
+                                Snackbar.make(tableActivity,
+                                    "Xóa thành công ${listEmpty[index].tableName}",
+                                    Snackbar.LENGTH_SHORT).show()
+                            } else
+                                Toast.makeText(this@TableActivity,
+                                    "Không thể xóa !",
+                                    Toast.LENGTH_SHORT)
+                                    .show()
+                        }
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                }
+            })
     }
 }

@@ -13,7 +13,6 @@ import com.ddwan.coffeeshop.Application.Companion.sdf
 import com.ddwan.coffeeshop.Application.Companion.sdfDay
 import com.ddwan.coffeeshop.R
 import com.ddwan.coffeeshop.activities.BillActivity
-import com.ddwan.coffeeshop.activities.FoodActivity
 import com.ddwan.coffeeshop.model.LoadingDialog
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.components.AxisBase
@@ -113,11 +112,11 @@ class ChartFragment : Fragment() {
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.exists()) {
-                        for ((i, item) in snapshot.children.withIndex()) {
+                        for ((i, item) in snapshot.children.reversed().withIndex()) {
                             if (i == snapshot.childrenCount.toInt() - 1) checkLast = true
-                            val time = sdf.parse(item.child("Date_Check_Out").value.toString())
-                            val index = listDay.indexOf(sdfDay.format(time))
-                            if ((item.child("Status").value as Boolean)) {
+                            if (item.child("Status").value as Boolean) {
+                                val time = sdf.parse(item.child("Date_Check_Out").value.toString())
+                                val index = listDay.indexOf(sdfDay.format(time))
                                 returnTheMoneyOfOneBill(item.key.toString(),
                                     index,
                                     view,

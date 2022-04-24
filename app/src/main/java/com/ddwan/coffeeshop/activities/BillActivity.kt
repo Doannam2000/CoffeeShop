@@ -44,16 +44,17 @@ class BillActivity : AppCompatActivity() {
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.exists()) {
-                        for (item in snapshot.children) {
-                            val time = sdf.parse(item.child("Date_Check_Out").value.toString())
-                            if ((item.child("Status").value as Boolean) && sdfDay.format(time)
-                                    .equals(date)
-                            ) {
-                                list.add(Bill(item.key.toString(),
-                                    item.child("Date_Check_In").value.toString(),
-                                    item.child("Date_Check_Out").value.toString(),
-                                    item.child("Table_ID").value.toString(),
-                                    item.child("Status").value as Boolean))
+                        for (item in snapshot.children.reversed()) {
+                            if ((item.child("Status").value as Boolean)) {
+                                val string = item.child("Date_Check_Out").value.toString()
+                                val time = sdf.parse(string)
+                                if (sdfDay.format(time).equals(date)) {
+                                    list.add(Bill(item.key.toString(),
+                                        item.child("Date_Check_In").value.toString(),
+                                        item.child("Date_Check_Out").value.toString(),
+                                        item.child("Table_ID").value.toString(),
+                                        item.child("Status").value as Boolean))
+                                }
                             }
                         }
                         adapter.notifyDataSetChanged()
@@ -68,4 +69,10 @@ class BillActivity : AppCompatActivity() {
             })
     }
 
+    override fun onBackPressed() {
+        finish()
+        overridePendingTransition(R.anim.left_to_right,
+            R.anim.left_to_right_out)
+        super.onBackPressed()
+    }
 }

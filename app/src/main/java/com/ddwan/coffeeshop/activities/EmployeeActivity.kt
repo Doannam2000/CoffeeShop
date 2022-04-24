@@ -37,6 +37,8 @@ class EmployeeActivity : AppCompatActivity() {
         recyclerViewEmployee.adapter = adapter
         addAccount.setOnClickListener {
             startActivity(Intent(this, EditProfileActivity::class.java))
+            overridePendingTransition(R.anim.right_to_left,
+                R.anim.right_to_left_out)
         }
         btnPrevious.setOnClickListener {
             finish()
@@ -78,5 +80,12 @@ class EmployeeActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         loadData()
+    }
+
+    override fun onBackPressed() {
+        finish()
+        overridePendingTransition(R.anim.left_to_right,
+            R.anim.left_to_right_out)
+        super.onBackPressed()
     }
 }

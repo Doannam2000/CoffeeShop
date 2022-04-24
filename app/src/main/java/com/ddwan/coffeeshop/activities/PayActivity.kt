@@ -253,11 +253,18 @@ class PayActivity : AppCompatActivity() {
                     if (deleteBill) {
                         snapshot.ref.removeValue()
                     }
-
                 }
 
                 override fun onCancelled(error: DatabaseError) {
                 }
             })
     }
+
+    override fun onBackPressed() {
+        finish()
+        overridePendingTransition(R.anim.left_to_right,
+            R.anim.left_to_right_out)
+        super.onBackPressed()
+    }
+
 }

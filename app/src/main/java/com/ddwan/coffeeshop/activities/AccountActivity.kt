@@ -155,4 +155,11 @@ class AccountActivity : AppCompatActivity() {
                 }
             })
     }
+
+    override fun onBackPressed() {
+        finish()
+        overridePendingTransition(R.anim.left_to_right,
+            R.anim.left_to_right_out)
+        super.onBackPressed()
+    }
 }

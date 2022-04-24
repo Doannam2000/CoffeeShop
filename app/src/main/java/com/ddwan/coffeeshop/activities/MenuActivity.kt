@@ -61,25 +61,23 @@ class MenuActivity : AppCompatActivity() {
         }
         initRecycler()
         btnPrevious.setOnClickListener {
-            if (tableID != "null") {
-                val returnIntent = Intent()
-                returnIntent.putExtra("Status", checkEmpty)
-                setResult(Activity.RESULT_OK, returnIntent)
-                finish()
-                overridePendingTransition(R.anim.left_to_right,
-                    R.anim.left_to_right_out)
-            } else {
-                finish()
-                overridePendingTransition(R.anim.left_to_right,
-                    R.anim.left_to_right_out)
-            }
+            backActivity()
         }
     }
 
-
-    override fun onResume() {
-        super.onResume()
-        loadData()
+    private fun backActivity() {
+        if (tableID != "null") {
+            val returnIntent = Intent()
+            returnIntent.putExtra("Status", checkEmpty)
+            setResult(Activity.RESULT_OK, returnIntent)
+            finish()
+            overridePendingTransition(R.anim.left_to_right,
+                R.anim.left_to_right_out)
+        } else {
+            finish()
+            overridePendingTransition(R.anim.left_to_right,
+                R.anim.left_to_right_out)
+        }
     }
 
     private fun loadData() {
@@ -138,7 +136,7 @@ class MenuActivity : AppCompatActivity() {
             recyclerViewFood.adapter = adapter
         } else {
             adapterAddFood.setCallBack {
-                createDialogAddTable(list[it])
+                createDialogAddFood(list[it])
             }
             recyclerViewFood.adapter = adapterAddFood
         }
@@ -174,7 +172,7 @@ class MenuActivity : AppCompatActivity() {
             })
     }
 
-    private fun createDialogAddTable(food: Food) {
+    private fun createDialogAddFood(food: Food) {
         val viewDialog = View.inflate(this, R.layout.custom_add_food, null)
         val builder = AlertDialog.Builder(this)
         builder.setView(viewDialog)
@@ -201,7 +199,7 @@ class MenuActivity : AppCompatActivity() {
         if (checkEmpty) {
             val hashMap = HashMap<String, Any>()
             hashMap["Date_Check_In"] = sdf.format(Calendar.getInstance().time)
-            hashMap["Date_Check_Out"] = ""
+            hashMap["Date_Check_Out"] = "NONE"
             hashMap["Table_ID"] = tableID
             hashMap["Status"] = false
             val billID = model.randomID()
@@ -294,4 +292,15 @@ class MenuActivity : AppCompatActivity() {
                 }
             })
     }
+
+    override fun onBackPressed() {
+        backActivity()
+        super.onBackPressed()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        loadData()
+    }
+
 }

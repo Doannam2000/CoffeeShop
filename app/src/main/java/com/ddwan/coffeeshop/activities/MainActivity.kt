@@ -64,7 +64,7 @@ class MainActivity : AppCompatActivity() {
                         R.anim.right_to_left_out)
                 }
                 R.id.menuFragment -> {
-                    startActivity(Intent(this, TableActivity::class.java))
+                    startActivity(Intent(this, MenuActivity::class.java))
                     overridePendingTransition(R.anim.right_to_left,
                         R.anim.right_to_left_out)
                 }
@@ -124,11 +124,6 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    override fun onResume() {
-        super.onResume()
-        initView()
-    }
-
     private fun initView() {
         val imageRef = firebaseStore.reference.child(accountLogin.id)
         imageRef.downloadUrl.addOnSuccessListener { Uri ->
@@ -151,5 +146,10 @@ class MainActivity : AppCompatActivity() {
         val email: TextView = viewHeader.findViewById(R.id.emailHead)
         name.text = accountLogin.name
         email.text = accountLogin.email
+    }
+
+    override fun onResume() {
+        super.onResume()
+        initView()
     }
 }
