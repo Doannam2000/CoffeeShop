@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ddwan.coffeeshop.Application
 import com.ddwan.coffeeshop.Application.Companion.firebaseDB
+import com.ddwan.coffeeshop.Application.Companion.listAccount
 import com.ddwan.coffeeshop.R
 import com.ddwan.coffeeshop.adapter.EmployeeAdapter
 import com.ddwan.coffeeshop.model.Account
@@ -16,15 +17,15 @@ import com.google.firebase.database.ValueEventListener
 import kotlinx.android.synthetic.main.activity_employee.*
 
 class EmployeeActivity : AppCompatActivity() {
-    var list = ArrayList<Account>()
-    val adapter by lazy { EmployeeAdapter(list, this) }
+
+    val adapter by lazy { EmployeeAdapter(listAccount, this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_employee)
         adapter.setCallBack {
             val bundle = Bundle()
-            bundle.putSerializable("account", list[it])
+            bundle.putSerializable("account", listAccount[it])
             val intent = Intent(this, AccountActivity::class.java)
             intent.putExtras(bundle)
             startActivity(intent)
@@ -65,8 +66,8 @@ class EmployeeActivity : AppCompatActivity() {
                                 "")
                             listP.add(account)
                         }
-                        list.clear()
-                        list.addAll(listP)
+                        listAccount.clear()
+                        listAccount.addAll(listP)
                         adapter.notifyDataSetChanged()
                     }
                 }

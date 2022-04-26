@@ -14,6 +14,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.ddwan.coffeeshop.Application.Companion.accountLogin
 import com.ddwan.coffeeshop.Application.Companion.firebaseDB
 import com.ddwan.coffeeshop.Application.Companion.firebaseStore
+import com.ddwan.coffeeshop.Application.Companion.listAccount
 import com.ddwan.coffeeshop.Application.Companion.mAuth
 import com.ddwan.coffeeshop.R
 import com.ddwan.coffeeshop.model.Account
@@ -155,17 +156,33 @@ class EditProfileActivity : AppCompatActivity() {
         ) {
             Toast.makeText(this, "Thông tin không được để trống", Toast.LENGTH_SHORT).show()
         } else {
-            mAuth.createUserWithEmailAndPassword(edtEmail.text.toString(),
-                edtPassword.text.toString()).addOnCompleteListener {
-                if (it.isSuccessful) {
-                    firebaseUserID = mAuth.currentUser!!.uid
-                    if (this::imageUrl.isInitialized) uploadImage(firebaseUserID)
-                    insertDataUser(firebaseUserID)
-                    mAuth.signOut()
-                    mAuth.signInWithEmailAndPassword(accountLogin.email, accountLogin.password)
+            if (checkEmail(edtEmail.text.toString()))
+                mAuth.createUserWithEmailAndPassword(edtEmail.text.toString(),
+                    edtPassword.text.toString()).addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        firebaseUserID = mAuth.currentUser!!.uid
+                        if (this::imageUrl.isInitialized) uploadImage(firebaseUserID)
+                        insertDataUser(firebaseUserID)
+                        mAuth.signOut()
+                        mAuth.signInWithEmailAndPassword(accountLogin.email, accountLogin.password)
+                    } else
+                        Toast.makeText(this,
+                            "Có lỗi xảy ra không thể tại tài khoản ",
+                            Toast.LENGTH_SHORT).show()
                 }
-            }
+            else
+                Toast.makeText(this,
+                    "Tài khoản này đã tồn tại trong hệ thống !!",
+                    Toast.LENGTH_SHORT).show()
         }
+    }
+
+    private fun checkEmail(email: String): Boolean {
+        for (item in listAccount) {
+            if (item.email == email)
+                return false
+        }
+        return true
     }
 
     private fun loadInfo() {

@@ -19,7 +19,7 @@ class Application {
         const val TYPE_MINUS = 2
         const val TYPE_DELETE = 3
         val numberFormatter: NumberFormat = NumberFormat.getCurrencyInstance()
-
+        val listAccount = ArrayList<Account>()
     }
     init {
         numberFormatter.maximumFractionDigits = 0
