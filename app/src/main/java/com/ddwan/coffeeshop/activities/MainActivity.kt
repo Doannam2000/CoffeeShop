@@ -26,7 +26,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
         // setup navigation
         navMenu.setOnClickListener {
             drawerLayout.openDrawer(GravityCompat.START)
@@ -35,6 +34,7 @@ class MainActivity : AppCompatActivity() {
         val fragmentTransaction: FragmentTransaction = fragment.beginTransaction()
         fragmentTransaction.add(R.id.fragmentContainerView, HomeFragment(), "HomeFragment").commit()
         fragmentTransaction.addToBackStack("HomeFragment")
+
         navigationView.setNavigationItemSelectedListener {
             val fragmentTransaction: FragmentTransaction = fragment.beginTransaction()
             val index = supportFragmentManager.backStackEntryCount - 1

@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ddwan.coffeeshop.Application
 import com.ddwan.coffeeshop.Application.Companion.firebaseDB
@@ -50,9 +51,14 @@ class HomeFragment : Fragment() {
                 R.anim.right_to_left_out)
         }
         view.cardViewEmployee.setOnClickListener {
-            startActivity(Intent(requireActivity(), EmployeeActivity::class.java))
-            activity?.overridePendingTransition(R.anim.right_to_left,
-                R.anim.right_to_left_out)
+            if (Application.accountLogin.role == "Quản lý") {
+                startActivity(Intent(requireActivity(), EmployeeActivity::class.java))
+                activity?.overridePendingTransition(R.anim.right_to_left,
+                    R.anim.right_to_left_out)
+            } else
+                Toast.makeText(requireContext(),
+                    "Bạn không có quyền sử dụng chức năng này",
+                    Toast.LENGTH_SHORT).show()
         }
         view.recyclerViewBillInHome.layoutManager = LinearLayoutManager(requireContext())
         view.recyclerViewBillInHome.setHasFixedSize(true)
