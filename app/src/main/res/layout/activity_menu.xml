@@ -42,11 +42,26 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <EditText
+            android:id="@+id/searchView"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginHorizontal="@dimen/dimen_10dp"
+            android:layout_marginTop="@dimen/dimen_10dp"
+            android:background="@drawable/custom_edit_text"
+            android:hint="Tìm kiếm"
+            android:singleLine="true"
+            android:textColor="@color/black"
+            android:textColorHint="#9C9FD3"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView4" />
+
         <androidx.recyclerview.widget.RecyclerView
+            android:layout_marginTop="@dimen/dimen_10dp"
             android:id="@+id/recyclerViewFood"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/dimen_10dp"
-            app:layout_constraintTop_toBottomOf="@+id/btnPrevious" />
+            app:layout_constraintTop_toBottomOf="@+id/searchView" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

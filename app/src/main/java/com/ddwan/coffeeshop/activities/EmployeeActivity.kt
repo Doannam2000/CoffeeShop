@@ -3,15 +3,20 @@ package com.ddwan.coffeeshop.activities
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.text.Editable
+import android.text.TextWatcher
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ddwan.coffeeshop.Application.Companion.listAccount
 import com.ddwan.coffeeshop.R
 import com.ddwan.coffeeshop.adapter.EmployeeAdapter
+import com.ddwan.coffeeshop.model.Account
 import com.ddwan.coffeeshop.viewmodel.MyViewModel
 import kotlinx.android.synthetic.main.activity_employee.*
 import kotlinx.android.synthetic.main.activity_employee.btnPrevious
+import kotlinx.android.synthetic.main.activity_employee.searchView
 
 class EmployeeActivity : AppCompatActivity() {
 
@@ -20,6 +25,19 @@ class EmployeeActivity : AppCompatActivity() {
     val model by lazy {
         ViewModelProvider(this).get(MyViewModel::class.java)
     }
+    var listP = ArrayList<Account>()
+    val handle = Handler()
+    val run = Runnable {
+        val text = searchView.text
+        listAccount.clear()
+        for (item in listP) {
+            if (item.name.uppercase().contains(text.toString().uppercase())) {
+                listAccount.add(item)
+            }
+        }
+        adapter.notifyDataSetChanged()
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,6 +70,21 @@ class EmployeeActivity : AppCompatActivity() {
         adapter.notifyDataSetChanged()
         if (listAccount.isEmpty())
             model.loadDataAccount(adapter)
+
+        listP.addAll(listAccount)
+        searchView.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                handle.removeCallbacks(run)
+                handle.postDelayed(run, 1000)
+            }
+
+            override fun afterTextChanged(p0: Editable?) {
+            }
+        })
+
     }
 
 

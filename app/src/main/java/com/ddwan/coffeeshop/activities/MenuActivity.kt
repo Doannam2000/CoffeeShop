@@ -7,6 +7,9 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -36,13 +39,30 @@ import kotlin.collections.HashMap
 class MenuActivity : AppCompatActivity() {
 
     private val adapter by lazy { FoodAdapter(listFood, this, true) }
-    private val adapterAddFood by lazy { FoodAdapter(listFood, this, true) }
+    private val adapterAddFood by lazy { FoodAdapter(listFood, this, false) }
     private val dialogLoad by lazy { LoadingDialog(this) }
     val model by lazy {
         ViewModelProvider(this).get(MyViewModel::class.java)
     }
     var tableID = ""
     var checkEmpty = true
+
+    var listP = ArrayList<Food>()
+    val handle = Handler()
+    val run = Runnable {
+        val text = searchView.text
+        listFood.clear()
+        for (item in listP) {
+            if (item.foodName.uppercase().contains(text.toString().uppercase())) {
+                listFood.add(item)
+            }
+        }
+        if (tableID == "null")
+            adapter.notifyDataSetChanged()
+        else
+            adapterAddFood.notifyDataSetChanged()
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,6 +83,19 @@ class MenuActivity : AppCompatActivity() {
         btnPrevious.setOnClickListener {
             backActivity()
         }
+        listP.addAll(listFood)
+        searchView.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                handle.removeCallbacks(run)
+                handle.postDelayed(run, 1000)
+            }
+
+            override fun afterTextChanged(p0: Editable?) {
+            }
+        })
     }
 
     private fun backActivity() {
