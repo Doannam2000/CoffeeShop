@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ddwan.coffeeshop.Application.Companion.firebaseDB
+import com.ddwan.coffeeshop.Application.Companion.listBill
 import com.ddwan.coffeeshop.Application.Companion.sdf
 import com.ddwan.coffeeshop.Application.Companion.sdfDay
 import com.ddwan.coffeeshop.R
@@ -18,15 +19,14 @@ import kotlinx.android.synthetic.main.activity_bill.*
 
 class BillActivity : AppCompatActivity() {
 
-    private val list = ArrayList<Bill>()
-    private val adapter by lazy { BillAdapter(list) }
+
+    private val adapter by lazy { BillAdapter(listBill) }
     var date = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_bill)
         date = intent.extras!!.getString("Date").toString()
-        Log.d("check phat ", "onCreate: $date")
         txtDay.text = date
         btnPrevious.setOnClickListener {
             finish()
@@ -49,7 +49,7 @@ class BillActivity : AppCompatActivity() {
                                 val string = item.child("Date_Check_Out").value.toString()
                                 val time = sdf.parse(string)
                                 if (sdfDay.format(time).equals(date)) {
-                                    list.add(Bill(item.key.toString(),
+                                    listBill.add(Bill(item.key.toString(),
                                         item.child("Date_Check_In").value.toString(),
                                         item.child("Date_Check_Out").value.toString(),
                                         item.child("Table_ID").value.toString(),
@@ -58,7 +58,7 @@ class BillActivity : AppCompatActivity() {
                             }
                         }
                         adapter.notifyDataSetChanged()
-                        if (list.isEmpty()) {
+                        if (listBill.isEmpty()) {
                             emptyBill.visibility = View.VISIBLE
                         }
                     }

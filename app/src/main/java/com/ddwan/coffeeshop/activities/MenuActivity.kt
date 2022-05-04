@@ -13,6 +13,7 @@ import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ddwan.coffeeshop.Application.Companion.firebaseDB
+import com.ddwan.coffeeshop.Application.Companion.listFood
 import com.ddwan.coffeeshop.Application.Companion.sdf
 import com.ddwan.coffeeshop.R
 import com.ddwan.coffeeshop.adapter.FoodAdapter
@@ -34,9 +35,8 @@ import kotlin.collections.HashMap
 
 class MenuActivity : AppCompatActivity() {
 
-    val list = ArrayList<Food>()
-    private val adapter by lazy { FoodAdapter(list, this, true) }
-    private val adapterAddFood by lazy { FoodAdapter(list, this, true) }
+    private val adapter by lazy { FoodAdapter(listFood, this, true) }
+    private val adapterAddFood by lazy { FoodAdapter(listFood, this, true) }
     private val dialogLoad by lazy { LoadingDialog(this) }
     val model by lazy {
         ViewModelProvider(this).get(MyViewModel::class.java)
@@ -80,39 +80,10 @@ class MenuActivity : AppCompatActivity() {
         }
     }
 
-    private fun loadData() {
-        list.clear()
-        dialogLoad.startLoadingDialog()
-        firebaseDB.getReference("Food")
-            .addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    if (snapshot.exists()) {
-                        for (f in snapshot.children) {
-                            val food = Food(f.key.toString(),
-                                f.child("Name").value.toString(),
-                                f.child("Category").value.toString(),
-                                f.child("Price").value.toString().toInt(),
-                                f.child("Description").value.toString(), "")
-                            list.add(food)
-                        }
-                        dialogLoad.stopLoadingDialog()
-                        if (tableID == "null")
-                            adapter.notifyDataSetChanged()
-                        else
-                            adapterAddFood.notifyDataSetChanged()
-                    }
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-                    TODO("Not yet implemented")
-                }
-            })
-    }
-
     private fun setupAdapter() {
         adapter.setCallBack {
             val bundle = Bundle()
-            bundle.putSerializable("food", list[it])
+            bundle.putSerializable("food", listFood[it])
             bundle.putBoolean("check", true)
             val intent = Intent(this, FoodActivity::class.java)
             intent.putExtras(bundle)
@@ -122,9 +93,9 @@ class MenuActivity : AppCompatActivity() {
         }
         adapter.setCallBack2 {
             val builder = AlertDialog.Builder(this)
-            builder.setMessage("Bạn có chắc muốn xóa ${list[it].foodName} ?")
+            builder.setMessage("Bạn có chắc muốn xóa ${listFood[it].foodName} ?")
                 .setPositiveButton("Có") { _, _ ->
-                    deleteFood(list[it].foodId, it)
+                    deleteFood(listFood[it].foodId, it)
                 }
                 .setNegativeButton("Không") { _, _ -> }.show()
         }
@@ -136,7 +107,7 @@ class MenuActivity : AppCompatActivity() {
             recyclerViewFood.adapter = adapter
         } else {
             adapterAddFood.setCallBack {
-                createDialogAddFood(list[it])
+                createDialogAddFood(listFood[it])
             }
             recyclerViewFood.adapter = adapterAddFood
         }
@@ -152,7 +123,7 @@ class MenuActivity : AppCompatActivity() {
                         snapshot.ref.removeValue().addOnCompleteListener { i ->
                             if (i.isSuccessful) {
                                 FirebaseStorage.getInstance().reference.child(id).delete()
-                                list.removeAt(it)
+                                listFood.removeAt(it)
                                 adapter.notifyItemRemoved(it)
                                 Toast.makeText(this@MenuActivity,
                                     "Xoá thành công !",
@@ -300,7 +271,7 @@ class MenuActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        loadData()
+        model.loadDataFood(dialogLoad, tableID, adapter, adapterAddFood)
     }
 
 }

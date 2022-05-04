@@ -13,11 +13,13 @@ import android.util.Patterns
 import android.view.View
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.ViewModelProvider
 import com.ddwan.coffeeshop.Application
 import com.ddwan.coffeeshop.Application.Companion.accountLogin
 import com.ddwan.coffeeshop.Application.Companion.firebaseDB
 import com.ddwan.coffeeshop.Application.Companion.mAuth
 import com.ddwan.coffeeshop.model.LoadingDialog
+import com.ddwan.coffeeshop.viewmodel.MyViewModel
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -26,6 +28,10 @@ import java.util.regex.Pattern
 
 class LoginScreenActivity : AppCompatActivity() {
     private val dialog by lazy { LoadingDialog(this) }
+    val model by lazy {
+        ViewModelProvider(this).get(MyViewModel::class.java)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login_screen)
@@ -126,6 +132,8 @@ class LoginScreenActivity : AppCompatActivity() {
         mAuth.signInWithEmailAndPassword(email.text.toString(), password.text.toString())
             .addOnCompleteListener {
                 if (it.isSuccessful) {
+                    model.loadDataAccount(null)
+                    model.loadDataFood(null,null,null,null)
                     getInfoUser()
                 } else {
                     Toast.makeText(this, "Sai tài khoản hoặc mật khẩu", Toast.LENGTH_SHORT)

@@ -15,6 +15,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ddwan.coffeeshop.Application.Companion.firebaseDB
+import com.ddwan.coffeeshop.Application.Companion.listEmpty
+import com.ddwan.coffeeshop.Application.Companion.listLiveTable
 import com.ddwan.coffeeshop.R
 import com.ddwan.coffeeshop.adapter.TableAdapter
 import com.ddwan.coffeeshop.model.LoadingDialog
@@ -34,8 +36,6 @@ class TableActivity : AppCompatActivity() {
         ViewModelProvider(this).get(MyViewModel::class.java)
     }
     private val dialogLoad by lazy { LoadingDialog(this) }
-    private val listEmpty = ArrayList<Table>()
-    private val listLiveTable = ArrayList<Table>()
     private val adapterEmpty by lazy { TableAdapter(listEmpty, true) }
     private val adapterLiveTable by lazy { TableAdapter(listLiveTable, false) }
 

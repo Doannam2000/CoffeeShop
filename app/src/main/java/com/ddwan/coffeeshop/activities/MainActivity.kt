@@ -34,7 +34,6 @@ class MainActivity : AppCompatActivity() {
         val fragmentTransaction: FragmentTransaction = fragment.beginTransaction()
         fragmentTransaction.add(R.id.fragmentContainerView, HomeFragment(), "HomeFragment").commit()
         fragmentTransaction.addToBackStack("HomeFragment")
-
         navigationView.setNavigationItemSelectedListener {
             val fragmentTransaction: FragmentTransaction = fragment.beginTransaction()
             val index = supportFragmentManager.backStackEntryCount - 1

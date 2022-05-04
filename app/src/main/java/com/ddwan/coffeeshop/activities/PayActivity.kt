@@ -13,6 +13,7 @@ import com.ddwan.coffeeshop.Application.Companion.TYPE_DELETE
 import com.ddwan.coffeeshop.Application.Companion.TYPE_MINUS
 import com.ddwan.coffeeshop.Application.Companion.TYPE_PLUS
 import com.ddwan.coffeeshop.Application.Companion.firebaseDB
+import com.ddwan.coffeeshop.Application.Companion.listBillInfo
 import com.ddwan.coffeeshop.Application.Companion.numberFormatter
 import com.ddwan.coffeeshop.R
 import com.ddwan.coffeeshop.adapter.PayAdapter
@@ -34,8 +35,8 @@ class PayActivity : AppCompatActivity() {
     val model by lazy {
         ViewModelProvider(this).get(MyViewModel::class.java)
     }
-    private var list = ArrayList<BillInfo>()
-    private val adapter by lazy { PayAdapter(list, this) }
+
+    private val adapter by lazy { PayAdapter(listBillInfo, this) }
     private var changeInfo = false
     private var listItemDelete = ArrayList<BillInfo>()
 
@@ -105,19 +106,19 @@ class PayActivity : AppCompatActivity() {
         adapter.setCallBack { position, type ->
             when (type) {
                 TYPE_MINUS, TYPE_PLUS -> {
-                    returnReceipt(list)
+                    returnReceipt(listBillInfo)
                     changeInfo = true
                 }
                 TYPE_DELETE -> {
                     val builder = AlertDialog.Builder(this)
                     builder.setMessage("Bạn có chắc muốn xóa ?")
                         .setPositiveButton("Có") { _, _ ->
-                            listItemDelete.add(list[position])
-                            list.removeAt(position)
+                            listItemDelete.add(listBillInfo[position])
+                            listBillInfo.removeAt(position)
                             adapter.notifyItemRemoved(position)
-                            returnReceipt(list)
+                            returnReceipt(listBillInfo)
                             changeInfo = true
-                            if (list.size == 0) {
+                            if (listBillInfo.size == 0) {
                                 checkEmpty = true
                                 emptyTable.visibility = View.VISIBLE
                                 textTotal.visibility = View.GONE
@@ -136,7 +137,7 @@ class PayActivity : AppCompatActivity() {
 
 
     private fun loadDataTableFromDB() {
-        list.clear()
+        listBillInfo.clear()
         dialogLoad.startLoadingDialog()
         firebaseDB.reference.child("Bill")
             .addListenerForSingleValueEvent(object : ValueEventListener {
@@ -167,14 +168,14 @@ class PayActivity : AppCompatActivity() {
                         for (billInfo in snapshot.children) {
                             if (billInfo.child("Bill_ID").value.toString() == billID) {
                                 val foodID = billInfo.child("Food_ID").value.toString()
-                                list.add(BillInfo(billInfo.key.toString(),
+                                listBillInfo.add(BillInfo(billInfo.key.toString(),
                                     billID,
                                     foodID,
                                     billInfo.child("Price").value.toString().toInt(),
                                     billInfo.child("Count").value.toString().toInt()))
                             }
                         }
-                        returnReceipt(list)
+                        returnReceipt(listBillInfo)
                         adapter.notifyDataSetChanged()
                     }
                     dialogLoad.stopLoadingDialog()
@@ -197,7 +198,7 @@ class PayActivity : AppCompatActivity() {
 
     private fun updateDB(pay: Boolean) {
         if (changeInfo) {
-            for (item in list) {
+            for (item in listBillInfo) {
                 firebaseDB.reference.child("BillInfo").child(item.billInfoId)
                     .updateChildren(model.returnBillInfo(item.foodId,
                         item.price,
@@ -218,7 +219,7 @@ class PayActivity : AppCompatActivity() {
                         }
                     })
             }
-            if (list.size == 0) {
+            if (listBillInfo.size == 0) {
                 updateTableToEmpty(listItemDelete[0].billId, true)
             } else {
                 finish()
@@ -228,11 +229,11 @@ class PayActivity : AppCompatActivity() {
         }
 
         if (pay) {
-            firebaseDB.reference.child("Bill").child(list[0].billId).child("Date_Check_Out")
+            firebaseDB.reference.child("Bill").child(listBillInfo[0].billId).child("Date_Check_Out")
                 .setValue(Application.sdf.format(Calendar.getInstance().time))
-            firebaseDB.reference.child("Bill").child(list[0].billId).child("Status")
+            firebaseDB.reference.child("Bill").child(listBillInfo[0].billId).child("Status")
                 .setValue(true)
-            updateTableToEmpty(list[0].billId, false)
+            updateTableToEmpty(listBillInfo[0].billId, false)
         }
     }
 

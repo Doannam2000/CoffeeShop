@@ -1,5 +1,6 @@
 package com.ddwan.coffeeshop.activities
 
+import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.graphics.Color
@@ -142,9 +143,17 @@ class EditProfileActivity : AppCompatActivity() {
                     if ((!edit && !this::imageUrl.isInitialized) || edit) {
                         Toast.makeText(this, "Thực hiện thao tác thành công !", Toast.LENGTH_LONG)
                             .show()
-                        finish()
-                        overridePendingTransition(R.anim.left_to_right,
-                            R.anim.left_to_right_out)
+                        if (edit) {
+                            finish()
+                            overridePendingTransition(R.anim.left_to_right,
+                                R.anim.left_to_right_out)
+                        } else {
+                            val returnIntent = Intent()
+                            setResult(Activity.RESULT_OK, returnIntent)
+                            finish()
+                            overridePendingTransition(R.anim.left_to_right,
+                                R.anim.left_to_right_out)
+                        }
                     }
                 }
             }
@@ -165,15 +174,19 @@ class EditProfileActivity : AppCompatActivity() {
                         insertDataUser(firebaseUserID)
                         mAuth.signOut()
                         mAuth.signInWithEmailAndPassword(accountLogin.email, accountLogin.password)
-                    } else
+                    } else {
                         Toast.makeText(this,
-                            "Có lỗi xảy ra không thể tại tài khoản ",
+                            "Có lỗi xảy ra không thể tạo tài khoản ",
                             Toast.LENGTH_SHORT).show()
+                        dialog.stopLoadingDialog()
+                    }
                 }
-            else
+            else {
                 Toast.makeText(this,
                     "Tài khoản này đã tồn tại trong hệ thống !!",
                     Toast.LENGTH_SHORT).show()
+                dialog.stopLoadingDialog()
+            }
         }
     }
 

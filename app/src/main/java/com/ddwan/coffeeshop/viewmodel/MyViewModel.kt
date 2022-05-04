@@ -9,8 +9,11 @@ import com.ddwan.coffeeshop.Application
 import com.ddwan.coffeeshop.Application.Companion.firebaseDB
 import com.ddwan.coffeeshop.Application.Companion.firebaseStore
 import com.ddwan.coffeeshop.R
+import com.ddwan.coffeeshop.adapter.EmployeeAdapter
+import com.ddwan.coffeeshop.adapter.FoodAdapter
 import com.ddwan.coffeeshop.model.Account
 import com.ddwan.coffeeshop.model.Food
+import com.ddwan.coffeeshop.model.LoadingDialog
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -67,4 +70,67 @@ class MyViewModel : ViewModel() {
         return billInfo
     }
 
+    fun loadDataAccount(adapter: EmployeeAdapter?) {
+        val listP = ArrayList<Account>()
+        firebaseDB.getReference("Users")
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.exists()) {
+                        for (user in snapshot.children) {
+                            val account = Account(user.key.toString(),
+                                user.child("Email").value.toString(),
+                                "",
+                                user.child("Name").value.toString(),
+                                user.child("Address").value.toString(),
+                                user.child("Phone_Number").value.toString(),
+                                user.child("Role").value.toString(),
+                                user.child("Gender").value as Boolean,
+                                "")
+                            listP.add(account)
+                        }
+                        Application.listAccount.clear()
+                        Application.listAccount.addAll(listP)
+                        adapter?.notifyDataSetChanged()
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    TODO("Not yet implemented")
+                }
+            })
+    }
+
+    fun loadDataFood(
+        dialogLoad: LoadingDialog?,
+        tableID: String?,
+        adapter: FoodAdapter?,
+        adapterAddFood: FoodAdapter?,
+    ) {
+        Application.listFood.clear()
+        dialogLoad?.startLoadingDialog()
+        firebaseDB.getReference("Food")
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.exists()) {
+                        for (f in snapshot.children) {
+                            val food = Food(f.key.toString(),
+                                f.child("Name").value.toString(),
+                                f.child("Category").value.toString(),
+                                f.child("Price").value.toString().toInt(),
+                                f.child("Description").value.toString(), "")
+                            Application.listFood.add(food)
+                        }
+                        if (tableID == "null")
+                            adapter?.notifyDataSetChanged()
+                        else
+                            adapterAddFood?.notifyDataSetChanged()
+                        dialogLoad?.stopLoadingDialog()
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    TODO("Not yet implemented")
+                }
+            })
+    }
 }

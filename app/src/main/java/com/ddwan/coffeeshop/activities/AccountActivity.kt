@@ -1,5 +1,6 @@
 package com.ddwan.coffeeshop.activities
 
+import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -26,17 +27,19 @@ class AccountActivity : AppCompatActivity() {
         ViewModelProvider(this).get(MyViewModel::class.java)
     }
     var account = Account()
+    var isChange = false
+    var isEmployeeActivity = false
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_account)
         val bundle = intent.extras
         account = bundle!!.getSerializable("account") as Account
+        isEmployeeActivity = bundle.getBoolean("EmployeeActivity", false)
         setView()
         btnPrevious.setOnClickListener {
-            finish()
-            overridePendingTransition(R.anim.left_to_right,
-                R.anim.left_to_right_out)
+            backActivity(false)
         }
         btnEdit.setOnClickListener {
             if (account.id == accountLogin.id) {
@@ -68,6 +71,7 @@ class AccountActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        isChange = true
         loadInfoUser()
     }
 
@@ -139,9 +143,8 @@ class AccountActivity : AppCompatActivity() {
                                     "Xoá thành công !",
                                     Toast.LENGTH_SHORT)
                                     .show()
-                                finish()
-                                overridePendingTransition(R.anim.left_to_right,
-                                    R.anim.left_to_right_out)
+                                isChange = true
+                                backActivity(true)
                             } else
                                 Toast.makeText(this@AccountActivity,
                                     "Không thể xóa !",
@@ -157,9 +160,23 @@ class AccountActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        finish()
-        overridePendingTransition(R.anim.left_to_right,
-            R.anim.left_to_right_out)
+        backActivity(false)
         super.onBackPressed()
     }
+
+    private fun backActivity(deleted: Boolean) {
+        if (isEmployeeActivity && isChange) {
+            val returnIntent = Intent()
+            returnIntent.putExtra("Change", deleted)
+            setResult(Activity.RESULT_OK, returnIntent)
+            finish()
+            overridePendingTransition(R.anim.left_to_right,
+                R.anim.left_to_right_out)
+        } else {
+            finish()
+            overridePendingTransition(R.anim.left_to_right,
+                R.anim.left_to_right_out)
+        }
+    }
+
 }

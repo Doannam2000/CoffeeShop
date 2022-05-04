@@ -1,5 +1,5 @@
 package com.ddwan.coffeeshop
-import com.ddwan.coffeeshop.model.Account
+import com.ddwan.coffeeshop.model.*
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
@@ -20,6 +20,11 @@ class Application {
         const val TYPE_DELETE = 3
         val numberFormatter: NumberFormat = NumberFormat.getCurrencyInstance()
         val listAccount = ArrayList<Account>()
+        val listBill = ArrayList<Bill>()
+        val listFood = ArrayList<Food>()
+        val listBillInfo = ArrayList<BillInfo>()
+        val listEmpty = ArrayList<Table>()
+        val listLiveTable = ArrayList<Table>()
     }
     init {
         numberFormatter.maximumFractionDigits = 0
