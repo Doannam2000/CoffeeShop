@@ -143,17 +143,11 @@ class EditProfileActivity : AppCompatActivity() {
                     if ((!edit && !this::imageUrl.isInitialized) || edit) {
                         Toast.makeText(this, "Thực hiện thao tác thành công !", Toast.LENGTH_LONG)
                             .show()
-                        if (edit) {
-                            finish()
-                            overridePendingTransition(R.anim.left_to_right,
-                                R.anim.left_to_right_out)
-                        } else {
-                            val returnIntent = Intent()
-                            setResult(Activity.RESULT_OK, returnIntent)
-                            finish()
-                            overridePendingTransition(R.anim.left_to_right,
-                                R.anim.left_to_right_out)
-                        }
+                        val returnIntent = Intent()
+                        setResult(Activity.RESULT_OK, returnIntent)
+                        finish()
+                        overridePendingTransition(R.anim.left_to_right,
+                            R.anim.left_to_right_out)
                     }
                 }
             }

@@ -30,7 +30,6 @@ class AccountActivity : AppCompatActivity() {
     var isChange = false
     var isEmployeeActivity = false
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_account)

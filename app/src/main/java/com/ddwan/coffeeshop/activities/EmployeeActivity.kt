@@ -87,6 +87,12 @@ class EmployeeActivity : AppCompatActivity() {
 
     }
 
+    override fun onResume() {
+        if (position == -1) {
+            model.loadDataAccount(adapter)
+        }
+        super.onResume()
+    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -100,9 +106,7 @@ class EmployeeActivity : AppCompatActivity() {
                     } else {
                         model.loadDataAccount(adapter)
                     }
-                }
-                106 -> {
-                    model.loadDataAccount(adapter)
+                    position = -1
                 }
             }
 
