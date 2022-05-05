@@ -20,7 +20,7 @@ class Application {
         const val TYPE_DELETE = 3
         var numberFormatter: NumberFormat = NumberFormat.getCurrencyInstance()
         val listAccount = ArrayList<Account>()
-        val listBill = ArrayList<Bill>()
+
         val listFood = ArrayList<Food>()
         val listBillInfo = ArrayList<BillInfo>()
         val listEmpty = ArrayList<Table>()

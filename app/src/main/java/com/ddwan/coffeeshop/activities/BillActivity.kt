@@ -2,11 +2,9 @@ package com.ddwan.coffeeshop.activities
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ddwan.coffeeshop.Application.Companion.firebaseDB
-import com.ddwan.coffeeshop.Application.Companion.listBill
 import com.ddwan.coffeeshop.Application.Companion.sdf
 import com.ddwan.coffeeshop.Application.Companion.sdfDay
 import com.ddwan.coffeeshop.R
@@ -16,10 +14,11 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import kotlinx.android.synthetic.main.activity_bill.*
+import java.util.ArrayList
 
 class BillActivity : AppCompatActivity() {
 
-
+    val listBill = ArrayList<Bill>()
     private val adapter by lazy { BillAdapter(listBill) }
     var date = ""
 
