@@ -4,12 +4,14 @@ import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import com.bumptech.glide.Glide
+import com.ddwan.coffeeshop.Application
 import com.ddwan.coffeeshop.Application.Companion.accountLogin
 import com.ddwan.coffeeshop.Application.Companion.firebaseStore
 import com.ddwan.coffeeshop.R
@@ -18,10 +20,15 @@ import com.ddwan.coffeeshop.fragment.HomeFragment
 import com.ddwan.coffeeshop.fragment.InfoFragment
 import com.google.android.material.navigation.NavigationView
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_menu.*
 import kotlinx.android.synthetic.main.header.*
 import java.lang.Exception
 
 class MainActivity : AppCompatActivity() {
+    var exit = 0
+    val run = Runnable {
+        exit = 0
+    }
     private val fragment: FragmentManager = supportFragmentManager
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -149,6 +156,23 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        exit = 0
         initView()
+
+    }
+
+    override fun onBackPressed() {
+        exit++
+        if (exit == 1) {
+            Toast.makeText(applicationContext, "Nhấn back thêm 1 lần để thoát", Toast.LENGTH_SHORT)
+                .show()
+            Handler().removeCallbacks(run)
+            Handler().postDelayed(run, 2000)
+        } else {
+            val homeIntent = Intent(Intent.ACTION_MAIN)
+            homeIntent.addCategory(Intent.CATEGORY_HOME)
+            homeIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+            startActivity(homeIntent)
+        }
     }
 }
