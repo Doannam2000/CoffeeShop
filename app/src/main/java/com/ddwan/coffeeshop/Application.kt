@@ -18,7 +18,7 @@ class Application {
         const val TYPE_PLUS = 1
         const val TYPE_MINUS = 2
         const val TYPE_DELETE = 3
-        val numberFormatter: NumberFormat = NumberFormat.getCurrencyInstance()
+        var numberFormatter: NumberFormat = NumberFormat.getCurrencyInstance()
         val listAccount = ArrayList<Account>()
         val listBill = ArrayList<Bill>()
         val listFood = ArrayList<Food>()

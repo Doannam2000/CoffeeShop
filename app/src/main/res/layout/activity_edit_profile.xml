@@ -114,7 +114,7 @@
                     android:id="@+id/edtEmail"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="DoanDuyNam2000@gmail.com"
+                    android:hint="DoanDuyNam2000@gmail.com"
                     android:textColor="@color/black"
                     android:textSize="@dimen/dimen_18sp" />
             </LinearLayout>
@@ -145,7 +145,7 @@
                     android:id="@+id/edtName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Đoàn Duy Nam"
+                    android:hint="Đoàn Duy Nam"
                     android:textColor="@color/black"
                     android:textSize="@dimen/dimen_18sp" />
             </LinearLayout>
@@ -176,8 +176,8 @@
                     android:id="@+id/edtPassword"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:hint="******"
                     android:inputType="textPassword"
-                    android:text="123456"
                     android:textColor="@color/black"
                     android:textSize="@dimen/dimen_18sp" />
             </LinearLayout>
@@ -208,7 +208,7 @@
                     android:id="@+id/edtAddress"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Vĩnh Bảo - Hải Phòng"
+                    android:hint="Vĩnh Bảo - Hải Phòng"
                     android:textColor="@color/black"
                     android:textSize="@dimen/dimen_18sp" />
             </LinearLayout>
@@ -239,8 +239,8 @@
                     android:id="@+id/edtPhone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:hint="0397482016"
                     android:inputType="number"
-                    android:text="0397482016"
                     android:textColor="@color/black"
                     android:textSize="@dimen/dimen_18sp" />
             </LinearLayout>
@@ -301,9 +301,9 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginBottom="@dimen/dimen_10dp"
                 android:gravity="center_vertical"
                 android:orientation="vertical"
-                android:layout_marginBottom="@dimen/dimen_10dp"
                 android:paddingHorizontal="@dimen/dimen_10dp">
 
                 <TextView
