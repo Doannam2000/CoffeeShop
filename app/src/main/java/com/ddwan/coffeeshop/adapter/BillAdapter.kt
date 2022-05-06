@@ -19,6 +19,16 @@ import com.google.firebase.database.ValueEventListener
 
 class BillAdapter(var list: ArrayList<Bill>) : RecyclerView.Adapter<BillAdapter.ViewHolder>() {
 
+    lateinit var itemClick: (position: Int) -> Unit
+    fun setCallBack(click: (position: Int) -> Unit) {
+        itemClick = click
+    }
+
+    lateinit var loadFinish: () -> Unit
+    fun setCallBackLoad(click: () -> Unit) {
+        loadFinish = click
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BillAdapter.ViewHolder {
         val view: View =
             LayoutInflater.from(parent.context).inflate(R.layout.item_in_bill, parent, false)
@@ -39,12 +49,20 @@ class BillAdapter(var list: ArrayList<Bill>) : RecyclerView.Adapter<BillAdapter.
         var tableName: TextView = itemView.findViewById(R.id.nameTableInBill)
         var price: TextView = itemView.findViewById(R.id.priceOneBill)
         var pay: TextView = itemView.findViewById(R.id.checkPay)
+
         @SuppressLint("SetTextI18n")
         fun setData() {
             billID.text = "Mã: ${list[adapterPosition].billId}"
             getNameTableFromID(tableName, list[adapterPosition].tableId)
             pay.text = if (list[adapterPosition].status) "Đã Thanh Toán" else "Chưa Thanh Toán"
-            returnTheMoneyOfOneBill(list[adapterPosition].billId, price)
+            if (adapterPosition == list.size - 1)
+                returnTheMoneyOfOneBill(list[adapterPosition].billId, price,true)
+            else
+                returnTheMoneyOfOneBill(list[adapterPosition].billId, price,false)
+        }
+
+        init {
+            layout.setOnClickListener { itemClick.invoke(adapterPosition) }
         }
     }
 
@@ -62,7 +80,7 @@ class BillAdapter(var list: ArrayList<Bill>) : RecyclerView.Adapter<BillAdapter.
             })
     }
 
-    fun returnTheMoneyOfOneBill(billID: String, view: TextView) {
+    fun returnTheMoneyOfOneBill(billID: String, view: TextView, check: Boolean) {
         Application.firebaseDB.reference.child("BillInfo")
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
@@ -75,6 +93,8 @@ class BillAdapter(var list: ArrayList<Bill>) : RecyclerView.Adapter<BillAdapter.
                             }
                         }
                         view.text = Application.numberFormatter.format(price)
+                        if (check)
+                            loadFinish.invoke()
                     }
                 }
 

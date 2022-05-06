@@ -124,7 +124,6 @@ class MyViewModel : ViewModel() {
                             adapter?.notifyDataSetChanged()
                         else
                             adapterAddFood?.notifyDataSetChanged()
-                        dialogLoad?.stopLoadingDialog()
                     }
                 }
 

@@ -5,6 +5,7 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -13,7 +14,6 @@ import com.ddwan.coffeeshop.Application.Companion.TYPE_DELETE
 import com.ddwan.coffeeshop.Application.Companion.TYPE_MINUS
 import com.ddwan.coffeeshop.Application.Companion.TYPE_PLUS
 import com.ddwan.coffeeshop.Application.Companion.firebaseDB
-import com.ddwan.coffeeshop.Application.Companion.listBillInfo
 import com.ddwan.coffeeshop.Application.Companion.numberFormatter
 import com.ddwan.coffeeshop.R
 import com.ddwan.coffeeshop.adapter.PayAdapter
@@ -35,8 +35,8 @@ class PayActivity : AppCompatActivity() {
     val model by lazy {
         ViewModelProvider(this).get(MyViewModel::class.java)
     }
-
-    private val adapter by lazy { PayAdapter(listBillInfo, this) }
+    val listBillInfo = ArrayList<BillInfo>()
+    private val adapter by lazy { PayAdapter(listBillInfo, this, true) }
     private var changeInfo = false
     private var listItemDelete = ArrayList<BillInfo>()
 
@@ -130,6 +130,11 @@ class PayActivity : AppCompatActivity() {
                 }
             }
         }
+        recyclerView_Bill.visibility = View.INVISIBLE
+        adapter.setCallBackLoad {
+            recyclerView_Bill.visibility = View.VISIBLE
+            dialogLoad.stopLoadingDialog()
+        }
         recyclerView_Bill.layoutManager = LinearLayoutManager(this)
         recyclerView_Bill.setHasFixedSize(true)
         recyclerView_Bill.adapter = adapter
@@ -177,8 +182,8 @@ class PayActivity : AppCompatActivity() {
                         }
                         returnReceipt(listBillInfo)
                         adapter.notifyDataSetChanged()
-                    }
-                    dialogLoad.stopLoadingDialog()
+                    } else
+                        dialogLoad.stopLoadingDialog()
                 }
 
                 override fun onCancelled(error: DatabaseError) {
@@ -247,6 +252,9 @@ class PayActivity : AppCompatActivity() {
                     firebaseDB.reference.child("Table")
                         .child(snapshot.child("Table_ID").value.toString()).child("Description")
                         .setValue("Trống").addOnCompleteListener {
+                            Toast.makeText(this@PayActivity,
+                                "Thực hiện thao tác thành công",
+                                Toast.LENGTH_SHORT).show()
                             finish()
                             overridePendingTransition(R.anim.left_to_right,
                                 R.anim.left_to_right_out)

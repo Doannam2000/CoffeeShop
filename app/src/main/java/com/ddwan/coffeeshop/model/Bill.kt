@@ -1,5 +1,7 @@
 package com.ddwan.coffeeshop.model
 
+import java.io.Serializable
+
 
 class Bill(
     var billId: String,
@@ -7,4 +9,4 @@ class Bill(
     var dateCheckOut: String,
     var tableId: String,
     var status: Boolean,
-)
+):Serializable

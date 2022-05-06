@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.View
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -13,6 +14,7 @@ import com.ddwan.coffeeshop.Application.Companion.listAccount
 import com.ddwan.coffeeshop.R
 import com.ddwan.coffeeshop.adapter.EmployeeAdapter
 import com.ddwan.coffeeshop.model.Account
+import com.ddwan.coffeeshop.model.LoadingDialog
 import com.ddwan.coffeeshop.viewmodel.MyViewModel
 import kotlinx.android.synthetic.main.activity_employee.*
 import kotlinx.android.synthetic.main.activity_employee.btnPrevious
@@ -25,6 +27,7 @@ class EmployeeActivity : AppCompatActivity() {
     val model by lazy {
         ViewModelProvider(this).get(MyViewModel::class.java)
     }
+    private val dialogLoad by lazy { LoadingDialog(this) }
     var listP = ArrayList<Account>()
     val handle = Handler()
     val run = Runnable {
@@ -42,6 +45,7 @@ class EmployeeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_employee)
+        recyclerView_employee.visibility = View.INVISIBLE
         adapter.setCallBack {
             val bundle = Bundle()
             position = it
@@ -52,6 +56,10 @@ class EmployeeActivity : AppCompatActivity() {
             startActivityForResult(intent, 105)
             overridePendingTransition(R.anim.right_to_left,
                 R.anim.right_to_left_out)
+        }
+        adapter.setCallBack2 {
+            recyclerView_employee.visibility = View.VISIBLE
+            dialogLoad.stopLoadingDialog()
         }
         val recyclerViewEmployee: RecyclerView = findViewById(R.id.recyclerView_employee)
         recyclerViewEmployee.layoutManager = LinearLayoutManager(this)
@@ -68,9 +76,9 @@ class EmployeeActivity : AppCompatActivity() {
                 R.anim.left_to_right_out)
         }
         adapter.notifyDataSetChanged()
+        dialogLoad.startLoadingDialog()
         if (listAccount.isEmpty())
             model.loadDataAccount(adapter)
-
         listP.addAll(listAccount)
         searchView.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
@@ -118,4 +126,5 @@ class EmployeeActivity : AppCompatActivity() {
             R.anim.left_to_right_out)
         super.onBackPressed()
     }
+
 }

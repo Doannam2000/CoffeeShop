@@ -26,7 +26,7 @@ import java.lang.Exception
 
 class MainActivity : AppCompatActivity() {
     var exit = 0
-    val run = Runnable {
+    private val run = Runnable {
         exit = 0
     }
     private val fragment: FragmentManager = supportFragmentManager

@@ -16,6 +16,7 @@ import com.ddwan.coffeeshop.activities.MenuActivity
 import com.ddwan.coffeeshop.activities.TableActivity
 import com.ddwan.coffeeshop.adapter.BillAdapter
 import com.ddwan.coffeeshop.model.Bill
+import com.ddwan.coffeeshop.model.LoadingDialog
 import com.denzcoskun.imageslider.constants.ScaleTypes
 import com.denzcoskun.imageslider.models.SlideModel
 import com.google.firebase.database.DataSnapshot
@@ -28,6 +29,7 @@ class HomeFragment : Fragment() {
 
     val list = ArrayList<Bill>()
     private val adapter by lazy { BillAdapter(list) }
+    private val dialogLoad by lazy { LoadingDialog(requireActivity()) }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -60,6 +62,7 @@ class HomeFragment : Fragment() {
                     "Bạn không có quyền sử dụng chức năng này",
                     Toast.LENGTH_SHORT).show()
         }
+        adapter.setCallBackLoad { dialogLoad.stopLoadingDialog() }
         view.recyclerViewBillInHome.layoutManager = LinearLayoutManager(requireContext())
         view.recyclerViewBillInHome.setHasFixedSize(true)
         view.recyclerViewBillInHome.adapter = adapter
@@ -69,6 +72,7 @@ class HomeFragment : Fragment() {
 
     private fun loadData() {
         list.clear()
+        dialogLoad.startLoadingDialog()
         firebaseDB.reference.child("Bill")
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {

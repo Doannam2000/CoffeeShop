@@ -67,6 +67,7 @@ class MenuActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_menu)
+        recyclerViewFood.visibility = View.INVISIBLE
         tableID = intent.getStringExtra("TableID").toString()
         checkEmpty = intent.getBooleanExtra("Status", true)
         if (tableID != "null") {
@@ -132,6 +133,10 @@ class MenuActivity : AppCompatActivity() {
                 }
                 .setNegativeButton("Không") { _, _ -> }.show()
         }
+        adapter.setCallBackLoad {
+            recyclerViewFood.visibility = View.VISIBLE
+            dialogLoad.stopLoadingDialog()
+        }
     }
 
     private fun initRecycler() {
@@ -141,6 +146,10 @@ class MenuActivity : AppCompatActivity() {
         } else {
             adapterAddFood.setCallBack {
                 createDialogAddFood(listFood[it])
+            }
+            adapterAddFood.setCallBackLoad {
+                recyclerViewFood.visibility = View.VISIBLE
+                dialogLoad.stopLoadingDialog()
             }
             recyclerViewFood.adapter = adapterAddFood
         }

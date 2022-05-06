@@ -33,13 +33,12 @@ class ChartFragment : Fragment() {
     private val listDay = ArrayList<String>()
     private val listPrice = ArrayList<Int>()
     private val dialogLoad by lazy { LoadingDialog(requireActivity()) }
-
+    lateinit var viewAll:View
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
         val view = inflater.inflate(R.layout.fragment_chart, container, false)
-        loadData(view)
         val cal = Calendar.getInstance()
         view.txtDay.text = sdfDay.format(cal.time)
         view.txtDay.setOnClickListener {
@@ -59,6 +58,7 @@ class ChartFragment : Fragment() {
                 }, year, month, day)
             datePicker.show()
         }
+        viewAll = view
         return view
     }
 
@@ -93,7 +93,7 @@ class ChartFragment : Fragment() {
         barchart.description.isEnabled = false
 
         barchart.data = barData
-        barchart.animateY(3000)
+        barchart.animateY(2000)
 
         val xAxis: XAxis = barchart.xAxis
         xAxis.position = XAxis.XAxisPosition.BOTTOM_INSIDE
@@ -131,6 +131,12 @@ class ChartFragment : Fragment() {
                 override fun onCancelled(error: DatabaseError) {
                 }
             })
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if(this::viewAll.isInitialized)
+            loadData(viewAll)
     }
 
     fun returnTheMoneyOfOneBill(billID: String, day: Int, view: View, checkLast: Boolean) {
