@@ -45,7 +45,6 @@ class EmployeeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_employee)
-        recyclerView_employee.visibility = View.INVISIBLE
         adapter.setCallBack {
             val bundle = Bundle()
             position = it
@@ -58,7 +57,6 @@ class EmployeeActivity : AppCompatActivity() {
                 R.anim.right_to_left_out)
         }
         adapter.setCallBack2 {
-            recyclerView_employee.visibility = View.VISIBLE
             dialogLoad.stopLoadingDialog()
         }
         val recyclerViewEmployee: RecyclerView = findViewById(R.id.recyclerView_employee)

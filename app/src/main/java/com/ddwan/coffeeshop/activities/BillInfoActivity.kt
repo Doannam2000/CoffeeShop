@@ -3,6 +3,7 @@ package com.ddwan.coffeeshop.activities
 import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ddwan.coffeeshop.Application
 import com.ddwan.coffeeshop.Application.Companion.firebaseDB
@@ -20,13 +21,17 @@ class BillInfoActivity : AppCompatActivity() {
 
     private val listBillInfo = java.util.ArrayList<BillInfo>()
     private val dialogLoad by lazy { LoadingDialog(this) }
-    private val adapter by lazy { PayAdapter(listBillInfo, this,false) }
+    private val adapter by lazy { PayAdapter(listBillInfo, this, false) }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_bill_info)
         val bundle = intent.extras
         val bill = bundle!!.getSerializable("Bill") as Bill
-        adapter.setCallBackLoad { dialogLoad.stopLoadingDialog() }
+        adapter.setCallBackLoad {
+            recyclerViewFood.visibility = View.INVISIBLE
+            dialogLoad.stopLoadingDialog()
+        }
+        recyclerViewFood.visibility = View.INVISIBLE
         recyclerViewFood.layoutManager = LinearLayoutManager(this)
         recyclerViewFood.setHasFixedSize(true)
         recyclerViewFood.adapter = adapter
@@ -57,8 +62,7 @@ class BillInfoActivity : AppCompatActivity() {
                         }
                         returnReceipt(listBillInfo)
                         adapter.notifyDataSetChanged()
-                    }
-                    else{
+                    } else {
                         dialogLoad.stopLoadingDialog()
                     }
                 }
