@@ -45,6 +45,11 @@ class LoginScreenActivity : AppCompatActivity() {
                 login()
             }
         }
+        txtGuest.setOnClickListener {
+            startActivity(Intent(this,GuestActivity::class.java))
+            overridePendingTransition(R.anim.right_to_left,
+                R.anim.right_to_left_out)
+        }
         forgotPass.setOnClickListener {
             val builder = AlertDialog.Builder(this)
             builder.setMessage("Bạn muốn lấy lại mật khẩu tài khoản ${email.text.toString()} ?")

@@ -36,6 +36,20 @@
         app:layout_constraintTop_toTopOf="parent" />
 
 
+    <TextView
+        android:id="@+id/txtGuest"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/dimen_10dp"
+        android:background="@color/gray"
+        android:paddingHorizontal="@dimen/dimen_10dp"
+        android:paddingVertical="5dp"
+        android:text="Khách"
+        android:textColor="@color/black"
+        android:textSize="@dimen/dimen_14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <EditText
         android:id="@+id/email"
         android:layout_width="match_parent"

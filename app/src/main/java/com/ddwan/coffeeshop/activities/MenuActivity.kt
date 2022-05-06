@@ -46,7 +46,6 @@ class MenuActivity : AppCompatActivity() {
     }
     var tableID = ""
     var checkEmpty = true
-
     var listP = ArrayList<Food>()
     val handle = Handler()
     val run = Runnable {
