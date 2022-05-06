@@ -45,7 +45,11 @@ class BillActivity : AppCompatActivity() {
             overridePendingTransition(R.anim.right_to_left,
                 R.anim.right_to_left_out)
         }
-        adapter.setCallBackLoad { dialogLoad.stopLoadingDialog() }
+        recyclerBill.visibility = View.INVISIBLE
+        adapter.setCallBackLoad {
+            recyclerBill.visibility = View.VISIBLE
+            dialogLoad.stopLoadingDialog()
+        }
         recyclerBill.layoutManager = LinearLayoutManager(this)
         recyclerBill.setHasFixedSize(true)
         recyclerBill.adapter = adapter

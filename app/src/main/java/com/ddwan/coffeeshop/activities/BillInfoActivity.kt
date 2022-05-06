@@ -28,10 +28,8 @@ class BillInfoActivity : AppCompatActivity() {
         val bundle = intent.extras
         val bill = bundle!!.getSerializable("Bill") as Bill
         adapter.setCallBackLoad {
-            recyclerViewFood.visibility = View.INVISIBLE
             dialogLoad.stopLoadingDialog()
         }
-        recyclerViewFood.visibility = View.INVISIBLE
         recyclerViewFood.layoutManager = LinearLayoutManager(this)
         recyclerViewFood.setHasFixedSize(true)
         recyclerViewFood.adapter = adapter
