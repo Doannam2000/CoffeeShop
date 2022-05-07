@@ -3,17 +3,24 @@ package com.ddwan.coffeeshop.fragment
 import android.app.DatePickerDialog
 import android.content.Intent
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupMenu
+import android.widget.Toast
+import androidx.fragment.app.Fragment
 import com.ddwan.coffeeshop.Application.Companion.firebaseDB
 import com.ddwan.coffeeshop.Application.Companion.sdf
 import com.ddwan.coffeeshop.Application.Companion.sdfDay
 import com.ddwan.coffeeshop.R
 import com.ddwan.coffeeshop.activities.BillActivity
+import com.ddwan.coffeeshop.model.Bill
 import com.ddwan.coffeeshop.model.LoadingDialog
+import com.ddwan.coffeeshop.model.WriteFile
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.components.XAxis
@@ -24,22 +31,27 @@ import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
+import com.kal.rackmonthpicker.RackMonthPicker
 import kotlinx.android.synthetic.main.fragment_chart.view.*
 import java.util.*
 import kotlin.collections.ArrayList
 
 
 class ChartFragment : Fragment() {
+
+    private val listBillDay = ArrayList<Bill>()
+    private val listMoneyOfBill = ArrayList<Int>()
     private val listDay = ArrayList<String>()
     private val listPrice = ArrayList<Int>()
     private val dialogLoad by lazy { LoadingDialog(requireActivity()) }
-    lateinit var viewAll:View
+    private val cal by lazy { Calendar.getInstance() }
+    lateinit var viewAll: View
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
         val view = inflater.inflate(R.layout.fragment_chart, container, false)
-        val cal = Calendar.getInstance()
         view.txtDay.text = sdfDay.format(cal.time)
         view.txtDay.setOnClickListener {
             val year = cal.get(Calendar.YEAR)
@@ -56,7 +68,17 @@ class ChartFragment : Fragment() {
                     requireActivity().overridePendingTransition(R.anim.right_to_left,
                         R.anim.right_to_left_out)
                 }, year, month, day)
+            datePicker.datePicker.maxDate = cal.timeInMillis
             datePicker.show()
+        }
+        view.imageOutput.setOnClickListener { it ->
+            val popupMenu = PopupMenu(requireContext(), it)
+            popupMenu.menuInflater.inflate(R.menu.export, popupMenu.menu)
+            popupMenu.setOnMenuItemClickListener { menuItem ->
+                selectedItem(menuItem)
+                false
+            }
+            popupMenu.show()
         }
         viewAll = view
         return view
@@ -104,7 +126,7 @@ class ChartFragment : Fragment() {
         dialogLoad.stopLoadingDialog()
     }
 
-    private fun loadData(view: View) {
+    private fun loadDataLastSevenDays(view: View) {
         dialogLoad.startLoadingDialog()
         returnsTheLast7Days()
         var checkLast = false
@@ -135,8 +157,8 @@ class ChartFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        if(this::viewAll.isInitialized)
-            loadData(viewAll)
+        if (this::viewAll.isInitialized)
+            loadDataLastSevenDays(viewAll)
     }
 
     fun returnTheMoneyOfOneBill(billID: String, day: Int, view: View, checkLast: Boolean) {
@@ -187,4 +209,117 @@ class ChartFragment : Fragment() {
             }
         }
     }
+
+    private fun selectedItem(it: MenuItem) {
+        when (it.itemId) {
+            R.id.itemDay -> {
+                val year = cal.get(Calendar.YEAR)
+                val month = cal.get(Calendar.MONTH)
+                val day = cal.get(Calendar.DAY_OF_MONTH)
+                val datePicker =
+                    DatePickerDialog(requireContext(), { _, y, monthOfYear, dayOfMonth ->
+                        cal.set(Calendar.YEAR, y)
+                        cal.set(Calendar.MONTH, monthOfYear)
+                        cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+                        loadDataDay(sdfDay.format(cal.time))
+                    }, year, month, day)
+                datePicker.datePicker.maxDate = cal.timeInMillis
+                datePicker.show()
+            }
+            R.id.itemMonth -> {
+                RackMonthPicker(requireActivity()).setLocale(Locale.getDefault())
+                    .setPositiveButton { month, _, _, year, _ ->
+                        Toast.makeText(requireContext(), "$month/$year", Toast.LENGTH_SHORT).show()
+                    }
+                    .setNegativeButton {
+                        it.dismiss()
+                    }
+                    .show()
+            }
+        }
+    }
+
+    private fun loadDataDay(date: String) {
+        dialogLoad.startLoadingDialog()
+        firebaseDB.reference.child("Bill")
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.exists()) {
+                        for (item in snapshot.children.reversed()) {
+                            if ((item.child("Status").value as Boolean)) {
+                                val string = item.child("Date_Check_Out").value.toString()
+                                val time = sdf.parse(string)
+                                if (sdfDay.format(time).equals(date)) {
+                                    listBillDay.add(Bill(item.key.toString(),
+                                        item.child("Date_Check_In").value.toString(),
+                                        item.child("Date_Check_Out").value.toString(),
+                                        item.child("Table_ID").value.toString(),
+                                        item.child("Status").value as Boolean))
+                                }
+                            }
+                        }
+                        if (listBillDay.isEmpty()) {
+                            dialogLoad.stopLoadingDialog()
+                            Toast.makeText(requireContext(),
+                                "Không có dữ liệu ngày $date",
+                                Toast.LENGTH_SHORT).show()
+                        } else
+                            for ((i, item) in listBillDay.withIndex()) {
+                                if (i == (listBillDay.size - 1))
+                                    returnTheMoneyOfOneBill2(item.billId, true)
+                                else
+                                    returnTheMoneyOfOneBill2(item.billId, false)
+                            }
+                    } else {
+                        dialogLoad.stopLoadingDialog()
+                        Toast.makeText(requireContext(),
+                            "Không có dữ liệu ngày $date",
+                            Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                }
+            })
+    }
+
+    fun returnTheMoneyOfOneBill2(billID: String, check: Boolean) {
+        firebaseDB.reference.child("BillInfo")
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.exists()) {
+                        var price = 0
+                        for (item in snapshot.children) {
+                            if (item.child("Bill_ID").value.toString() == billID) {
+                                price += item.child("Price").value.toString()
+                                    .toInt() * item.child("Count").value.toString().toInt()
+                            }
+                        }
+                        listMoneyOfBill.add(price)
+                    }
+                    if (check) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            if(WriteFile(requireContext()).writeFile(listBillDay, listMoneyOfBill))
+                                Toast.makeText(requireContext(),
+                                    "Lưu file thành công !!!",
+                                    Toast.LENGTH_SHORT).show()
+                            else
+                                Toast.makeText(requireContext(),
+                                    "Có lỗi gì đó xin thử lại sau !!!",
+                                    Toast.LENGTH_SHORT).show()
+                        } else
+                            Toast.makeText(requireContext(),
+                                "Chúng tôi chưa hỗ trợ bản android này !!!",
+                                Toast.LENGTH_SHORT).show()
+                        dialogLoad.stopLoadingDialog()
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                }
+
+            })
+    }
+
+
 }

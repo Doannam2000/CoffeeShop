@@ -78,6 +78,7 @@ class BillActivity : AppCompatActivity() {
                         adapter.notifyDataSetChanged()
                         if (listBill.isEmpty()) {
                             emptyBill.visibility = View.VISIBLE
+                            dialogLoad.stopLoadingDialog()
                         }
                     }
                 }

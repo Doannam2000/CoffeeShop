@@ -12,6 +12,7 @@ import com.ddwan.coffeeshop.R
 import com.ddwan.coffeeshop.adapter.EmployeeAdapter
 import com.ddwan.coffeeshop.adapter.FoodAdapter
 import com.ddwan.coffeeshop.model.Account
+import com.ddwan.coffeeshop.model.Bill
 import com.ddwan.coffeeshop.model.Food
 import com.ddwan.coffeeshop.model.LoadingDialog
 import com.google.firebase.auth.FirebaseAuth
@@ -20,6 +21,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.ktx.Firebase
+import kotlinx.android.synthetic.main.activity_bill.*
 import kotlinx.android.synthetic.main.activity_login_screen.*
 import kotlin.random.Random
 
@@ -132,4 +134,6 @@ class MyViewModel : ViewModel() {
                 }
             })
     }
+
+
 }

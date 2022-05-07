@@ -13,6 +13,7 @@ import com.ddwan.coffeeshop.Application.Companion.firebaseDB
 import com.ddwan.coffeeshop.Application.Companion.listFood
 import com.ddwan.coffeeshop.R
 import com.ddwan.coffeeshop.adapter.FoodAdapter
+import com.ddwan.coffeeshop.model.Bill
 import com.ddwan.coffeeshop.model.Food
 import com.ddwan.coffeeshop.model.LoadingDialog
 import com.ddwan.coffeeshop.viewmodel.MyViewModel
@@ -21,7 +22,9 @@ import com.denzcoskun.imageslider.models.SlideModel
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
+import kotlinx.android.synthetic.main.activity_bill.*
 import kotlinx.android.synthetic.main.activity_khach.*
+import kotlinx.android.synthetic.main.activity_khach.btnPrevious
 import kotlinx.android.synthetic.main.activity_khach.searchView
 
 class GuestActivity : AppCompatActivity() {
@@ -61,6 +64,11 @@ class GuestActivity : AppCompatActivity() {
         imageSlider.setImageList(imageList, ScaleTypes.FIT)
         adapterAddFood.setCallBackLoad {
             dialogLoad.stopLoadingDialog()
+        }
+        btnPrevious.setOnClickListener {
+            finish()
+            overridePendingTransition(R.anim.left_to_right,
+                R.anim.left_to_right_out)
         }
         recyclerGuestFood.adapter = adapterAddFood
         recyclerGuestFood.layoutManager = LinearLayoutManager(this)
@@ -121,6 +129,5 @@ class GuestActivity : AppCompatActivity() {
                 }
             })
     }
-
 
 }

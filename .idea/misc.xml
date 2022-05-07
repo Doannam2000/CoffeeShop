@@ -39,6 +39,7 @@
         <entry key="..\:/Code/Kotlin/CoffeeShop/app/src/main/res/layout/custom_dialog.xml" value="0.36666666666666664" />
         <entry key="..\:/Code/Kotlin/CoffeeShop/app/src/main/res/layout/custom_dialog_change_password.xml" value="0.23157894736842105" />
         <entry key="..\:/Code/Kotlin/CoffeeShop/app/src/main/res/layout/custom_editext_dialog.xml" value="0.33" />
+        <entry key="..\:/Code/Kotlin/CoffeeShop/app/src/main/res/layout/custom_month_picker_dialog.xml" value="0.23157894736842105" />
         <entry key="..\:/Code/Kotlin/CoffeeShop/app/src/main/res/layout/employee_layout.xml" value="0.38697916666666665" />
         <entry key="..\:/Code/Kotlin/CoffeeShop/app/src/main/res/layout/food_layout.xml" value="0.25" />
         <entry key="..\:/Code/Kotlin/CoffeeShop/app/src/main/res/layout/fragment_bill.xml" value="0.38697916666666665" />
@@ -59,6 +60,7 @@
         <entry key="..\:/Code/Kotlin/CoffeeShop/app/src/main/res/layout/text_view_dropdown.xml" value="0.23157894736842105" />
         <entry key="..\:/Code/Kotlin/CoffeeShop/app/src/main/res/layout/toolbar.xml" value="0.32592592592592595" />
         <entry key="..\:/Code/Kotlin/CoffeeShop/app/src/main/res/menu/drawer_menu.xml" value="0.32592592592592595" />
+        <entry key="..\:/Code/Kotlin/CoffeeShop/app/src/main/res/menu/export.xml" value="0.23157894736842105" />
         <entry key="..\:/Code/Kotlin/CoffeeShop/app/src/main/res/menu/menu.xml" value="0.32592592592592595" />
         <entry key="..\:/Code/Kotlin/CoffeeShop/app/src/main/res/menu/menu_control.xml" value="0.23157894736842105" />
         <entry key="..\:/Code/Kotlin/CoffeeShop/app/src/main/res/menu/menu_food.xml" value="0.36666666666666664" />
