@@ -33,6 +33,8 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.kal.rackmonthpicker.RackMonthPicker
 import kotlinx.android.synthetic.main.fragment_chart.view.*
+import java.time.LocalDate
+import java.time.YearMonth
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -44,7 +46,6 @@ class ChartFragment : Fragment() {
     private val listDay = ArrayList<String>()
     private val listPrice = ArrayList<Int>()
     private val dialogLoad by lazy { LoadingDialog(requireActivity()) }
-    private val cal by lazy { Calendar.getInstance() }
     lateinit var viewAll: View
 
     override fun onCreateView(
@@ -52,6 +53,7 @@ class ChartFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View? {
         val view = inflater.inflate(R.layout.fragment_chart, container, false)
+        val cal = Calendar.getInstance()
         view.txtDay.text = sdfDay.format(cal.time)
         view.txtDay.setOnClickListener {
             val year = cal.get(Calendar.YEAR)
@@ -65,8 +67,10 @@ class ChartFragment : Fragment() {
                     val intent = Intent(requireActivity(), BillActivity::class.java)
                     intent.putExtra("Date", sdfDay.format(cal.time))
                     startActivity(intent)
-                    requireActivity().overridePendingTransition(R.anim.right_to_left,
-                        R.anim.right_to_left_out)
+                    requireActivity().overridePendingTransition(
+                        R.anim.right_to_left,
+                        R.anim.right_to_left_out
+                    )
                 }, year, month, day)
             datePicker.datePicker.maxDate = cal.timeInMillis
             datePicker.show()
@@ -84,6 +88,7 @@ class ChartFragment : Fragment() {
         return view
     }
 
+    // tao bieu do
     fun initChart(view: View) {
         val barchart: BarChart = view.findViewById(R.id.chart)
         val list = arrayListOf(
@@ -93,16 +98,19 @@ class ChartFragment : Fragment() {
             BarEntry(3f, listPrice[3].toFloat()),
             BarEntry(4f, listPrice[4].toFloat()),
             BarEntry(5f, listPrice[5].toFloat()),
-            BarEntry(6f, listPrice[6].toFloat()))
+            BarEntry(6f, listPrice[6].toFloat())
+        )
         val barDataset = BarDataSet(list, "")
         barDataset.colors =
-            mutableListOf(Color.LTGRAY,
+            mutableListOf(
+                Color.LTGRAY,
                 Color.CYAN,
                 Color.RED,
                 Color.GRAY,
                 Color.GREEN,
                 Color.MAGENTA,
-                Color.YELLOW)
+                Color.YELLOW
+            )
         barDataset.valueTextColor = Color.BLACK
         barDataset.valueTextSize = 10f
         val barData = BarData(barDataset)
@@ -126,6 +134,7 @@ class ChartFragment : Fragment() {
         dialogLoad.stopLoadingDialog()
     }
 
+    // lay du lieu bieu do
     private fun loadDataLastSevenDays(view: View) {
         dialogLoad.startLoadingDialog()
         returnsTheLast7Days()
@@ -139,10 +148,12 @@ class ChartFragment : Fragment() {
                             if (item.child("Status").value as Boolean) {
                                 val time = sdf.parse(item.child("Date_Check_Out").value.toString())
                                 val index = listDay.indexOf(sdfDay.format(time))
-                                returnTheMoneyOfOneBill(item.key.toString(),
+                                returnTheMoneyOfOneBill(
+                                    item.key.toString(),
                                     index,
                                     view,
-                                    checkLast)
+                                    checkLast
+                                )
                             } else {
                                 if (checkLast) initChart(view)
                             }
@@ -210,7 +221,9 @@ class ChartFragment : Fragment() {
         }
     }
 
+
     private fun selectedItem(it: MenuItem) {
+        val cal = Calendar.getInstance()
         when (it.itemId) {
             R.id.itemDay -> {
                 val year = cal.get(Calendar.YEAR)
@@ -221,7 +234,7 @@ class ChartFragment : Fragment() {
                         cal.set(Calendar.YEAR, y)
                         cal.set(Calendar.MONTH, monthOfYear)
                         cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
-                        loadDataDay(sdfDay.format(cal.time))
+                        loadDataDay(sdfDay.format(cal.time), -1, -1, true)
                     }, year, month, day)
                 datePicker.datePicker.maxDate = cal.timeInMillis
                 datePicker.show()
@@ -229,7 +242,7 @@ class ChartFragment : Fragment() {
             R.id.itemMonth -> {
                 RackMonthPicker(requireActivity()).setLocale(Locale.getDefault())
                     .setPositiveButton { month, _, _, year, _ ->
-                        Toast.makeText(requireContext(), "$month/$year", Toast.LENGTH_SHORT).show()
+                        loadDataDay("", month, year, false)
                     }
                     .setNegativeButton {
                         it.dismiss()
@@ -239,8 +252,10 @@ class ChartFragment : Fragment() {
         }
     }
 
-    private fun loadDataDay(date: String) {
+    // Xuat bao cao 1 ngay
+    private fun loadDataDay(date: String, month: Int, year: Int, checkDay: Boolean) {
         dialogLoad.startLoadingDialog()
+        clearDay()
         firebaseDB.reference.child("Bill")
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
@@ -249,32 +264,46 @@ class ChartFragment : Fragment() {
                             if ((item.child("Status").value as Boolean)) {
                                 val string = item.child("Date_Check_Out").value.toString()
                                 val time = sdf.parse(string)
-                                if (sdfDay.format(time).equals(date)) {
-                                    listBillDay.add(Bill(item.key.toString(),
-                                        item.child("Date_Check_In").value.toString(),
-                                        item.child("Date_Check_Out").value.toString(),
-                                        item.child("Table_ID").value.toString(),
-                                        item.child("Status").value as Boolean))
+                                if ((sdfDay.format(time)
+                                        .equals(date) && checkDay) || (!checkDay && compareMonth(
+                                        month,
+                                        year,
+                                        sdf.parse(string)
+                                    ))
+                                ) {
+                                    listBillDay.add(
+                                        Bill(
+                                            item.key.toString(),
+                                            item.child("Date_Check_In").value.toString(),
+                                            item.child("Date_Check_Out").value.toString(),
+                                            item.child("Table_ID").value.toString(),
+                                            item.child("Status").value as Boolean
+                                        )
+                                    )
                                 }
                             }
                         }
                         if (listBillDay.isEmpty()) {
                             dialogLoad.stopLoadingDialog()
-                            Toast.makeText(requireContext(),
-                                "Không có dữ liệu ngày $date",
-                                Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                requireContext(),
+                                "Không có dữ liệu của ${if (month == -1) date else "${month}/${year}"}",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         } else
                             for ((i, item) in listBillDay.withIndex()) {
                                 if (i == (listBillDay.size - 1))
-                                    returnTheMoneyOfOneBill2(item.billId, true)
+                                    totalPriceAndExport(item.billId, true)
                                 else
-                                    returnTheMoneyOfOneBill2(item.billId, false)
+                                    totalPriceAndExport(item.billId, false)
                             }
                     } else {
                         dialogLoad.stopLoadingDialog()
-                        Toast.makeText(requireContext(),
-                            "Không có dữ liệu ngày $date",
-                            Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            requireContext(),
+                            "Không có dữ liệu của ${if (month == -1) date else "${month}/${year}"}",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
 
@@ -283,7 +312,7 @@ class ChartFragment : Fragment() {
             })
     }
 
-    fun returnTheMoneyOfOneBill2(billID: String, check: Boolean) {
+    fun totalPriceAndExport(billID: String, check: Boolean) {
         firebaseDB.reference.child("BillInfo")
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
@@ -299,18 +328,24 @@ class ChartFragment : Fragment() {
                     }
                     if (check) {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                            if(WriteFile(requireContext()).writeFile(listBillDay, listMoneyOfBill))
-                                Toast.makeText(requireContext(),
+                            if (WriteFile(requireContext()).writeFile(listBillDay, listMoneyOfBill))
+                                Toast.makeText(
+                                    requireContext(),
                                     "Lưu file thành công !!!",
-                                    Toast.LENGTH_SHORT).show()
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             else
-                                Toast.makeText(requireContext(),
+                                Toast.makeText(
+                                    requireContext(),
                                     "Có lỗi gì đó xin thử lại sau !!!",
-                                    Toast.LENGTH_SHORT).show()
+                                    Toast.LENGTH_SHORT
+                                ).show()
                         } else
-                            Toast.makeText(requireContext(),
+                            Toast.makeText(
+                                requireContext(),
                                 "Chúng tôi chưa hỗ trợ bản android này !!!",
-                                Toast.LENGTH_SHORT).show()
+                                Toast.LENGTH_SHORT
+                            ).show()
                         dialogLoad.stopLoadingDialog()
                     }
                 }
@@ -321,5 +356,18 @@ class ChartFragment : Fragment() {
             })
     }
 
+    // xuat bao cao 1 thang
 
+    private fun clearDay() {
+        listBillDay.clear()
+        listMoneyOfBill.clear()
+    }
+
+    fun compareMonth(month: Int, year: Int, time: Date): Boolean {
+        val cal = Calendar.getInstance()
+        cal.time = time
+        if (month == cal.get(Calendar.MONTH) + 1 && year == cal.get(Calendar.YEAR))
+            return true
+        return false
+    }
 }
