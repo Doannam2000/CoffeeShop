@@ -11,6 +11,7 @@ class Application {
     companion object{
         val sdf = SimpleDateFormat("HH:mm:ss dd/MM/yyyy")
         val sdfDay = SimpleDateFormat("dd/MM/yyyy")
+        val sdfMonth = SimpleDateFormat("MM/yyyy")
         val mAuth = FirebaseAuth.getInstance()
         val firebaseDB = FirebaseDatabase.getInstance()
         val firebaseStore = FirebaseStorage.getInstance()

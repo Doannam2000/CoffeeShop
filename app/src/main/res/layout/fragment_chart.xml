@@ -8,6 +8,15 @@
     android:orientation="vertical"
     tools:context=".fragment.ChartFragment">
 
+    <ImageView
+        android:id="@+id/imageReverse"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/dimen_10dp"
+        android:src="@drawable/ic_baseline_autorenew_24"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/txtDay"
         android:layout_width="wrap_content"

@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment
 import com.ddwan.coffeeshop.Application.Companion.firebaseDB
 import com.ddwan.coffeeshop.Application.Companion.sdf
 import com.ddwan.coffeeshop.Application.Companion.sdfDay
+import com.ddwan.coffeeshop.Application.Companion.sdfMonth
 import com.ddwan.coffeeshop.R
 import com.ddwan.coffeeshop.activities.BillActivity
 import com.ddwan.coffeeshop.model.Bill
@@ -47,15 +48,17 @@ class ChartFragment : Fragment() {
     private val listPrice = ArrayList<Int>()
     private val dialogLoad by lazy { LoadingDialog(requireActivity()) }
     lateinit var viewAll: View
+    private var chartDay = true
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
         val view = inflater.inflate(R.layout.fragment_chart, container, false)
-        val cal = Calendar.getInstance()
-        view.txtDay.text = sdfDay.format(cal.time)
+        val cal1 = Calendar.getInstance()
+        view.txtDay.text = sdfDay.format(cal1.time)
         view.txtDay.setOnClickListener {
+            val cal = Calendar.getInstance()
             val year = cal.get(Calendar.YEAR)
             val month = cal.get(Calendar.MONTH)
             val day = cal.get(Calendar.DAY_OF_MONTH)
@@ -72,7 +75,7 @@ class ChartFragment : Fragment() {
                         R.anim.right_to_left_out
                     )
                 }, year, month, day)
-            datePicker.datePicker.maxDate = cal.timeInMillis
+            datePicker.datePicker.maxDate = cal1.timeInMillis
             datePicker.show()
         }
         view.imageOutput.setOnClickListener { it ->
@@ -84,22 +87,21 @@ class ChartFragment : Fragment() {
             }
             popupMenu.show()
         }
+        view.imageReverse.setOnClickListener {
+            chartDay = !chartDay
+            loadDataLastSevenDays(viewAll)
+        }
         viewAll = view
         return view
     }
 
-    // tao bieu do
+    // tao bieu do 7 ngày
     fun initChart(view: View) {
         val barchart: BarChart = view.findViewById(R.id.chart)
-        val list = arrayListOf(
-            BarEntry(0f, listPrice[0].toFloat()),
-            BarEntry(1f, listPrice[1].toFloat()),
-            BarEntry(2f, listPrice[2].toFloat()),
-            BarEntry(3f, listPrice[3].toFloat()),
-            BarEntry(4f, listPrice[4].toFloat()),
-            BarEntry(5f, listPrice[5].toFloat()),
-            BarEntry(6f, listPrice[6].toFloat())
-        )
+        val list = ArrayList<BarEntry>()
+        for (i in 0 until listDay.size) {
+            list.add(BarEntry(i.toFloat(), listPrice[i].toFloat()))
+        }
         val barDataset = BarDataSet(list, "")
         barDataset.colors =
             mutableListOf(
@@ -137,7 +139,12 @@ class ChartFragment : Fragment() {
     // lay du lieu bieu do
     private fun loadDataLastSevenDays(view: View) {
         dialogLoad.startLoadingDialog()
-        returnsTheLast7Days()
+        listDay.clear()
+        listPrice.clear()
+        if (chartDay)
+            returnsTheLast7Days()
+        else
+            returnsTheLast6Month()
         var checkLast = false
         firebaseDB.reference.child("Bill")
             .addListenerForSingleValueEvent(object : ValueEventListener {
@@ -147,7 +154,10 @@ class ChartFragment : Fragment() {
                             if (i == snapshot.childrenCount.toInt() - 1) checkLast = true
                             if (item.child("Status").value as Boolean) {
                                 val time = sdf.parse(item.child("Date_Check_Out").value.toString())
-                                val index = listDay.indexOf(sdfDay.format(time))
+                                val index = if (chartDay)
+                                    listDay.indexOf(sdfDay.format(time))
+                                else
+                                    listDay.indexOf(sdfMonth.format(time))
                                 returnTheMoneyOfOneBill(
                                     item.key.toString(),
                                     index,
@@ -221,6 +231,24 @@ class ChartFragment : Fragment() {
         }
     }
 
+    // tạo biểu đồ tháng
+    private fun returnsTheLast6Month() {
+        val count = Calendar.getInstance().get(Calendar.MONTH)
+        for (i in count downTo 0) {
+            addMonth(-i)
+            listPrice.add(0)
+        }
+        Log.d("checkMonth", listDay.toString())
+    }
+
+    private fun addMonth(i: Int) {
+        val now = Calendar.getInstance().time
+        val calendar = Calendar.getInstance()
+        calendar.time = now
+        calendar.add(Calendar.MONTH, i)
+        val newDate = calendar.time
+        listDay.add(sdfMonth.format(newDate))
+    }
 
     private fun selectedItem(it: MenuItem) {
         val cal = Calendar.getInstance()
