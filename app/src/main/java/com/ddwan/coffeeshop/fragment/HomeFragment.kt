@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.ddwan.coffeeshop.Application
 import com.ddwan.coffeeshop.Application.Companion.firebaseDB
 import com.ddwan.coffeeshop.R
+import com.ddwan.coffeeshop.activities.BillInfoActivity
 import com.ddwan.coffeeshop.activities.EmployeeActivity
 import com.ddwan.coffeeshop.activities.MenuActivity
 import com.ddwan.coffeeshop.activities.TableActivity
@@ -61,6 +62,15 @@ class HomeFragment : Fragment() {
                 Toast.makeText(requireContext(),
                     "Bạn không có quyền sử dụng chức năng này",
                     Toast.LENGTH_SHORT).show()
+        }
+        adapter.setCallBack {
+            val bundle = Bundle()
+            bundle.putSerializable("Bill", list[it])
+            val intent = Intent(requireActivity(), BillInfoActivity::class.java)
+            intent.putExtras(bundle)
+            startActivity(intent)
+            activity?.overridePendingTransition(R.anim.right_to_left,
+                R.anim.right_to_left_out)
         }
         adapter.setCallBackLoad { dialogLoad.stopLoadingDialog() }
         view.recyclerViewBillInHome.layoutManager = LinearLayoutManager(requireContext())
