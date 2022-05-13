@@ -35,15 +35,15 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/textView6"
+            android:id="@+id/txtAccount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/dimen_10dp"
             android:text="Account"
             android:textColor="@color/black"
             android:textSize="@dimen/dimen_18sp"
             app:layout_constraintBottom_toBottomOf="@+id/btnPrevious"
-            app:layout_constraintStart_toEndOf="@+id/btnPrevious"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/btnPrevious" />
 
 

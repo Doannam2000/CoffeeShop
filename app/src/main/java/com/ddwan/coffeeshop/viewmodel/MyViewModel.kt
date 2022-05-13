@@ -1,7 +1,6 @@
 package com.ddwan.coffeeshop.viewmodel
 
 import android.content.Context
-import android.view.View
 import android.widget.ImageView
 import androidx.lifecycle.ViewModel
 import com.bumptech.glide.Glide
@@ -11,18 +10,13 @@ import com.ddwan.coffeeshop.Application.Companion.firebaseStore
 import com.ddwan.coffeeshop.R
 import com.ddwan.coffeeshop.adapter.EmployeeAdapter
 import com.ddwan.coffeeshop.adapter.FoodAdapter
-import com.ddwan.coffeeshop.model.Account
-import com.ddwan.coffeeshop.model.Bill
+import com.ddwan.coffeeshop.model.Category
+import com.ddwan.coffeeshop.model.Users
 import com.ddwan.coffeeshop.model.Food
 import com.ddwan.coffeeshop.model.LoadingDialog
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.google.firebase.ktx.Firebase
-import kotlinx.android.synthetic.main.activity_bill.*
-import kotlinx.android.synthetic.main.activity_login_screen.*
 import kotlin.random.Random
 
 class MyViewModel : ViewModel() {
@@ -73,13 +67,13 @@ class MyViewModel : ViewModel() {
     }
 
     fun loadDataAccount(adapter: EmployeeAdapter?) {
-        val listP = ArrayList<Account>()
+        val listP = ArrayList<Users>()
         firebaseDB.getReference("Users")
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.exists()) {
                         for (user in snapshot.children) {
-                            val account = Account(user.key.toString(),
+                            val account = Users(user.key.toString(),
                                 user.child("Email").value.toString(),
                                 "",
                                 user.child("Name").value.toString(),
@@ -117,7 +111,7 @@ class MyViewModel : ViewModel() {
                         for (f in snapshot.children) {
                             val food = Food(f.key.toString(),
                                 f.child("Name").value.toString(),
-                                f.child("Category").value.toString(),
+                                f.child("Category_ID").value.toString(),
                                 f.child("Price").value.toString().toInt(),
                                 f.child("Description").value.toString(), "")
                             Application.listFood.add(food)
@@ -135,5 +129,25 @@ class MyViewModel : ViewModel() {
             })
     }
 
+    fun loadDataCategory() {
+        Application.listCategory.clear()
+        firebaseDB.getReference("Category")
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.exists()) {
+                        for (tb in snapshot.children) {
+                            val category = Category(
+                                tb.key.toString(),
+                                tb.child("Category_Name").value.toString()
+                            )
+                            Application.listCategory.add(category)
+                        }
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                }
+            })
+    }
 
 }

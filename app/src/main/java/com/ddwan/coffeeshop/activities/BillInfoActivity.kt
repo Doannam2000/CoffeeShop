@@ -3,7 +3,6 @@ package com.ddwan.coffeeshop.activities
 import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ddwan.coffeeshop.Application
 import com.ddwan.coffeeshop.Application.Companion.firebaseDB
@@ -30,15 +29,34 @@ class BillInfoActivity : AppCompatActivity() {
         adapter.setCallBackLoad {
             dialogLoad.stopLoadingDialog()
         }
+        loadName(bill.userId)
         recyclerViewFood.layoutManager = LinearLayoutManager(this)
         recyclerViewFood.setHasFixedSize(true)
         recyclerViewFood.adapter = adapter
         loadBillInfoFromBillID(bill.billId)
         btnPrevious.setOnClickListener {
             finish()
-            overridePendingTransition(R.anim.left_to_right,
-                R.anim.left_to_right_out)
+            overridePendingTransition(
+                R.anim.left_to_right,
+                R.anim.left_to_right_out
+            )
         }
+
+    }
+
+    private fun loadName(id: String) {
+        firebaseDB.reference.child("Users").child(id)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.exists()) {
+                        txtAccount.text = snapshot.child("Name").value.toString()
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                }
+
+            })
     }
 
     private fun loadBillInfoFromBillID(billID: String) {
@@ -51,11 +69,15 @@ class BillInfoActivity : AppCompatActivity() {
                         for (billInfo in snapshot.children) {
                             if (billInfo.child("Bill_ID").value.toString() == billID) {
                                 val foodID = billInfo.child("Food_ID").value.toString()
-                                listBillInfo.add(BillInfo(billInfo.key.toString(),
-                                    billID,
-                                    foodID,
-                                    billInfo.child("Price").value.toString().toInt(),
-                                    billInfo.child("Count").value.toString().toInt()))
+                                listBillInfo.add(
+                                    BillInfo(
+                                        billInfo.key.toString(),
+                                        billID,
+                                        foodID,
+                                        billInfo.child("Price").value.toString().toInt(),
+                                        billInfo.child("Count").value.toString().toInt()
+                                    )
+                                )
                             }
                         }
                         returnReceipt(listBillInfo)

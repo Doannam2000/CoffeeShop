@@ -6,14 +6,13 @@ import android.os.Bundle
 import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.View
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ddwan.coffeeshop.Application.Companion.listAccount
 import com.ddwan.coffeeshop.R
 import com.ddwan.coffeeshop.adapter.EmployeeAdapter
-import com.ddwan.coffeeshop.model.Account
+import com.ddwan.coffeeshop.model.Users
 import com.ddwan.coffeeshop.model.LoadingDialog
 import com.ddwan.coffeeshop.viewmodel.MyViewModel
 import kotlinx.android.synthetic.main.activity_employee.*
@@ -28,7 +27,7 @@ class EmployeeActivity : AppCompatActivity() {
         ViewModelProvider(this).get(MyViewModel::class.java)
     }
     private val dialogLoad by lazy { LoadingDialog(this) }
-    var listP = ArrayList<Account>()
+    var listP = ArrayList<Users>()
     val handle = Handler()
     val run = Runnable {
         val text = searchView.text

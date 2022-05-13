@@ -17,11 +17,11 @@ import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.ddwan.coffeeshop.Application.Companion.firebaseStore
 import com.ddwan.coffeeshop.R
-import com.ddwan.coffeeshop.model.Account
+import com.ddwan.coffeeshop.model.Users
 import java.lang.Exception
 
 class EmployeeAdapter(
-    var list: ArrayList<Account>,
+    var list: ArrayList<Users>,
     var context: Context,
 ) :
     RecyclerView.Adapter<EmployeeAdapter.ViewHolder>() {
@@ -64,7 +64,7 @@ class EmployeeAdapter(
             role.text = list[adapterPosition].role
             email.text = list[adapterPosition].email
 
-            firebaseStore.reference.child(list[adapterPosition].id).downloadUrl.addOnSuccessListener { Uri ->
+            firebaseStore.reference.child(list[adapterPosition].userId).downloadUrl.addOnSuccessListener { Uri ->
                 try {
                     Glide.with(context)
                         .load(Uri.toString())

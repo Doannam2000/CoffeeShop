@@ -38,17 +38,19 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
+        android:id="@+id/txtFood"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/dimen_20dp"
         android:text="Menu"
         android:textColor="@color/black"
         android:textSize="@dimen/dimen_18sp"
         app:layout_constraintBottom_toBottomOf="@+id/btnPrevious"
-        app:layout_constraintStart_toEndOf="@+id/btnPrevious"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/btnPrevious" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toTopOf="@+id/guideline6"
@@ -94,29 +96,24 @@
     </com.google.android.material.textfield.TextInputLayout>
 
 
-    <RadioGroup
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/radioGroup"
-        android:layout_width="wrap_content"
+        android:layout_margin="@dimen/dimen_15dp"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/dimen_15dp"
-        android:orientation="horizontal"
-        app:layout_constraintStart_toStartOf="@+id/textInputLayout"
         app:layout_constraintTop_toBottomOf="@+id/textInputLayout">
 
-        <RadioButton
-            android:id="@+id/radioDrink"
-            android:layout_width="wrap_content"
+        <AutoCompleteTextView
+            android:id="@+id/edtCategory"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:checked="true"
-            android:text="Đồ uống" />
-
-        <RadioButton
-            android:id="@+id/radioFood"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/dimen_10dp"
+            android:layout_weight="1"
+            android:inputType="none"
             android:text="Đồ ăn" />
-    </RadioGroup>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textInputLayout3"

@@ -4,10 +4,12 @@ import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import com.ddwan.coffeeshop.Application.Companion.firebaseDB
 import com.ddwan.coffeeshop.Application.Companion.firebaseStore
+import com.ddwan.coffeeshop.Application.Companion.listCategory
 import com.ddwan.coffeeshop.R
 import com.ddwan.coffeeshop.model.Food
 import com.ddwan.coffeeshop.model.LoadingDialog
@@ -35,6 +37,8 @@ class FoodActivity : AppCompatActivity() {
             food = bundle.getSerializable("food") as Food
             edit = bundle.getBoolean("check")
         }
+        val arrayAdapter = ArrayAdapter(this, R.layout.text_view_dropdown, getCategory())
+        edtCategory.setAdapter(arrayAdapter)
         if (edit) {
             loadFood()
             btnSave.setOnClickListener {
@@ -43,10 +47,13 @@ class FoodActivity : AppCompatActivity() {
                     addDataFood(food.foodId)
                 } else {
                     finish()
-                    overridePendingTransition(R.anim.left_to_right,
-                        R.anim.left_to_right_out)
+                    overridePendingTransition(
+                        R.anim.left_to_right,
+                        R.anim.left_to_right_out
+                    )
                 }
             }
+            txtFood.text = food.foodName
         } else
             btnSave.setOnClickListener {
                 dialog.startLoadingDialog()
@@ -55,8 +62,10 @@ class FoodActivity : AppCompatActivity() {
 
         btnPrevious.setOnClickListener {
             finish()
-            overridePendingTransition(R.anim.left_to_right,
-                R.anim.left_to_right_out)
+            overridePendingTransition(
+                R.anim.left_to_right,
+                R.anim.left_to_right_out
+            )
         }
         imageEdit.setOnClickListener { selectImage() }
     }
@@ -75,8 +84,10 @@ class FoodActivity : AppCompatActivity() {
                     Toast.makeText(this, "Thực hiện thao tác thành công !", Toast.LENGTH_LONG)
                         .show()
                     finish()
-                    overridePendingTransition(R.anim.left_to_right,
-                        R.anim.left_to_right_out)
+                    overridePendingTransition(
+                        R.anim.left_to_right,
+                        R.anim.left_to_right_out
+                    )
                 } else {
                     Toast.makeText(this, "Thay đổi ảnh thành công !", Toast.LENGTH_LONG)
                         .show()
@@ -111,7 +122,7 @@ class FoodActivity : AppCompatActivity() {
     private fun infoFood(): HashMap<String, Any> {
         val hashMap = HashMap<String, Any>()
         hashMap["Name"] = edtNameFood.text.toString()
-        hashMap["Category"] = if (radioDrink.isChecked) "Đồ uống" else "Đồ ăn"
+        hashMap["Category_ID"] = returnIdCategory(edtCategory.text.toString())
         hashMap["Price"] = edtPrice.text.toString()
         hashMap["Description"] = edtDescription.text.toString()
         return hashMap
@@ -127,8 +138,10 @@ class FoodActivity : AppCompatActivity() {
                             .show()
                         dialog.stopLoadingDialog()
                         finish()
-                        overridePendingTransition(R.anim.left_to_right,
-                            R.anim.left_to_right_out)
+                        overridePendingTransition(
+                            R.anim.left_to_right,
+                            R.anim.left_to_right_out
+                        )
                     }
                 }
             }
@@ -137,26 +150,48 @@ class FoodActivity : AppCompatActivity() {
     private fun loadFood() {
         model.loadImage(this, food.imageUrl, food.foodId, imageViewFood)
         edtNameFood.setText(food.foodName)
-        if (food.category == "Đồ uống")
-            radioDrink.isChecked = true
-        else
-            radioFood.isChecked = true
+        edtCategory.setText(returnCategory(food.categoryId), false)
         edtPrice.setText(food.price.toString())
         edtDescription.setText(food.description)
     }
 
     private fun checkTextChange(): Boolean {
-        val string = if (radioDrink.isChecked) "Đồ uống" else "Đồ ăn"
         return edtNameFood.text.toString() != food.foodName ||
-                string != food.category ||
+                edtCategory.text.toString() != food.categoryId ||
                 edtPrice.text.toString().toInt() != food.price ||
                 edtDescription.text.toString() != food.description
     }
 
     override fun onBackPressed() {
         finish()
-        overridePendingTransition(R.anim.left_to_right,
-            R.anim.left_to_right_out)
+        overridePendingTransition(
+            R.anim.left_to_right,
+            R.anim.left_to_right_out
+        )
         super.onBackPressed()
+    }
+
+    private fun getCategory(): ArrayList<String> {
+        val list = ArrayList<String>()
+        for (item in listCategory) {
+            list.add(item.categoryName)
+        }
+        return list
+    }
+
+
+    private fun returnCategory(id: String): String {
+        for (item in listCategory) {
+            if (item.categoryId == id)
+                return item.categoryName
+        }
+        return ""
+    }
+    private fun returnIdCategory(name: String): String {
+        for (item in listCategory) {
+            if (item.categoryName == name)
+                return item.categoryId
+        }
+        return ""
     }
 }

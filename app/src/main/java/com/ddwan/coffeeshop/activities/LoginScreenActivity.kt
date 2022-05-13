@@ -102,7 +102,7 @@ class LoginScreenActivity : AppCompatActivity() {
     private fun getInfoUser() {
         // get current user
         val user = mAuth.currentUser
-        accountLogin.id = user!!.uid
+        accountLogin.userId = user!!.uid
         accountLogin.email = user.email.toString()
         accountLogin.password = password.text.toString()
         // get info user
@@ -117,7 +117,7 @@ class LoginScreenActivity : AppCompatActivity() {
                     accountLogin.role = snapshot.child("Role").value.toString()
                     accountLogin.gender =
                         snapshot.child("Gender").value as Boolean
-                    val imageRef = Application.firebaseStore.reference.child(accountLogin.id)
+                    val imageRef = Application.firebaseStore.reference.child(accountLogin.userId)
                     imageRef.downloadUrl.addOnSuccessListener { Uri ->
                         accountLogin.imageUrl = Uri.toString()
                     }.addOnCompleteListener {
@@ -140,6 +140,8 @@ class LoginScreenActivity : AppCompatActivity() {
                     model.loadDataAccount(null)
                     model.loadDataFood(null,null,null,null)
                     getInfoUser()
+                    if (Application.listCategory.isEmpty())
+                        model.loadDataCategory()
                 } else {
                     Toast.makeText(this, "Sai tài khoản hoặc mật khẩu", Toast.LENGTH_SHORT)
                         .show()

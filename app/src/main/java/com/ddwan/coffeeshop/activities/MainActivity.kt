@@ -131,7 +131,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initView() {
-        val imageRef = firebaseStore.reference.child(accountLogin.id)
+        val imageRef = firebaseStore.reference.child(accountLogin.userId)
         imageRef.downloadUrl.addOnSuccessListener { Uri ->
             val imageURL = Uri.toString()
             if (imageURL != "null")

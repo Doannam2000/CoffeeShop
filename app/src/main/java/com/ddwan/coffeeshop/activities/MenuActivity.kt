@@ -12,9 +12,11 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
+import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.ddwan.coffeeshop.Application.Companion.accountLogin
 import com.ddwan.coffeeshop.Application.Companion.firebaseDB
 import com.ddwan.coffeeshop.Application.Companion.listFood
 import com.ddwan.coffeeshop.Application.Companion.sdf
@@ -73,9 +75,13 @@ class MenuActivity : AppCompatActivity() {
             Log.d("checkkkkk", tableID)
         } else {
             addFood.setOnClickListener {
-                startActivity(Intent(this, FoodActivity::class.java))
-                overridePendingTransition(R.anim.right_to_left,
-                    R.anim.right_to_left_out)
+                val popupMenu = PopupMenu(this, it)
+                popupMenu.menuInflater.inflate(R.menu.add_food_or_category, popupMenu.menu)
+                popupMenu.setOnMenuItemClickListener { i ->
+                    selectedItemMenu(i.itemId)
+                    false
+                }
+                popupMenu.show()
             }
         }
         initRecycler()
@@ -181,6 +187,21 @@ class MenuActivity : AppCompatActivity() {
             })
     }
 
+    private fun selectedItemMenu(id: Int) {
+        when (id) {
+            R.id.itemAddFood -> {
+                startActivity(Intent(this, FoodActivity::class.java))
+                overridePendingTransition(R.anim.right_to_left,
+                    R.anim.right_to_left_out)
+            }
+            R.id.itemAddCategory -> {
+                startActivity(Intent(this, CategoryActivity::class.java))
+                overridePendingTransition(R.anim.right_to_left,
+                    R.anim.right_to_left_out)
+            }
+        }
+    }
+
     private fun createDialogAddFood(food: Food) {
         val viewDialog = View.inflate(this, R.layout.custom_add_food, null)
         val builder = AlertDialog.Builder(this)
@@ -210,6 +231,7 @@ class MenuActivity : AppCompatActivity() {
             hashMap["Date_Check_In"] = sdf.format(Calendar.getInstance().time)
             hashMap["Date_Check_Out"] = "NONE"
             hashMap["Table_ID"] = tableID
+            hashMap["User_ID"] = accountLogin.userId
             hashMap["Status"] = false
             val billID = model.randomID()
             firebaseDB.reference.child("Bill").child(billID).updateChildren(hashMap)

@@ -18,7 +18,7 @@ import com.ddwan.coffeeshop.Application.Companion.firebaseStore
 import com.ddwan.coffeeshop.Application.Companion.listAccount
 import com.ddwan.coffeeshop.Application.Companion.mAuth
 import com.ddwan.coffeeshop.R
-import com.ddwan.coffeeshop.model.Account
+import com.ddwan.coffeeshop.model.Users
 import com.ddwan.coffeeshop.model.LoadingDialog
 import com.ddwan.coffeeshop.viewmodel.MyViewModel
 import com.google.firebase.storage.FirebaseStorage
@@ -33,7 +33,7 @@ class EditProfileActivity : AppCompatActivity() {
     private lateinit var imageUrl: Uri
     private lateinit var firebaseUserID: String
     private var edit = false
-    private var account = Account()
+    private var account = Users()
     private val model by lazy {
         ViewModelProvider(this).get(MyViewModel::class.java)
     }
@@ -44,7 +44,7 @@ class EditProfileActivity : AppCompatActivity() {
         setContentView(R.layout.activity_edit_profile)
         val bundle = intent.extras
         if (bundle != null) {
-            account = bundle.getSerializable("account") as Account
+            account = bundle.getSerializable("account") as Users
             edit = bundle.getBoolean("check")
         }
         val arrayAdapter = ArrayAdapter(this, R.layout.text_view_dropdown, role)
@@ -56,13 +56,14 @@ class EditProfileActivity : AppCompatActivity() {
             }
             btnSave.setOnClickListener {
                 if (checkTextChange())
-                    insertDataUser(account.id)
+                    insertDataUser(account.userId)
                 else {
                     finish()
                     overridePendingTransition(R.anim.left_to_right,
                         R.anim.left_to_right_out)
                 }
             }
+            txtAccount.text = account.name
         } else
             btnSave.setOnClickListener {
                 dialog.startLoadingDialog()
@@ -119,9 +120,9 @@ class EditProfileActivity : AppCompatActivity() {
             if (edit) {
                 dialog.startLoadingDialog()
                 if (account.imageUrl.trim() == "")
-                    uploadImage(account.id)
+                    uploadImage(account.userId)
                 else
-                    updateImage(account.id)
+                    updateImage(account.userId)
             }
         }
     }
@@ -134,7 +135,7 @@ class EditProfileActivity : AppCompatActivity() {
         hashMap["Address"] = edtAddress.text.toString()
         hashMap["Role"] = edtRole.text.toString()
         hashMap["Gender"] = radioMale.isChecked
-        if (account.id == accountLogin.id) {
+        if (account.userId == accountLogin.userId) {
             updateDataUserLocal(accountLogin)
         }
         firebaseDB.reference.child("Users").child(id).updateChildren(hashMap)
@@ -193,7 +194,7 @@ class EditProfileActivity : AppCompatActivity() {
     }
 
     private fun loadInfo() {
-        if (account.id == accountLogin.id)
+        if (account.userId == accountLogin.userId)
             btnChangePassword.visibility = View.VISIBLE
         cardViewPassword.visibility = View.GONE
         edtEmail.setText(account.email)
@@ -205,14 +206,14 @@ class EditProfileActivity : AppCompatActivity() {
             radioMale.isChecked = true
         else
             radioFemale.isChecked = true
-        model.loadImage(this, account.imageUrl, account.id, avatar)
+        model.loadImage(this, account.imageUrl, account.userId, avatar)
         edtEmail.isEnabled = false
         cardViewEmail.setOnClickListener {
             Toast.makeText(this,
                 "Không thể sửa email !!!",
                 Toast.LENGTH_SHORT).show()
         }
-        if (accountLogin.role != "Quản lý" || accountLogin.id == account.id) {
+        if (accountLogin.role != "Quản lý" || accountLogin.userId == account.userId) {
             edtRole.isEnabled = false
             cardViewRole.setOnClickListener {
                 Toast.makeText(this,
@@ -230,7 +231,7 @@ class EditProfileActivity : AppCompatActivity() {
                 radioMale.isChecked != accountLogin.gender
     }
 
-    private fun updateDataUserLocal(acc: Account) {
+    private fun updateDataUserLocal(acc: Users) {
         acc.role = edtRole.text.toString()
         acc.name = edtName.text.toString()
         acc.phone = edtPhone.text.toString()

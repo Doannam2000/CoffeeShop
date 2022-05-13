@@ -45,23 +45,31 @@ class HomeFragment : Fragment() {
         view.imageSlider.setImageList(imageList, ScaleTypes.FIT)
         view.cardViewMenu.setOnClickListener {
             startActivity(Intent(requireActivity(), MenuActivity::class.java))
-            activity?.overridePendingTransition(R.anim.right_to_left,
-                R.anim.right_to_left_out)
+            activity?.overridePendingTransition(
+                R.anim.right_to_left,
+                R.anim.right_to_left_out
+            )
         }
         view.cardViewTable.setOnClickListener {
             startActivity(Intent(requireActivity(), TableActivity::class.java))
-            activity?.overridePendingTransition(R.anim.right_to_left,
-                R.anim.right_to_left_out)
+            activity?.overridePendingTransition(
+                R.anim.right_to_left,
+                R.anim.right_to_left_out
+            )
         }
         view.cardViewEmployee.setOnClickListener {
             if (Application.accountLogin.role == "Quản lý") {
                 startActivity(Intent(requireActivity(), EmployeeActivity::class.java))
-                activity?.overridePendingTransition(R.anim.right_to_left,
-                    R.anim.right_to_left_out)
+                activity?.overridePendingTransition(
+                    R.anim.right_to_left,
+                    R.anim.right_to_left_out
+                )
             } else
-                Toast.makeText(requireContext(),
+                Toast.makeText(
+                    requireContext(),
                     "Bạn không có quyền sử dụng chức năng này",
-                    Toast.LENGTH_SHORT).show()
+                    Toast.LENGTH_SHORT
+                ).show()
         }
         adapter.setCallBack {
             val bundle = Bundle()
@@ -69,8 +77,10 @@ class HomeFragment : Fragment() {
             val intent = Intent(requireActivity(), BillInfoActivity::class.java)
             intent.putExtras(bundle)
             startActivity(intent)
-            activity?.overridePendingTransition(R.anim.right_to_left,
-                R.anim.right_to_left_out)
+            activity?.overridePendingTransition(
+                R.anim.right_to_left,
+                R.anim.right_to_left_out
+            )
         }
         adapter.setCallBackLoad { dialogLoad.stopLoadingDialog() }
         view.recyclerViewBillInHome.layoutManager = LinearLayoutManager(requireContext())
@@ -89,11 +99,16 @@ class HomeFragment : Fragment() {
                     if (snapshot.exists()) {
                         for ((i, item) in snapshot.children.reversed().withIndex()) {
                             if ((item.child("Status").value as Boolean)) {
-                                list.add(Bill(item.key.toString(),
-                                    item.child("Date_Check_In").value.toString(),
-                                    item.child("Date_Check_Out").value.toString(),
-                                    item.child("Table_ID").value.toString(),
-                                    item.child("Status").value as Boolean))
+                                list.add(
+                                    Bill(
+                                        item.key.toString(),
+                                        item.child("Date_Check_In").value.toString(),
+                                        item.child("Date_Check_Out").value.toString(),
+                                        item.child("Table_ID").value.toString(),
+                                        item.child("User_ID").value.toString(),
+                                        item.child("Status").value as Boolean
+                                    )
+                                )
                             }
                             if (i == 4)
                                 break

@@ -28,7 +28,7 @@
         app:layout_constraintTop_toTopOf="@+id/btnPrevious" />
 
     <TextView
-        android:id="@+id/textTotal"
+        android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/dimen_15dp"
@@ -43,9 +43,32 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/dimen_15dp"
-        android:layout_marginBottom="@dimen/dimen_20dp"
+        android:layout_marginBottom="@dimen/dimen_10dp"
         android:text="10000đ"
         android:textColor="@color/red"
+        android:textSize="@dimen/dimen_22sp"
+        app:layout_constraintBottom_toTopOf="@+id/txtAccount"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/dimen_15dp"
+        android:text="Lập hóa đơn:"
+        android:textColor="@color/black"
+        android:textSize="@dimen/dimen_22dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/txtAccount" />
+
+    <TextView
+        android:id="@+id/txtAccount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/dimen_15dp"
+        android:layout_marginBottom="@dimen/dimen_20dp"
+        android:text="Tên"
+        android:textColor="@color/black"
         android:textSize="@dimen/dimen_22sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />

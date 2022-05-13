@@ -2,8 +2,8 @@ package com.ddwan.coffeeshop.model
 
 import java.io.Serializable
 
-class Account constructor(
-    var id: String = "",
+class Users constructor(
+    var userId: String = "",
     var email: String = "",
     var password: String = "",
     var name: String = "",

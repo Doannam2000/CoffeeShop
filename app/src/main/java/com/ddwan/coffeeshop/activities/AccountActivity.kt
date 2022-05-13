@@ -12,7 +12,7 @@ import com.ddwan.coffeeshop.Application
 import com.ddwan.coffeeshop.Application.Companion.accountLogin
 import com.ddwan.coffeeshop.Application.Companion.firebaseDB
 import com.ddwan.coffeeshop.R
-import com.ddwan.coffeeshop.model.Account
+import com.ddwan.coffeeshop.model.Users
 import com.ddwan.coffeeshop.viewmodel.MyViewModel
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -26,7 +26,7 @@ class AccountActivity : AppCompatActivity() {
     val model by lazy {
         ViewModelProvider(this).get(MyViewModel::class.java)
     }
-    var account = Account()
+    var account = Users()
     var isChange = false
     var isEmployeeActivity = false
 
@@ -34,17 +34,17 @@ class AccountActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_account)
         val bundle = intent.extras
-        account = bundle!!.getSerializable("account") as Account
+        account = bundle!!.getSerializable("account") as Users
         isEmployeeActivity = bundle.getBoolean("EmployeeActivity", false)
         setView()
         btnPrevious.setOnClickListener {
             backActivity(false)
         }
         btnEdit.setOnClickListener {
-            if (account.id == accountLogin.id) {
+            if (account.userId == accountLogin.userId) {
                 nextEditActivity()
             } else {
-                var popupMenu = PopupMenu(this, it)
+                val popupMenu = PopupMenu(this, it)
                 popupMenu.menuInflater.inflate(R.menu.menu_control, popupMenu.menu)
                 popupMenu.setOnMenuItemClickListener { i ->
                     selectedItemMenu(i.itemId)
@@ -82,14 +82,14 @@ class AccountActivity : AppCompatActivity() {
         accountPhone.text = account.phone
         accountRole.text = account.role
         try {
-            model.loadImage(this, account.imageUrl, account.id, accountImage)
+            model.loadImage(this, account.imageUrl, account.userId, accountImage)
         } catch (e: Exception) {
 
         }
     }
 
     private fun loadInfoUser() {
-        firebaseDB.getReference("Users").child(account.id)
+        firebaseDB.getReference("Users").child(account.userId)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     account.name = snapshot.child("Name").value.toString()
@@ -100,7 +100,7 @@ class AccountActivity : AppCompatActivity() {
                     account.role = snapshot.child("Role").value.toString()
                     account.gender =
                         snapshot.child("Gender").value as Boolean
-                    Application.firebaseStore.reference.child(account.id).downloadUrl.addOnSuccessListener { Uri ->
+                    Application.firebaseStore.reference.child(account.userId).downloadUrl.addOnSuccessListener { Uri ->
                         account.imageUrl = Uri.toString()
                     }.addOnCompleteListener {
                         setView()
@@ -123,7 +123,7 @@ class AccountActivity : AppCompatActivity() {
                 val builder = AlertDialog.Builder(this);
                 builder.setMessage("Bạn có chắc muốn xóa ${account.name} ?")
                     .setPositiveButton("Có") { _, _ ->
-                        deleteAccount(account.id)
+                        deleteAccount(account.userId)
                     }
                     .setNegativeButton("Không") { _, _ -> }.show()
             }

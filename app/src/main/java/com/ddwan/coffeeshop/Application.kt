@@ -15,15 +15,16 @@ class Application {
         val mAuth = FirebaseAuth.getInstance()
         val firebaseDB = FirebaseDatabase.getInstance()
         val firebaseStore = FirebaseStorage.getInstance()
-        val accountLogin = Account()
+        val accountLogin = Users()
         const val TYPE_PLUS = 1
         const val TYPE_MINUS = 2
         const val TYPE_DELETE = 3
         var numberFormatter: NumberFormat = NumberFormat.getCurrencyInstance()
-        val listAccount = ArrayList<Account>()
+        val listAccount = ArrayList<Users>()
         val listFood = ArrayList<Food>()
         val listEmpty = ArrayList<Table>()
         val listLiveTable = ArrayList<Table>()
+        val listCategory = ArrayList<Category>()
     }
     init {
         numberFormatter.maximumFractionDigits = 0

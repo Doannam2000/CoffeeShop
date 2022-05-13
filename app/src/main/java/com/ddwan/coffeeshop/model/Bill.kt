@@ -8,5 +8,6 @@ class Bill(
     var dateCheckIn: String,
     var dateCheckOut: String,
     var tableId: String,
+    var userId: String,
     var status: Boolean,
-):Serializable
+) : Serializable

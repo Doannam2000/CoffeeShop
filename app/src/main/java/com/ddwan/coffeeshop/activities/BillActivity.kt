@@ -71,6 +71,7 @@ class BillActivity : AppCompatActivity() {
                                         item.child("Date_Check_In").value.toString(),
                                         item.child("Date_Check_Out").value.toString(),
                                         item.child("Table_ID").value.toString(),
+                                        item.child("User_ID").value.toString(),
                                         item.child("Status").value as Boolean))
                                 }
                             }
