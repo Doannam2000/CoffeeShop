@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
+import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.ddwan.coffeeshop.Application
 import com.ddwan.coffeeshop.Application.Companion.accountLogin
@@ -18,6 +19,7 @@ import com.ddwan.coffeeshop.R
 import com.ddwan.coffeeshop.fragment.ChartFragment
 import com.ddwan.coffeeshop.fragment.HomeFragment
 import com.ddwan.coffeeshop.fragment.InfoFragment
+import com.ddwan.coffeeshop.viewmodel.MyViewModel
 import com.google.android.material.navigation.NavigationView
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_menu.*
@@ -49,9 +51,11 @@ class MainActivity : AppCompatActivity() {
             when (it.itemId) {
                 R.id.homeFragment -> {
                     if (tag != "HomeFragment") {
-                        fragmentTransaction.replace(R.id.fragmentContainerView,
+                        fragmentTransaction.replace(
+                            R.id.fragmentContainerView,
                             HomeFragment(),
-                            "FragmentHome").commit()
+                            "FragmentHome"
+                        ).commit()
                         fragmentTransaction.addToBackStack("HomeFragment")
                     }
                     it.isChecked = true
@@ -66,37 +70,52 @@ class MainActivity : AppCompatActivity() {
                 }
                 R.id.tableFragment -> {
                     startActivity(Intent(this, TableActivity::class.java))
-                    overridePendingTransition(R.anim.right_to_left,
-                        R.anim.right_to_left_out)
+                    overridePendingTransition(
+                        R.anim.right_to_left,
+                        R.anim.right_to_left_out
+                    )
                 }
                 R.id.menuFragment -> {
                     startActivity(Intent(this, MenuActivity::class.java))
-                    overridePendingTransition(R.anim.right_to_left,
-                        R.anim.right_to_left_out)
+                    overridePendingTransition(
+                        R.anim.right_to_left,
+                        R.anim.right_to_left_out
+                    )
                 }
                 R.id.employeeFragment -> {
-                    if (accountLogin.role == "Quản lý") {
+                    if (ViewModelProvider(this).get(MyViewModel::class.java)
+                            .returnRoleName(
+                                accountLogin.roleId
+                            ) == "Quản lý") {
                         startActivity(Intent(this, EmployeeActivity::class.java))
-                        overridePendingTransition(R.anim.right_to_left,
-                            R.anim.right_to_left_out)
+                        overridePendingTransition(
+                            R.anim.right_to_left,
+                            R.anim.right_to_left_out
+                        )
                     } else
-                        Toast.makeText(this,
+                        Toast.makeText(
+                            this,
                             "Bạn không có quyền sử dụng chức năng này",
-                            Toast.LENGTH_SHORT).show()
+                            Toast.LENGTH_SHORT
+                        ).show()
                 }
                 R.id.itemFacebook -> {
                     val intent = Intent(Intent.ACTION_VIEW)
                     intent.data = Uri.parse("https://fb.com/DoanNamVBHP")
                     startActivity(intent)
-                    overridePendingTransition(R.anim.right_to_left,
-                        R.anim.right_to_left_out)
+                    overridePendingTransition(
+                        R.anim.right_to_left,
+                        R.anim.right_to_left_out
+                    )
                 }
                 R.id.itemZalo -> {
                     val intent = Intent(Intent.ACTION_VIEW)
                     intent.data = Uri.parse("https://zalo.me/0397482016")
                     startActivity(intent)
-                    overridePendingTransition(R.anim.right_to_left,
-                        R.anim.right_to_left_out)
+                    overridePendingTransition(
+                        R.anim.right_to_left,
+                        R.anim.right_to_left_out
+                    )
                 }
                 R.id.infoFragment -> {
                     if (tag != "InfoFragment") {
@@ -109,8 +128,10 @@ class MainActivity : AppCompatActivity() {
                 R.id.itemLogout -> {
                     startActivity(Intent(this, LoginScreenActivity::class.java))
                     finish()
-                    overridePendingTransition(R.anim.left_to_right,
-                        R.anim.left_to_right_out)
+                    overridePendingTransition(
+                        R.anim.left_to_right,
+                        R.anim.left_to_right_out
+                    )
                 }
             }
             drawerLayout.closeDrawers()
@@ -124,8 +145,10 @@ class MainActivity : AppCompatActivity() {
             bundle.putSerializable("account", accountLogin)
             intent.putExtras(bundle)
             startActivity(intent)
-            overridePendingTransition(R.anim.right_to_left,
-                R.anim.right_to_left_out)
+            overridePendingTransition(
+                R.anim.right_to_left,
+                R.anim.right_to_left_out
+            )
         }
 
     }

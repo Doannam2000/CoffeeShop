@@ -18,6 +18,7 @@ import com.google.firebase.storage.FirebaseStorage
 import kotlinx.android.synthetic.main.activity_food.*
 import kotlinx.android.synthetic.main.activity_food.btnPrevious
 import kotlinx.android.synthetic.main.activity_food.btnSave
+import java.lang.Exception
 
 class FoodActivity : AppCompatActivity() {
 
@@ -97,11 +98,16 @@ class FoodActivity : AppCompatActivity() {
     }
 
     private fun updateImage(id: String) {
-        FirebaseStorage.getInstance().reference.child(id).delete()
+        try {
+            FirebaseStorage.getInstance().reference.child(id).delete()
             .addOnCompleteListener {
                 if (it.isSuccessful)
                     uploadImage(id)
             }
+        } catch (e: Exception) {
+
+        }
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

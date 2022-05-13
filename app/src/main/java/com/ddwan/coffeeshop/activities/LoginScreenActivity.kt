@@ -114,7 +114,7 @@ class LoginScreenActivity : AppCompatActivity() {
                         snapshot.child("Address").value.toString()
                     accountLogin.phone =
                         snapshot.child("Phone_Number").value.toString()
-                    accountLogin.role = snapshot.child("Role").value.toString()
+                    accountLogin.roleId = snapshot.child("Role_ID").value.toString()
                     accountLogin.gender =
                         snapshot.child("Gender").value as Boolean
                     val imageRef = Application.firebaseStore.reference.child(accountLogin.userId)
@@ -139,6 +139,7 @@ class LoginScreenActivity : AppCompatActivity() {
                 if (it.isSuccessful) {
                     model.loadDataAccount(null)
                     model.loadDataFood(null,null,null,null)
+                    model.loadDataRole()
                     getInfoUser()
                     if (Application.listCategory.isEmpty())
                         model.loadDataCategory()

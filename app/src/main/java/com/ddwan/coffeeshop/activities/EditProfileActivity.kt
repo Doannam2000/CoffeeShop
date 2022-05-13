@@ -16,6 +16,7 @@ import com.ddwan.coffeeshop.Application.Companion.accountLogin
 import com.ddwan.coffeeshop.Application.Companion.firebaseDB
 import com.ddwan.coffeeshop.Application.Companion.firebaseStore
 import com.ddwan.coffeeshop.Application.Companion.listAccount
+import com.ddwan.coffeeshop.Application.Companion.listRole
 import com.ddwan.coffeeshop.Application.Companion.mAuth
 import com.ddwan.coffeeshop.R
 import com.ddwan.coffeeshop.model.Users
@@ -26,6 +27,7 @@ import kotlinx.android.synthetic.main.activity_edit_profile.*
 import kotlinx.android.synthetic.main.custom_dialog_change_password.view.*
 import kotlinx.android.synthetic.main.custom_editext_dialog.view.cancel
 import kotlinx.android.synthetic.main.custom_editext_dialog.view.oke
+import java.lang.Exception
 
 class EditProfileActivity : AppCompatActivity() {
 
@@ -37,7 +39,7 @@ class EditProfileActivity : AppCompatActivity() {
     private val model by lazy {
         ViewModelProvider(this).get(MyViewModel::class.java)
     }
-    private val role by lazy { resources.getStringArray(R.array.Role) }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,7 +49,7 @@ class EditProfileActivity : AppCompatActivity() {
             account = bundle.getSerializable("account") as Users
             edit = bundle.getBoolean("check")
         }
-        val arrayAdapter = ArrayAdapter(this, R.layout.text_view_dropdown, role)
+        val arrayAdapter = ArrayAdapter(this, R.layout.text_view_dropdown, getRole())
         edtRole.setAdapter(arrayAdapter)
         if (edit) {
             loadInfo()
@@ -59,8 +61,10 @@ class EditProfileActivity : AppCompatActivity() {
                     insertDataUser(account.userId)
                 else {
                     finish()
-                    overridePendingTransition(R.anim.left_to_right,
-                        R.anim.left_to_right_out)
+                    overridePendingTransition(
+                        R.anim.left_to_right,
+                        R.anim.left_to_right_out
+                    )
                 }
             }
             txtAccount.text = account.name
@@ -75,8 +79,10 @@ class EditProfileActivity : AppCompatActivity() {
         }
         btnPrevious.setOnClickListener {
             finish()
-            overridePendingTransition(R.anim.left_to_right,
-                R.anim.left_to_right_out)
+            overridePendingTransition(
+                R.anim.left_to_right,
+                R.anim.left_to_right_out
+            )
         }
     }
 
@@ -94,8 +100,10 @@ class EditProfileActivity : AppCompatActivity() {
                     Toast.makeText(this, "Thực hiện thao tác thành công !", Toast.LENGTH_LONG)
                         .show()
                     finish()
-                    overridePendingTransition(R.anim.left_to_right,
-                        R.anim.left_to_right_out)
+                    overridePendingTransition(
+                        R.anim.left_to_right,
+                        R.anim.left_to_right_out
+                    )
                 } else {
                     Toast.makeText(this, "Đổi avatar thành công !", Toast.LENGTH_LONG)
                         .show()
@@ -105,11 +113,15 @@ class EditProfileActivity : AppCompatActivity() {
     }
 
     private fun updateImage(id: String) {
-        FirebaseStorage.getInstance().reference.child(id).delete()
-            .addOnCompleteListener {
-                if (it.isSuccessful)
-                    uploadImage(id)
-            }
+        try {
+            FirebaseStorage.getInstance().reference.child(id).delete()
+                .addOnCompleteListener {
+                    if (it.isSuccessful)
+                        uploadImage(id)
+                }
+        } catch (e: Exception) {
+
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -133,7 +145,8 @@ class EditProfileActivity : AppCompatActivity() {
         hashMap["Email"] = edtEmail.text.toString()
         hashMap["Phone_Number"] = edtPhone.text.toString()
         hashMap["Address"] = edtAddress.text.toString()
-        hashMap["Role"] = edtRole.text.toString()
+        hashMap["Password"] = edtPassword.text.toString()
+        hashMap["Role_ID"] = returnRoleId(edtRole.text.toString())
         hashMap["Gender"] = radioMale.isChecked
         if (account.userId == accountLogin.userId) {
             updateDataUserLocal(accountLogin)
@@ -147,8 +160,10 @@ class EditProfileActivity : AppCompatActivity() {
                         val returnIntent = Intent()
                         setResult(Activity.RESULT_OK, returnIntent)
                         finish()
-                        overridePendingTransition(R.anim.left_to_right,
-                            R.anim.left_to_right_out)
+                        overridePendingTransition(
+                            R.anim.left_to_right,
+                            R.anim.left_to_right_out
+                        )
                     }
                 }
             }
@@ -161,8 +176,10 @@ class EditProfileActivity : AppCompatActivity() {
             Toast.makeText(this, "Thông tin không được để trống", Toast.LENGTH_SHORT).show()
         } else {
             if (checkEmail(edtEmail.text.toString()))
-                mAuth.createUserWithEmailAndPassword(edtEmail.text.toString(),
-                    edtPassword.text.toString()).addOnCompleteListener {
+                mAuth.createUserWithEmailAndPassword(
+                    edtEmail.text.toString(),
+                    edtPassword.text.toString()
+                ).addOnCompleteListener {
                     if (it.isSuccessful) {
                         firebaseUserID = mAuth.currentUser!!.uid
                         if (this::imageUrl.isInitialized) uploadImage(firebaseUserID)
@@ -170,16 +187,20 @@ class EditProfileActivity : AppCompatActivity() {
                         mAuth.signOut()
                         mAuth.signInWithEmailAndPassword(accountLogin.email, accountLogin.password)
                     } else {
-                        Toast.makeText(this,
+                        Toast.makeText(
+                            this,
                             "Có lỗi xảy ra không thể tạo tài khoản ",
-                            Toast.LENGTH_SHORT).show()
+                            Toast.LENGTH_SHORT
+                        ).show()
                         dialog.stopLoadingDialog()
                     }
                 }
             else {
-                Toast.makeText(this,
+                Toast.makeText(
+                    this,
                     "Tài khoản này đã tồn tại trong hệ thống !!",
-                    Toast.LENGTH_SHORT).show()
+                    Toast.LENGTH_SHORT
+                ).show()
                 dialog.stopLoadingDialog()
             }
         }
@@ -201,7 +222,7 @@ class EditProfileActivity : AppCompatActivity() {
         edtAddress.setText(account.address)
         edtName.setText(account.name)
         edtPhone.setText(account.phone)
-        edtRole.setText(account.role, false)
+        edtRole.setText(returnRoleName(account.roleId), false)
         if (account.gender)
             radioMale.isChecked = true
         else
@@ -209,16 +230,20 @@ class EditProfileActivity : AppCompatActivity() {
         model.loadImage(this, account.imageUrl, account.userId, avatar)
         edtEmail.isEnabled = false
         cardViewEmail.setOnClickListener {
-            Toast.makeText(this,
+            Toast.makeText(
+                this,
                 "Không thể sửa email !!!",
-                Toast.LENGTH_SHORT).show()
+                Toast.LENGTH_SHORT
+            ).show()
         }
-        if (accountLogin.role != "Quản lý" || accountLogin.userId == account.userId) {
+        if (model.returnRoleName(accountLogin.roleId) != "Quản lý" || accountLogin.userId == account.userId) {
             edtRole.isEnabled = false
             cardViewRole.setOnClickListener {
-                Toast.makeText(this,
+                Toast.makeText(
+                    this,
                     "Không thể sửa chức vụ !!!",
-                    Toast.LENGTH_SHORT).show()
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
     }
@@ -227,12 +252,12 @@ class EditProfileActivity : AppCompatActivity() {
         return edtAddress.text.toString() != accountLogin.address
                 || edtName.text.toString() != accountLogin.name ||
                 edtPhone.text.toString() != accountLogin.phone ||
-                edtRole.text.toString() != accountLogin.role ||
+                edtRole.text.toString() != accountLogin.roleId ||
                 radioMale.isChecked != accountLogin.gender
     }
 
     private fun updateDataUserLocal(acc: Users) {
-        acc.role = edtRole.text.toString()
+        acc.roleId = edtRole.text.toString()
         acc.name = edtName.text.toString()
         acc.phone = edtPhone.text.toString()
         acc.address = edtAddress.text.toString()
@@ -262,9 +287,11 @@ class EditProfileActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
             if (viewDialog.edtCurrentPass.text.toString() == viewDialog.edtNewPass.text.toString()) {
-                Toast.makeText(this,
+                Toast.makeText(
+                    this,
                     "Mật khẩu mới không được trùng với mật khẩu hiện tại !",
-                    Toast.LENGTH_SHORT).show()
+                    Toast.LENGTH_SHORT
+                ).show()
                 return@setOnClickListener
             }
             if (viewDialog.edtCheckNewPass.text.toString() != viewDialog.edtNewPass.text.toString()) {
@@ -281,14 +308,18 @@ class EditProfileActivity : AppCompatActivity() {
             mAuth.currentUser!!.updatePassword(viewDialog.edtCheckNewPass.text.toString())
                 .addOnCompleteListener {
                     if (it.isSuccessful) {
-                        Toast.makeText(this,
+                        Toast.makeText(
+                            this,
                             "Đổi mật khẩu thành công !",
-                            Toast.LENGTH_SHORT).show()
+                            Toast.LENGTH_SHORT
+                        ).show()
                         accountLogin.password = viewDialog.edtCheckNewPass.text.toString()
                     } else {
-                        Toast.makeText(this,
+                        Toast.makeText(
+                            this,
                             "Đã xảy ra lỗi, xin thử lại sau !",
-                            Toast.LENGTH_SHORT).show()
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
         }
@@ -296,8 +327,35 @@ class EditProfileActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         finish()
-        overridePendingTransition(R.anim.left_to_right,
-            R.anim.left_to_right_out)
+        overridePendingTransition(
+            R.anim.left_to_right,
+            R.anim.left_to_right_out
+        )
         super.onBackPressed()
+    }
+
+
+    private fun getRole(): ArrayList<String> {
+        val list = ArrayList<String>()
+        for (item in listRole) {
+            list.add(item.roleName)
+        }
+        return list
+    }
+
+    private fun returnRoleName(id: String): String {
+        for (item in listRole) {
+            if (item.roleId == id)
+                return item.roleName
+        }
+        return ""
+    }
+
+    private fun returnRoleId(name: String): String {
+        for (item in listRole) {
+            if (item.roleName == name)
+                return item.roleId
+        }
+        return ""
     }
 }

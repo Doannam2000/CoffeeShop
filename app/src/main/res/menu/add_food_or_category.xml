@@ -5,5 +5,5 @@
         android:title="Thêm món ăn" />
     <item
         android:id="@+id/itemAddCategory"
-        android:title="Thêm loại món ăn" />
+        android:title="Quản lý loại món ăn" />
 </menu>

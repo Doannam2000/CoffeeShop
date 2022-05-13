@@ -15,6 +15,7 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
+import com.ddwan.coffeeshop.Application
 import com.ddwan.coffeeshop.Application.Companion.firebaseStore
 import com.ddwan.coffeeshop.R
 import com.ddwan.coffeeshop.model.Users
@@ -61,7 +62,7 @@ class EmployeeAdapter(
         @SuppressLint("SetTextI18n")
         fun setData() {
             name.text = list[adapterPosition].name
-            role.text = list[adapterPosition].role
+            role.text = returnRoleName(list[adapterPosition].roleId)
             email.text = list[adapterPosition].email
 
             firebaseStore.reference.child(list[adapterPosition].userId).downloadUrl.addOnSuccessListener { Uri ->
@@ -107,5 +108,13 @@ class EmployeeAdapter(
                 itemClick.invoke(adapterPosition)
             }
         }
+    }
+
+    fun returnRoleName(id: String): String {
+        for (item in Application.listRole) {
+            if (item.roleId == id)
+                return item.roleName
+        }
+        return ""
     }
 }

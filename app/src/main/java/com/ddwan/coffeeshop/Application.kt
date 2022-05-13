@@ -25,6 +25,7 @@ class Application {
         val listEmpty = ArrayList<Table>()
         val listLiveTable = ArrayList<Table>()
         val listCategory = ArrayList<Category>()
+        val listRole = ArrayList<Role>()
     }
     init {
         numberFormatter.maximumFractionDigits = 0

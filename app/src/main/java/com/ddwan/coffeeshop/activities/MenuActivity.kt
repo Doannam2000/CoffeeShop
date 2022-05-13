@@ -34,6 +34,7 @@ import kotlinx.android.synthetic.main.activity_menu.btnPrevious
 import kotlinx.android.synthetic.main.custom_add_food.view.*
 import kotlinx.android.synthetic.main.custom_editext_dialog.view.cancel
 import kotlinx.android.synthetic.main.custom_editext_dialog.view.oke
+import java.lang.Exception
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
@@ -109,12 +110,16 @@ class MenuActivity : AppCompatActivity() {
             returnIntent.putExtra("Status", checkEmpty)
             setResult(Activity.RESULT_OK, returnIntent)
             finish()
-            overridePendingTransition(R.anim.left_to_right,
-                R.anim.left_to_right_out)
+            overridePendingTransition(
+                R.anim.left_to_right,
+                R.anim.left_to_right_out
+            )
         } else {
             finish()
-            overridePendingTransition(R.anim.left_to_right,
-                R.anim.left_to_right_out)
+            overridePendingTransition(
+                R.anim.left_to_right,
+                R.anim.left_to_right_out
+            )
         }
     }
 
@@ -126,8 +131,10 @@ class MenuActivity : AppCompatActivity() {
             val intent = Intent(this, FoodActivity::class.java)
             intent.putExtras(bundle)
             startActivity(intent)
-            overridePendingTransition(R.anim.right_to_left,
-                R.anim.right_to_left_out)
+            overridePendingTransition(
+                R.anim.right_to_left,
+                R.anim.right_to_left_out
+            )
         }
         adapter.setCallBack2 {
             val builder = AlertDialog.Builder(this)
@@ -166,17 +173,25 @@ class MenuActivity : AppCompatActivity() {
                     if (snapshot.exists()) {
                         snapshot.ref.removeValue().addOnCompleteListener { i ->
                             if (i.isSuccessful) {
-                                FirebaseStorage.getInstance().reference.child(id).delete()
+                                try {
+                                    FirebaseStorage.getInstance().reference.child(id).delete()
+                                } catch (e: Exception) {
+
+                                }
                                 listFood.removeAt(it)
                                 adapter.notifyItemRemoved(it)
-                                Toast.makeText(this@MenuActivity,
+                                Toast.makeText(
+                                    this@MenuActivity,
                                     "Xoá thành công !",
-                                    Toast.LENGTH_SHORT)
+                                    Toast.LENGTH_SHORT
+                                )
                                     .show()
                             } else
-                                Toast.makeText(this@MenuActivity,
+                                Toast.makeText(
+                                    this@MenuActivity,
                                     "Không thể xóa !",
-                                    Toast.LENGTH_SHORT)
+                                    Toast.LENGTH_SHORT
+                                )
                                     .show()
                         }
                     }
@@ -191,13 +206,17 @@ class MenuActivity : AppCompatActivity() {
         when (id) {
             R.id.itemAddFood -> {
                 startActivity(Intent(this, FoodActivity::class.java))
-                overridePendingTransition(R.anim.right_to_left,
-                    R.anim.right_to_left_out)
+                overridePendingTransition(
+                    R.anim.right_to_left,
+                    R.anim.right_to_left_out
+                )
             }
             R.id.itemAddCategory -> {
                 startActivity(Intent(this, CategoryActivity::class.java))
-                overridePendingTransition(R.anim.right_to_left,
-                    R.anim.right_to_left_out)
+                overridePendingTransition(
+                    R.anim.right_to_left,
+                    R.anim.right_to_left_out
+                )
             }
         }
     }
@@ -215,9 +234,11 @@ class MenuActivity : AppCompatActivity() {
         viewDialog.oke.setOnClickListener {
             dialog.dismiss()
             if (viewDialog.edit_count.text.isEmpty()) {
-                Toast.makeText(this,
+                Toast.makeText(
+                    this,
                     "Số lượng không được để trống",
-                    Toast.LENGTH_SHORT).show()
+                    Toast.LENGTH_SHORT
+                ).show()
             } else {
                 dialogLoad.startLoadingDialog()
                 addFoodToBill(food, viewDialog.edit_count.text.toString().toInt())
@@ -241,12 +262,16 @@ class MenuActivity : AppCompatActivity() {
                             .setValue(false)
                         firebaseDB.reference.child("Table").child(tableID).child("Description")
                             .setValue("Chưa Thanh Toán")
-                        addBillInfo(model.returnBillInfo(food.foodId, food.price, count, billID),
-                            model.randomID())
+                        addBillInfo(
+                            model.returnBillInfo(food.foodId, food.price, count, billID),
+                            model.randomID()
+                        )
                     } else {
-                        Toast.makeText(this,
+                        Toast.makeText(
+                            this,
                             "Thêm thành món ăn không thành công ",
-                            Toast.LENGTH_SHORT).show()
+                            Toast.LENGTH_SHORT
+                        ).show()
                         dialogLoad.stopLoadingDialog()
                     }
                 }
@@ -305,15 +330,23 @@ class MenuActivity : AppCompatActivity() {
                             }
                         }
                         if (count1 == 0) {
-                            addBillInfo(model.returnBillInfo(food.foodId,
-                                food.price,
-                                count,
-                                billID), model.randomID())
+                            addBillInfo(
+                                model.returnBillInfo(
+                                    food.foodId,
+                                    food.price,
+                                    count,
+                                    billID
+                                ), model.randomID()
+                            )
                         } else {
-                            addBillInfo(model.returnBillInfo(food.foodId,
-                                food.price,
-                                count + count1,
-                                billID), billInfoID)
+                            addBillInfo(
+                                model.returnBillInfo(
+                                    food.foodId,
+                                    food.price,
+                                    count + count1,
+                                    billID
+                                ), billInfoID
+                            )
                         }
                     }
                 }

@@ -7,13 +7,11 @@ import com.bumptech.glide.Glide
 import com.ddwan.coffeeshop.Application
 import com.ddwan.coffeeshop.Application.Companion.firebaseDB
 import com.ddwan.coffeeshop.Application.Companion.firebaseStore
+import com.ddwan.coffeeshop.Application.Companion.listRole
 import com.ddwan.coffeeshop.R
 import com.ddwan.coffeeshop.adapter.EmployeeAdapter
 import com.ddwan.coffeeshop.adapter.FoodAdapter
-import com.ddwan.coffeeshop.model.Category
-import com.ddwan.coffeeshop.model.Users
-import com.ddwan.coffeeshop.model.Food
-import com.ddwan.coffeeshop.model.LoadingDialog
+import com.ddwan.coffeeshop.model.*
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -75,11 +73,11 @@ class MyViewModel : ViewModel() {
                         for (user in snapshot.children) {
                             val account = Users(user.key.toString(),
                                 user.child("Email").value.toString(),
-                                "",
+                                user.child("Password").value.toString(),
                                 user.child("Name").value.toString(),
                                 user.child("Address").value.toString(),
                                 user.child("Phone_Number").value.toString(),
-                                user.child("Role").value.toString(),
+                                user.child("Role_ID").value.toString(),
                                 user.child("Gender").value as Boolean,
                                 "")
                             listP.add(account)
@@ -148,6 +146,35 @@ class MyViewModel : ViewModel() {
                 override fun onCancelled(error: DatabaseError) {
                 }
             })
+    }
+
+    fun loadDataRole() {
+        listRole.clear()
+        firebaseDB.getReference("Role")
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.exists()) {
+                        for (tb in snapshot.children) {
+                            val role = Role(
+                                tb.key.toString(),
+                                tb.child("Role_Name").value.toString()
+                            )
+                            listRole.add(role)
+                        }
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                }
+            })
+    }
+
+    fun returnRoleName(id: String): String {
+        for (item in listRole) {
+            if (item.roleId == id)
+                return item.roleName
+        }
+        return ""
     }
 
 }

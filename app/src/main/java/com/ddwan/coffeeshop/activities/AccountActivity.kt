@@ -11,9 +11,11 @@ import androidx.lifecycle.ViewModelProvider
 import com.ddwan.coffeeshop.Application
 import com.ddwan.coffeeshop.Application.Companion.accountLogin
 import com.ddwan.coffeeshop.Application.Companion.firebaseDB
+import com.ddwan.coffeeshop.Application.Companion.mAuth
 import com.ddwan.coffeeshop.R
 import com.ddwan.coffeeshop.model.Users
 import com.ddwan.coffeeshop.viewmodel.MyViewModel
+import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -64,8 +66,10 @@ class AccountActivity : AppCompatActivity() {
         bundle.putBoolean("check", true)
         intent.putExtras(bundle)
         startActivityForResult(intent, 123)
-        overridePendingTransition(R.anim.right_to_left,
-            R.anim.right_to_left_out)
+        overridePendingTransition(
+            R.anim.right_to_left,
+            R.anim.right_to_left_out
+        )
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -80,7 +84,7 @@ class AccountActivity : AppCompatActivity() {
         accountEmail.text = account.email
         accountGender.text = if (account.gender) "Nam" else "Nữ"
         accountPhone.text = account.phone
-        accountRole.text = account.role
+        accountRole.text = model.returnRoleName(account.roleId)
         try {
             model.loadImage(this, account.imageUrl, account.userId, accountImage)
         } catch (e: Exception) {
@@ -97,7 +101,7 @@ class AccountActivity : AppCompatActivity() {
                         snapshot.child("Address").value.toString()
                     account.phone =
                         snapshot.child("Phone_Number").value.toString()
-                    account.role = snapshot.child("Role").value.toString()
+                    account.roleId = snapshot.child("Role_ID").value.toString()
                     account.gender =
                         snapshot.child("Gender").value as Boolean
                     Application.firebaseStore.reference.child(account.userId).downloadUrl.addOnSuccessListener { Uri ->
@@ -135,19 +139,39 @@ class AccountActivity : AppCompatActivity() {
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.exists()) {
-                        snapshot.ref.removeValue().addOnCompleteListener { i ->
-                            if (i.isSuccessful) {
-                                FirebaseStorage.getInstance().reference.child(id).delete()
-                                Toast.makeText(this@AccountActivity,
+                        try {
+                            FirebaseStorage.getInstance().reference.child(id).delete()
+                        } catch (e: Exception) {
+
+                        }
+                        val email = snapshot.child("Email").value.toString()
+                        val pass = snapshot.child("Password").value.toString()
+                        snapshot.ref.removeValue().addOnCompleteListener { j ->
+                            if (j.isSuccessful) {
+                                mAuth.signOut()
+                                mAuth.signInWithEmailAndPassword(email,pass).addOnCompleteListener {
+                                    if(it.isSuccessful){
+                                        val user = mAuth.currentUser
+                                        val credential = EmailAuthProvider.getCredential(email,pass)
+                                        user!!.reauthenticate(credential)
+                                        user.delete()
+                                    }
+                                }
+
+                                Toast.makeText(
+                                    this@AccountActivity,
                                     "Xoá thành công !",
-                                    Toast.LENGTH_SHORT)
+                                    Toast.LENGTH_SHORT
+                                )
                                     .show()
                                 isChange = true
                                 backActivity(true)
                             } else
-                                Toast.makeText(this@AccountActivity,
+                                Toast.makeText(
+                                    this@AccountActivity,
                                     "Không thể xóa !",
-                                    Toast.LENGTH_SHORT)
+                                    Toast.LENGTH_SHORT
+                                )
                                     .show()
                         }
                     }
@@ -169,12 +193,16 @@ class AccountActivity : AppCompatActivity() {
             returnIntent.putExtra("Change", deleted)
             setResult(Activity.RESULT_OK, returnIntent)
             finish()
-            overridePendingTransition(R.anim.left_to_right,
-                R.anim.left_to_right_out)
+            overridePendingTransition(
+                R.anim.left_to_right,
+                R.anim.left_to_right_out
+            )
         } else {
             finish()
-            overridePendingTransition(R.anim.left_to_right,
-                R.anim.left_to_right_out)
+            overridePendingTransition(
+                R.anim.left_to_right,
+                R.anim.left_to_right_out
+            )
         }
     }
 

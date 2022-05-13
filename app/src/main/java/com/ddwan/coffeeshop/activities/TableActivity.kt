@@ -276,7 +276,6 @@ class TableActivity : AppCompatActivity() {
                     if (snapshot.exists()) {
                         snapshot.ref.removeValue().addOnCompleteListener { i ->
                             if (i.isSuccessful) {
-                                FirebaseStorage.getInstance().reference.child(id).delete()
                                 listEmpty.removeAt(index)
                                 adapterEmpty.notifyItemRemoved(index)
                                 Snackbar.make(tableActivity,

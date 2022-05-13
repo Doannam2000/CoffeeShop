@@ -10,6 +10,8 @@ import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.ddwan.coffeeshop.Application
+import com.ddwan.coffeeshop.Application.Companion.listEmpty
+import com.ddwan.coffeeshop.Application.Companion.listLiveTable
 import com.ddwan.coffeeshop.R
 import com.ddwan.coffeeshop.activities.BillActivity
 import com.ddwan.coffeeshop.model.Bill

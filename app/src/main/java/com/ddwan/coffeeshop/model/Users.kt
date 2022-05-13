@@ -9,7 +9,7 @@ class Users constructor(
     var name: String = "",
     var address: String = "",
     var phone: String = "",
-    var role: String = "",
+    var roleId: String = "",
     var gender: Boolean = true,
     var imageUrl: String = "",
 ) : Serializable {

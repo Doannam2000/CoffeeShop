@@ -18,6 +18,9 @@
         android:theme="@style/Theme.CoffeeShop"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".activities.RoleActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.CategoryActivity"
             android:exported="false" />
         <activity
@@ -73,12 +76,12 @@
         <activity
             android:name=".activities.MainActivity"
             android:exported="true"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activities.LoginScreenActivity"
             android:exported="true"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

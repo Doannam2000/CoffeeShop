@@ -7,8 +7,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.ddwan.coffeeshop.Application
+import com.ddwan.coffeeshop.Application.Companion.accountLogin
 import com.ddwan.coffeeshop.Application.Companion.firebaseDB
 import com.ddwan.coffeeshop.R
 import com.ddwan.coffeeshop.activities.BillInfoActivity
@@ -18,12 +19,12 @@ import com.ddwan.coffeeshop.activities.TableActivity
 import com.ddwan.coffeeshop.adapter.BillAdapter
 import com.ddwan.coffeeshop.model.Bill
 import com.ddwan.coffeeshop.model.LoadingDialog
+import com.ddwan.coffeeshop.viewmodel.MyViewModel
 import com.denzcoskun.imageslider.constants.ScaleTypes
 import com.denzcoskun.imageslider.models.SlideModel
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
-import kotlinx.android.synthetic.main.activity_bill.*
 import kotlinx.android.synthetic.main.fragment_home.view.*
 
 class HomeFragment : Fragment() {
@@ -58,7 +59,10 @@ class HomeFragment : Fragment() {
             )
         }
         view.cardViewEmployee.setOnClickListener {
-            if (Application.accountLogin.role == "Quản lý") {
+            if (ViewModelProvider(requireActivity()).get(MyViewModel::class.java).returnRoleName(
+                    accountLogin.roleId
+                ) == "Quản lý"
+            ) {
                 startActivity(Intent(requireActivity(), EmployeeActivity::class.java))
                 activity?.overridePendingTransition(
                     R.anim.right_to_left,

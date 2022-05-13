@@ -11,35 +11,36 @@ import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ddwan.coffeeshop.Application.Companion.firebaseDB
-import com.ddwan.coffeeshop.Application.Companion.listCategory
+import com.ddwan.coffeeshop.Application.Companion.listRole
+import com.ddwan.coffeeshop.Application.Companion.mAuth
 import com.ddwan.coffeeshop.R
-import com.ddwan.coffeeshop.adapter.CategoryAdapter
-import com.ddwan.coffeeshop.model.Category
+import com.ddwan.coffeeshop.adapter.RoleAdapter
 import com.ddwan.coffeeshop.model.LoadingDialog
+import com.ddwan.coffeeshop.model.Role
 import com.ddwan.coffeeshop.viewmodel.MyViewModel
+import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.FirebaseStorage
-import kotlinx.android.synthetic.main.activity_category.*
+import kotlinx.android.synthetic.main.activity_role.*
 import kotlinx.android.synthetic.main.custom_editext_dialog.view.*
 import java.lang.Exception
 
-class CategoryActivity : AppCompatActivity() {
-
+class RoleActivity : AppCompatActivity() {
     val model by lazy {
         ViewModelProvider(this).get(MyViewModel::class.java)
     }
     private val dialogLoad by lazy { LoadingDialog(this) }
-    private val adapter by lazy { CategoryAdapter(listCategory) }
+    private val adapter by lazy { RoleAdapter(listRole) }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_category)
-        recyclerViewCategory.layoutManager = LinearLayoutManager(this)
-        recyclerViewCategory.setHasFixedSize(true)
-        recyclerViewCategory.adapter = adapter
-        addCategory.setOnClickListener {
-            createDialogAddCategory(true, null)
+        setContentView(R.layout.activity_role)
+        recyclerViewRole.layoutManager = LinearLayoutManager(this)
+        recyclerViewRole.setHasFixedSize(true)
+        recyclerViewRole.adapter = adapter
+        addRole.setOnClickListener {
+            createDialogAddRole(true, null)
         }
         btnPrevious.setOnClickListener {
             finish()
@@ -51,10 +52,14 @@ class CategoryActivity : AppCompatActivity() {
     }
 
     override fun onContextItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            125 -> createDialogAddCategory(false, item.groupId)
-            126 -> confirmDelete(item.groupId)
-        }
+        if (model.returnRoleName(listRole[item.groupId].roleId) == "Quản lý")
+            Toast.makeText(this, "Không thể thao tác với chức vụ Quản lý", Toast.LENGTH_SHORT)
+                .show()
+        else
+            when (item.itemId) {
+                127 -> createDialogAddRole(false, item.groupId)
+                128 -> confirmDelete(item.groupId)
+            }
         return super.onContextItemSelected(item)
     }
 
@@ -65,17 +70,17 @@ class CategoryActivity : AppCompatActivity() {
 
     private fun loadData() {
         dialogLoad.startLoadingDialog()
-        listCategory.clear()
-        firebaseDB.getReference("Category")
+        listRole.clear()
+        firebaseDB.getReference("Role")
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.exists()) {
                         for (tb in snapshot.children) {
-                            val category = Category(
+                            val role = Role(
                                 tb.key.toString(),
-                                tb.child("Category_Name").value.toString()
+                                tb.child("Role_Name").value.toString()
                             )
-                            listCategory.add(category)
+                            listRole.add(role)
                         }
                         adapter.notifyDataSetChanged()
                         dialogLoad.stopLoadingDialog()
@@ -90,24 +95,24 @@ class CategoryActivity : AppCompatActivity() {
     }
 
     private fun checkName(name: String): Boolean {
-        for (item in listCategory) {
-            if (name.uppercase() == item.categoryName.uppercase()) {
+        for (item in listRole) {
+            if (name.uppercase() == item.roleName.uppercase()) {
                 return false
             }
         }
         return true
     }
 
-    private fun updateCategory(index: Int, name: String) {
+    private fun updateRole(index: Int, name: String) {
         if (checkName(name)) {
-            firebaseDB.reference.child("Category").child(listCategory[index].categoryId)
-                .child("Category_Name")
+            firebaseDB.reference.child("Role").child(listRole[index].roleId)
+                .child("Role_Name")
                 .setValue(name)
                 .addOnCompleteListener {
                     if (it.isSuccessful) {
-                        listCategory[index].categoryName = name
+                        listRole[index].roleName = name
                         Toast.makeText(
-                            this@CategoryActivity,
+                            this@RoleActivity,
                             "Thực hiện thao tác thành công !",
                             Toast.LENGTH_LONG
                         )
@@ -116,7 +121,7 @@ class CategoryActivity : AppCompatActivity() {
                 }
         } else {
             Toast.makeText(
-                this@CategoryActivity,
+                this@RoleActivity,
                 "Loại đã tồn tại",
                 Toast.LENGTH_SHORT
             ).show()
@@ -126,22 +131,22 @@ class CategoryActivity : AppCompatActivity() {
 
     private fun confirmDelete(index: Int) {
         val builder = AlertDialog.Builder(this)
-        builder.setMessage("Khi xóa ${listCategory[index].categoryName} thì các món ăn trong loại này sẽ bị xóa\nBạn muốn xóa chứ ?")
+        builder.setMessage("Khi xóa ${listRole[index].roleName} thì các tài khoản trong chức vụ này sẽ bị xóa\nBạn muốn xóa chứ ?")
             .setPositiveButton("Có") { _, _ ->
-                deleteCategory(index)
+                deleteRole(index)
             }
             .setNegativeButton("Không") { _, _ -> }.show()
     }
 
-    private fun deleteCategory(index: Int) {
-        val id = listCategory[index].categoryId
-        firebaseDB.reference.child("Food")
+    private fun deleteRole(index: Int) {
+        val id = listRole[index].roleId
+        firebaseDB.reference.child("Users")
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.exists()) {
                         for (item in snapshot.children) {
-                            if (item.child("Category_ID").value.toString() == id) {
-                                item.ref.removeValue()
+                            if (item.child("Role_ID").value.toString() == id) {
+                                deleteAccount(item.key.toString())
                             }
                         }
                     }
@@ -150,23 +155,24 @@ class CategoryActivity : AppCompatActivity() {
                 override fun onCancelled(error: DatabaseError) {
                 }
             })
-        firebaseDB.reference.child("Category").child(id)
+        firebaseDB.reference.child("Role").child(id)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.exists()) {
                         snapshot.ref.removeValue().addOnCompleteListener { i ->
                             if (i.isSuccessful) {
+                                FirebaseStorage.getInstance().reference.child(id).delete()
                                 Toast.makeText(
-                                    this@CategoryActivity,
-                                    "Xóa thành công ${listCategory[index].categoryName} !",
+                                    this@RoleActivity,
+                                    "Xóa thành công ${listRole[index].roleName} !",
                                     Toast.LENGTH_SHORT
                                 )
                                     .show()
-                                listCategory.removeAt(index)
+                                listRole.removeAt(index)
                                 adapter.notifyItemRemoved(index)
                             } else
                                 Toast.makeText(
-                                    this@CategoryActivity,
+                                    this@RoleActivity,
                                     "Không thể xóa !",
                                     Toast.LENGTH_SHORT
                                 )
@@ -180,15 +186,15 @@ class CategoryActivity : AppCompatActivity() {
             })
     }
 
-    private fun createDialogAddCategory(check: Boolean, index: Int?) {
+    private fun createDialogAddRole(check: Boolean, index: Int?) {
         val viewDialog = View.inflate(this, R.layout.custom_editext_dialog, null)
         val builder = AlertDialog.Builder(this)
         builder.setView(viewDialog)
         val dialog = builder.create()
         dialog.show()
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        if (!check) viewDialog.name.setText(listCategory[index!!].categoryName)
-        viewDialog.txtTitle.text = "Tên loại"
+        if (!check) viewDialog.name.setText(listRole[index!!].roleName)
+        viewDialog.txtTitle.text = "Tên chức vụ"
         viewDialog.cancel.setOnClickListener {
             dialog.dismiss()
         }
@@ -197,32 +203,32 @@ class CategoryActivity : AppCompatActivity() {
             if (viewDialog.name.text.isEmpty()) {
                 Toast.makeText(
                     this,
-                    "Tên loại không được để trống",
+                    "Tên chức vụ không được để trống",
                     Toast.LENGTH_SHORT
                 ).show()
             } else {
                 if (check)
-                    addCategory(viewDialog.name.text.toString())
+                    addRole(viewDialog.name.text.toString())
                 else {
-                    if (viewDialog.name.text.toString() != listCategory[index!!].categoryName)
-                        updateCategory(index, viewDialog.name.text.toString())
+                    if (viewDialog.name.text.toString() != listRole[index!!].roleName)
+                        updateRole(index, viewDialog.name.text.toString())
                 }
             }
         }
     }
 
-    private fun addCategory(name: String) {
+    private fun addRole(name: String) {
         val hashMap = HashMap<String, Any>()
         val id = model.randomID()
-        hashMap["Category_Name"] = name
+        hashMap["Role_Name"] = name
         if (checkName(name)) {
-            firebaseDB.reference.child("Category").child(id)
+            firebaseDB.reference.child("Role").child(id)
                 .updateChildren(hashMap).addOnCompleteListener {
                     if (it.isSuccessful) {
-                        listCategory.add(Category(id, name))
+                        listRole.add(Role(id, name))
                         adapter.notifyDataSetChanged()
                         Toast.makeText(
-                            this@CategoryActivity,
+                            this@RoleActivity,
                             "Thực hiện thao tác thành công!",
                             Toast.LENGTH_SHORT
                         )
@@ -231,12 +237,44 @@ class CategoryActivity : AppCompatActivity() {
                 }
         } else {
             Toast.makeText(
-                this@CategoryActivity,
-                "Loại này đã tồn tại",
+                this@RoleActivity,
+                "Chức vụ này đã tồn tại",
                 Toast.LENGTH_SHORT
             ).show()
         }
+    }
 
+    private fun deleteAccount(id: String) {
+        firebaseDB.reference.child("Users").child(id)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.exists()) {
+                        try {
+                            FirebaseStorage.getInstance().reference.child(id).delete()
+                        } catch (e: Exception) {
+
+                        }
+                        val email = snapshot.child("Email").value.toString()
+                        val pass = snapshot.child("Password").value.toString()
+                        snapshot.ref.removeValue().addOnCompleteListener { i ->
+                            if (i.isSuccessful) {
+                                mAuth.signOut()
+                                mAuth.signInWithEmailAndPassword(email,pass).addOnCompleteListener {
+                                    if(it.isSuccessful){
+                                        val user = mAuth.currentUser
+                                        val credential = EmailAuthProvider.getCredential(email,pass)
+                                        user!!.reauthenticate(credential)
+                                        user.delete()
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                }
+            })
     }
 
 }

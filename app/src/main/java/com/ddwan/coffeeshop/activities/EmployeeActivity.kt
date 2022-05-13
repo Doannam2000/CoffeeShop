@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
+import android.widget.PopupMenu
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -63,9 +64,13 @@ class EmployeeActivity : AppCompatActivity() {
         recyclerViewEmployee.setHasFixedSize(true)
         recyclerViewEmployee.adapter = adapter
         addAccount.setOnClickListener {
-            startActivityForResult(Intent(this, EditProfileActivity::class.java), 106)
-            overridePendingTransition(R.anim.right_to_left,
-                R.anim.right_to_left_out)
+            val popupMenu = PopupMenu(this, it)
+            popupMenu.menuInflater.inflate(R.menu.role_or_employee, popupMenu.menu)
+            popupMenu.setOnMenuItemClickListener { i ->
+                selectedItemMenu(i.itemId)
+                false
+            }
+            popupMenu.show()
         }
         btnPrevious.setOnClickListener {
             finish()
@@ -122,6 +127,21 @@ class EmployeeActivity : AppCompatActivity() {
         overridePendingTransition(R.anim.left_to_right,
             R.anim.left_to_right_out)
         super.onBackPressed()
+    }
+
+    private fun selectedItemMenu(id: Int) {
+        when (id) {
+            R.id.itemAddEmployee -> {
+                startActivityForResult(Intent(this, EditProfileActivity::class.java), 106)
+                overridePendingTransition(R.anim.right_to_left,
+                    R.anim.right_to_left_out)
+            }
+            R.id.itemAddRole -> {
+                startActivity(Intent(this, RoleActivity::class.java))
+                overridePendingTransition(R.anim.right_to_left,
+                    R.anim.right_to_left_out)
+            }
+        }
     }
 
 }
