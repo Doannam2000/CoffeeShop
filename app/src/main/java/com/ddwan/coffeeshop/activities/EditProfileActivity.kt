@@ -305,15 +305,21 @@ class EditProfileActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
             dialog.dismiss()
-            mAuth.currentUser!!.updatePassword(viewDialog.edtCheckNewPass.text.toString())
+            val newPassword = viewDialog.edtCheckNewPass.text.toString()
+            mAuth.currentUser!!.updatePassword(newPassword)
                 .addOnCompleteListener {
                     if (it.isSuccessful) {
-                        Toast.makeText(
-                            this,
-                            "Đổi mật khẩu thành công !",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        accountLogin.password = viewDialog.edtCheckNewPass.text.toString()
+                        firebaseDB.reference.child("Users").child(accountLogin.userId)
+                            .child("Password").setValue(newPassword).addOnCompleteListener { i ->
+                            if (i.isSuccessful) {
+                                Toast.makeText(
+                                    this,
+                                    "Đổi mật khẩu thành công !",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                accountLogin.password = newPassword
+                            }
+                        }
                     } else {
                         Toast.makeText(
                             this,
