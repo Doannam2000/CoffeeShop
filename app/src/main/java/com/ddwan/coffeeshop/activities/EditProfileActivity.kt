@@ -116,12 +116,11 @@ class EditProfileActivity : AppCompatActivity() {
         try {
             FirebaseStorage.getInstance().reference.child(id).delete()
                 .addOnCompleteListener {
-                    if (it.isSuccessful)
-                        uploadImage(id)
                 }
         } catch (e: Exception) {
 
         }
+        uploadImage(id)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
