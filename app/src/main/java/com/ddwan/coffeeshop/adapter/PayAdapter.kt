@@ -123,7 +123,7 @@ class PayAdapter(
         }
 
         init {
-            if(pay){
+            if (pay) {
                 imagePlus.setOnClickListener {
                     itemClick.invoke(adapterPosition, TYPE_PLUS)
                     list[adapterPosition].count++
@@ -133,11 +133,15 @@ class PayAdapter(
                     itemClick.invoke(adapterPosition, TYPE_MINUS)
                 }
                 imageMinus.setOnClickListener {
-                    list[adapterPosition].count--
-                    count.text = list[adapterPosition].count.toString()
-                    price.text =
-                        numberFormatter.format(list[adapterPosition].price * list[adapterPosition].count)
-                    itemClick.invoke(adapterPosition, TYPE_MINUS)
+                    if (list[adapterPosition].count == 1) {
+                        itemClick.invoke(adapterPosition, TYPE_DELETE)
+                    }else{
+                        list[adapterPosition].count--
+                        count.text = list[adapterPosition].count.toString()
+                        price.text =
+                            numberFormatter.format(list[adapterPosition].price * list[adapterPosition].count)
+                        itemClick.invoke(adapterPosition, TYPE_MINUS)
+                    }
                 }
                 imageDelete.setOnClickListener { itemClick.invoke(adapterPosition, TYPE_DELETE) }
             }
