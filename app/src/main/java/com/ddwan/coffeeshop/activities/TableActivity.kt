@@ -276,11 +276,11 @@ class TableActivity : AppCompatActivity() {
                     if (snapshot.exists()) {
                         snapshot.ref.removeValue().addOnCompleteListener { i ->
                             if (i.isSuccessful) {
-                                listEmpty.removeAt(index)
-                                adapterEmpty.notifyItemRemoved(index)
                                 Snackbar.make(tableActivity,
                                     "Xóa thành công ${listEmpty[index].tableName}",
                                     Snackbar.LENGTH_SHORT).show()
+                                listEmpty.removeAt(index)
+                                adapterEmpty.notifyItemRemoved(index)
                             } else
                                 Toast.makeText(this@TableActivity,
                                     "Không thể xóa !",

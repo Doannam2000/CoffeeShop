@@ -31,6 +31,7 @@ class EmployeeActivity : AppCompatActivity() {
     var listP = ArrayList<Users>()
     val handle = Handler()
     val run = Runnable {
+        dialogLoad.startLoadingDialog()
         val text = searchView.text
         listAccount.clear()
         for (item in listP) {

@@ -115,8 +115,8 @@ class RoleActivity : AppCompatActivity() {
                             this@RoleActivity,
                             "Thực hiện thao tác thành công !",
                             Toast.LENGTH_LONG
-                        )
-                            .show()
+                        ).show()
+                        adapter.notifyItemChanged(index)
                     }
                 }
         } else {

@@ -52,6 +52,7 @@ class MenuActivity : AppCompatActivity() {
     var listP = ArrayList<Food>()
     val handle = Handler()
     val run = Runnable {
+        dialogLoad.startLoadingDialog()
         val text = searchView.text
         listFood.clear()
         for (item in listP) {

@@ -110,8 +110,8 @@ class CategoryActivity : AppCompatActivity() {
                             this@CategoryActivity,
                             "Thực hiện thao tác thành công !",
                             Toast.LENGTH_LONG
-                        )
-                            .show()
+                        ).show()
+                        adapter.notifyItemChanged(index)
                     }
                 }
         } else {
