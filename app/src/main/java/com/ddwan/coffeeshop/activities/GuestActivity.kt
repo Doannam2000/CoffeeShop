@@ -8,12 +8,10 @@ import android.text.TextWatcher
 import android.view.View
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.ddwan.coffeeshop.Application
 import com.ddwan.coffeeshop.Application.Companion.firebaseDB
 import com.ddwan.coffeeshop.Application.Companion.listFood
 import com.ddwan.coffeeshop.R
 import com.ddwan.coffeeshop.adapter.FoodAdapter
-import com.ddwan.coffeeshop.model.Bill
 import com.ddwan.coffeeshop.model.Food
 import com.ddwan.coffeeshop.model.LoadingDialog
 import com.ddwan.coffeeshop.viewmodel.MyViewModel
@@ -22,10 +20,8 @@ import com.denzcoskun.imageslider.models.SlideModel
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
-import kotlinx.android.synthetic.main.activity_bill.*
-import kotlinx.android.synthetic.main.activity_khach.*
-import kotlinx.android.synthetic.main.activity_khach.btnPrevious
-import kotlinx.android.synthetic.main.activity_khach.searchView
+import kotlinx.android.synthetic.main.activity_guest.*
+import kotlinx.android.synthetic.main.activity_guest.searchView
 
 class GuestActivity : AppCompatActivity() {
 
@@ -37,6 +33,7 @@ class GuestActivity : AppCompatActivity() {
     }
     val handle = Handler()
     val run = Runnable {
+        dialogLoad.startLoadingDialog()
         val text = searchView.text
         disableView()
         if (listP.size == 0)
@@ -55,7 +52,7 @@ class GuestActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_khach)
+        setContentView(R.layout.activity_guest)
         val imageList = ArrayList<SlideModel>()
         imageList.add(SlideModel(R.drawable.image_slide1))
         imageList.add(SlideModel(R.drawable.image_slide2))
